@@ -51,8 +51,11 @@ jobs:
               echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
               cd "$app"
               flutter pub get
-              if ! flutter analyze --no-pub; then
-                echo "❌ FAILED: $app"
+              output=$(flutter analyze --no-pub 2>&1)
+              echo "$output"
+              errors=$(echo "$output" | grep -cE "^  error - " || true)
+              if [ "${errors:-0}" -gt 0 ]; then
+                echo "❌ FAILED: $app ($errors errors)"
                 failed=1
               else
                 echo "✅ PASSED: $app"
