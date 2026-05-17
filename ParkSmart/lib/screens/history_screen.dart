@@ -182,8 +182,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       Text(
                         _formatDate(createdAt),
                         style: TextStyle(
-                            fontSize: AppTextSize.sm,
-                            color: ct.textSecondary),
+                            fontSize: AppTextSize.sm, color: ct.textSecondary),
                       ),
                     ],
                   ),
@@ -253,8 +252,7 @@ class _UpgradeCTA extends StatelessWidget {
       color: AppTheme.primary.withAlpha(13),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppRadius.xl),
-        side:
-            BorderSide(color: AppTheme.primary.withAlpha(51), width: 1.5),
+        side: BorderSide(color: AppTheme.primary.withAlpha(51), width: 1.5),
       ),
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.lg),
@@ -273,8 +271,8 @@ class _UpgradeCTA extends StatelessWidget {
             Text(
               'Supprimez les publicités et accédez à toutes les fonctionnalités.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                  color: ct.textSecondary, fontSize: AppTextSize.md),
+              style:
+                  TextStyle(color: ct.textSecondary, fontSize: AppTextSize.md),
             ),
             const SizedBox(height: 12),
             SizedBox(
