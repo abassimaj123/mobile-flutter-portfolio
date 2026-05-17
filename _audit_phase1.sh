@@ -20,7 +20,8 @@ for app in "${APPS[@]}"; do
   dir="$ROOT/$app"
   cd "$dir" || continue
   output=$(flutter analyze --no-pub 2>&1)
-  err=$(echo "$output" | grep -cE "error •" || true)
+  # Flutter 3.x uses "error - " format (not old "error •")
+  err=$(echo "$output" | grep -cE "^  error - |error •" || true)
   if [[ $err -gt 0 ]]; then
     echo -e "${RED}❌${RESET}  $app — $err erreur(s)"
     (( FAILED++ ))

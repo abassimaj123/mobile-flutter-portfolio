@@ -84,7 +84,7 @@ class AlternatingService {
     for (int di = -1; di <= 1; di++) {
       for (int dj = -1; dj <= 1; dj++) {
         final key = '${gi + di},${gj + dj}';
-        for (final idx in _grid[key] ?? []) {
+        for (final idx in _grid[key] ?? <int>[]) {
           final seg = _segs[idx];
           for (final pt in seg.coords) {
             final dl = pt[1] - lat;
