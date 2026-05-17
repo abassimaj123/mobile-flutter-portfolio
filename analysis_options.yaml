@@ -1,0 +1,72 @@
+include: package:lints/recommended.yaml
+
+linter:
+  rules:
+    # === STRICT MODE — Prevent bugs before they land ===
+
+    # Ambiguous imports — THE bug we just fixed
+    - avoid_ambiguous_imports
+
+    # Empty/unreachable code
+    - avoid_empty_else
+    - empty_statements
+    - control_flow_in_finally
+
+    # Import hygiene
+    - avoid_relative_lib_imports
+    - prefer_relative_imports
+
+    # Null safety & futures
+    - avoid_returning_null_for_future
+    - avoid_returning_null_for_void
+    - avoid_returning_this
+    - avoid_null_checks_in_equality_operators
+
+    # Async hygiene
+    - avoid_slow_async_io
+    - cancel_subscriptions
+    - close_sinks
+
+    # Type & equality
+    - hash_and_equals
+    - unrelated_type_equality_checks
+
+    # String/List
+    - no_adjacent_strings_in_list
+    - leading_newlines_in_multiline_strings
+    - unnecessary_string_interpolations
+    - unnecessary_string_escapes
+
+    # Consistency
+    - prefer_void_to_null
+    - throw_in_finally
+    - unnecessary_statements
+    - comment_references
+
+    # Performance
+    - invariant_booleans
+
+  exclude:
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+    - "**/*.config.dart"
+    - "**/*.chopper.dart"
+
+analyzer:
+  exclude:
+    - "build/**"
+    - ".dart_tool/**"
+    - "coverage/**"
+
+  errors:
+    # Treat these as errors (not warnings)
+    missing_required_param: error
+    missing_return: error
+    deprecated_member_use_from_same_package: ignore
+    todo: ignore
+
+  # Dart strict mode (optional, very strict)
+  language:
+    strict-casts: false
+    strict-inference: false
+    strict-raw-types: false

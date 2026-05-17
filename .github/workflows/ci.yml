@@ -1,0 +1,192 @@
+name: 🔐 CI — Lint, Format, Test
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  analyze:
+    name: Flutter Analyze — All Apps
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          cache: true
+
+      - name: 📋 Pub get (root)
+        run: flutter pub get
+
+      - name: 🔍 Analyze — All Apps (STRICT)
+        run: |
+          apps=(
+            "AutoLoan"
+            "CreditCardAPR"
+            "HELOCApp"
+            "LoanPayoffUS"
+            "MortgageCA"
+            "MortgageUK"
+            "MortgageUS"
+            "PropertyROISuite"
+            "RentBuyUS"
+            "RentalExpenses"
+            "SalaryApp"
+            "StudentLoan"
+            "rideprofit"
+            "RideProfit"
+            "TaxeCA"
+          )
+
+          failed=0
+          for app in "${apps[@]}"; do
+            if [ -f "$app/pubspec.yaml" ]; then
+              echo ""
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              echo "📦 Analyzing: $app"
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              cd "$app"
+              flutter pub get
+              if ! flutter analyze --fatal-infos; then
+                echo "❌ FAILED: $app"
+                failed=1
+              else
+                echo "✅ PASSED: $app"
+              fi
+              cd ..
+            fi
+          done
+
+          if [ $failed -eq 1 ]; then
+            echo ""
+            echo "❌ Some apps failed analysis. See above."
+            exit 1
+          fi
+          echo ""
+          echo "✅ All apps passed analysis!"
+
+  format:
+    name: Dart Format — Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          cache: true
+
+      - name: 🎨 Format Check — All Apps
+        run: |
+          apps=(
+            "AutoLoan"
+            "CreditCardAPR"
+            "HELOCApp"
+            "LoanPayoffUS"
+            "MortgageCA"
+            "MortgageUK"
+            "MortgageUS"
+            "PropertyROISuite"
+            "RentBuyUS"
+            "RentalExpenses"
+            "SalaryApp"
+            "StudentLoan"
+            "rideprofit"
+            "RideProfit"
+            "TaxeCA"
+          )
+
+          failed=0
+          for app in "${apps[@]}"; do
+            if [ -f "$app/pubspec.yaml" ]; then
+              echo "Checking format: $app"
+              cd "$app"
+              if ! dart format --set-exit-if-changed lib test --line-length 100; then
+                echo "❌ Format issue in $app"
+                failed=1
+              fi
+              cd ..
+            fi
+          done
+
+          if [ $failed -eq 1 ]; then
+            echo "❌ Format issues found. Run: dart format lib test"
+            exit 1
+          fi
+          echo "✅ All apps properly formatted!"
+
+  test:
+    name: 🧪 Flutter Test
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.24.0'
+          cache: true
+
+      - name: 🧪 Test — Apps With Tests
+        run: |
+          apps=(
+            "AutoLoan"
+            "MortgageUS"
+            "MortgageUK"
+            "RideProfit"
+            "TaxeCA"
+          )
+
+          failed=0
+          for app in "${apps[@]}"; do
+            if [ -f "$app/pubspec.yaml" ] && [ -d "$app/test" ]; then
+              echo ""
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              echo "🧪 Testing: $app"
+              echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+              cd "$app"
+              flutter pub get
+              if ! flutter test; then
+                echo "❌ Tests FAILED: $app"
+                failed=1
+              else
+                echo "✅ Tests PASSED: $app"
+              fi
+              cd ..
+            fi
+          done
+
+          if [ $failed -eq 1 ]; then
+            exit 1
+          fi
+          echo ""
+          echo "✅ All tests passed!"
+
+  # Summary job — must pass
+  check-result:
+    name: ✅ CI Summary
+    runs-on: ubuntu-latest
+    needs: [analyze, format, test]
+    if: always()
+
+    steps:
+      - name: Check CI Status
+        run: |
+          if [ "${{ needs.analyze.result }}" != "success" ]; then
+            echo "❌ Analyze failed"
+            exit 1
+          fi
+          if [ "${{ needs.format.result }}" != "success" ]; then
+            echo "❌ Format failed"
+            exit 1
+          fi
+          if [ "${{ needs.test.result }}" != "success" ] && [ "${{ needs.test.result }}" != "skipped" ]; then
+            echo "❌ Tests failed"
+            exit 1
+          fi
+          echo "✅ All CI checks passed!"
