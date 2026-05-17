@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:calcwise_core/calcwise_core.dart';
 import '../core/theme/app_theme.dart';
-import 'map_screen.dart';
+import '../main.dart';
 import 'onboarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -35,7 +35,7 @@ class _SplashScreenState extends State<SplashScreen> {
             context,
             PageRouteBuilder(
               pageBuilder: (_, __, ___) => _onboardingDone
-                  ? const MapScreen()
+                  ? const MainShell()
                   : const OnboardingScreen(),
               transitionsBuilder: (_, anim, __, child) =>
                   FadeTransition(opacity: anim, child: child),

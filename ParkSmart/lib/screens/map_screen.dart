@@ -27,14 +27,13 @@ import '../core/services/user_preferences_service.dart';
 import '../core/services/saved_spot_service.dart';
 import '../core/theme/app_theme.dart';
 import '../core/services/freemium_service.dart';
+import '../core/services/analytics_service.dart';
 import '../widgets/time_control_widget.dart';
 import '../widgets/layer_filter_widget.dart';
 import '../widgets/map_skeleton_loader.dart';
 import '../widgets/segment_bottom_sheet.dart';
-import '../widgets/banner_ad_widget.dart';
 import '../widgets/session_alert_banner.dart';
 import '../widgets/search_bar_widget.dart';
-import 'settings_screen.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({super.key});
@@ -89,7 +88,7 @@ class _MapScreenState extends State<MapScreen>
   // ── Saved spots ──────────────────────────────────────────────────────────
   List<SavedSpot> _savedSpots = [];
   // Toggle saved spots layer visibility
-  bool _showSavedSpots = true;
+  final bool _showSavedSpots = true;
 
   // Zoom courant — initialisé à la valeur par défaut, mis à jour par _onMapEvent.
   // NE PAS utiliser _mapController.camera.zoom dans build() :
@@ -193,6 +192,7 @@ class _MapScreenState extends State<MapScreen>
       HapticFeedback.mediumImpact();
       _snack('Spot sauvegardé !');
       _loadSavedSpots();
+      AnalyticsService.instance.logSpotSaved();
     }
   }
 
@@ -347,6 +347,7 @@ class _MapScreenState extends State<MapScreen>
         _loadingGeometry = false;
       });
       _computeStreetRules();
+      AnalyticsService.instance.logMapLoaded();
     }
   }
 
@@ -634,6 +635,7 @@ class _MapScreenState extends State<MapScreen>
         _selectedSegment = nearestSeg;
         _selectedBulkStreet = null;
       });
+      AnalyticsService.instance.logSegmentTapped();
       return;
     }
 
@@ -692,6 +694,7 @@ class _MapScreenState extends State<MapScreen>
     setState(() => _selectedCity = city);
     _mapController.move(city.center, city.defaultZoom);
     UserPreferencesService().setSelectedCity(city.id);
+    AnalyticsService.instance.logCitySwitch(city.id);
   }
 
   void _onSavedSpotTap(SavedSpot spot) {
@@ -918,9 +921,6 @@ class _MapScreenState extends State<MapScreen>
     final sheetOpen = _selectedSegment != null || _selectedBulkStreet != null;
 
     return Scaffold(
-      extendBody:
-          true, // map fills edge-to-edge; mq.padding.bottom = nav bar height
-      bottomNavigationBar: const BannerAdWidget(),
       body: Stack(
         children: [
           // ── SKELETON LOADER (while geometry loads) ────────────────────────
@@ -1103,47 +1103,6 @@ class _MapScreenState extends State<MapScreen>
                                       child: Icon(Icons.workspace_premium,
                                           color: AppTheme.primary, size: 20),
                                     ),
-                            ),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(width: 6),
-                    Builder(
-                      builder: (ctx) {
-                        final surfaceColor = Theme.of(ctx).colorScheme.surface;
-                        final iconColor = Theme.of(ctx)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6);
-                        return Tooltip(
-                          message: 'Settings',
-                          child: Semantics(
-                            label: 'Open settings',
-                            button: true,
-                            child: Material(
-                              color: surfaceColor,
-                              shape: const CircleBorder(),
-                              elevation: 0,
-                              child: InkWell(
-                                customBorder: const CircleBorder(),
-                                onTap: () => Navigator.push(
-                                  ctx,
-                                  PageRouteBuilder(
-                                    pageBuilder: (_, __, ___) =>
-                                        const SettingsScreen(),
-                                    transitionsBuilder: (_, anim, __, child) =>
-                                        FadeTransition(
-                                            opacity: anim, child: child),
-                                    transitionDuration: AppDuration.base,
-                                  ),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(6),
-                                  child: Icon(Icons.settings_rounded,
-                                      size: 20, color: iconColor),
-                                ),
-                              ),
                             ),
                           ),
                         );

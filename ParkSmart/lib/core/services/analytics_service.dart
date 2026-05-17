@@ -14,6 +14,13 @@ class AnalyticsService extends CalcwiseAnalytics {
   Future<void> logSearchUsed() => log('search_used');
   Future<void> logLayerToggled(String layer) =>
       log('layer_toggled', {'layer': layer});
+  Future<void> logTabSwitch(int index) =>
+      log('tab_switch', {'tab_index': index});
+  Future<void> logCitySwitch(String cityId) =>
+      log('city_switch', {'city_id': cityId});
+  Future<void> logSpotSaved() => log('spot_saved');
+  @override
+  Future<void> logHistoryViewed() => log('history_viewed');
 
   // ── Session ───────────────────────────────────────────────────────────────
 
@@ -37,6 +44,8 @@ class AnalyticsService extends CalcwiseAnalytics {
   // ── Paywall variants ──────────────────────────────────────────────────────
 
   Future<void> logPremiumShown() => log('premium_shown');
+  Future<void> logPaywallViewed(String type) =>
+      log('paywall_viewed', {'type': type});
 
   // ── Features ─────────────────────────────────────────────────────────────
 

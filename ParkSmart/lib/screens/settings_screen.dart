@@ -1,5 +1,4 @@
 import 'package:calcwise_core/calcwise_core.dart';
-import '../widgets/banner_ad_widget.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -22,7 +21,6 @@ class SettingsScreen extends StatelessWidget {
     final ct = CalcwiseTheme.of(context);
     return CalcwiseSettingsScaffold(
       title: 'Paramètres',
-      bottomNavigationBar: const BannerAdWidget(),
       children: [
         // ── Affichage ─────────────────────────────────────────────────────
         CalcwiseSettingsSection(

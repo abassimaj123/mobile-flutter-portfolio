@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:calcwise_core/calcwise_core.dart';
-import 'map_screen.dart';
+import '../main.dart';
 
 class OnboardingScreen extends StatelessWidget {
   const OnboardingScreen({super.key});
@@ -8,7 +8,7 @@ class OnboardingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const CalcwiseOnboarding(
         appKey: 'parksmart',
-        nextScreen: MapScreen(),
+        nextScreen: MainShell(),
         pages: [
           OnboardingPage(
             icon: Icons.local_parking_rounded,
