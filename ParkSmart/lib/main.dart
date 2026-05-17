@@ -1,16 +1,20 @@
 import 'package:calcwise_core/calcwise_core.dart'
     show
         themeModeService,
+        showIapErrorSnackBar,
         PaywallSessionService,
         PaywallTrigger,
         PaywallSoft,
         PaywallHard;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'core/language/language_notifier.dart';
 import 'core/services/analytics_service.dart';
 import 'core/services/freemium_service.dart';
 import 'core/services/iap_service.dart';
@@ -47,11 +51,54 @@ Future<void> main() async {
   await ParkingNotificationService.instance.initialize();
   await paywallSession.initialize();
 
+  // EN/ES: saved preference first, then system locale detection
+  {
+    final locales = PlatformDispatcher.instance.locales;
+    final systemLang = locales.isNotEmpty ? locales.first.languageCode : 'en';
+    final prefs = await SharedPreferences.getInstance();
+    final savedLang = prefs.getString('language');
+    isSpanishNotifier.value = (savedLang ?? systemLang) == 'es';
+  }
+
   // Analytics: startup events
   await AnalyticsService.instance.logAppOpen();
   await AnalyticsService.instance.setUserPremium(freemiumService.hasFullAccess);
 
-  runApp(const ParkSmartApp());
+  runApp(const _IapErrorWrapper());
+}
+
+class _IapErrorWrapper extends StatefulWidget {
+  const _IapErrorWrapper();
+
+  @override
+  State<_IapErrorWrapper> createState() => _IapErrorWrapperState();
+}
+
+class _IapErrorWrapperState extends State<_IapErrorWrapper> {
+  @override
+  void initState() {
+    super.initState();
+    iapErrorNotifier.addListener(_onIapError);
+  }
+
+  @override
+  void dispose() {
+    iapErrorNotifier.removeListener(_onIapError);
+    super.dispose();
+  }
+
+  void _onIapError() {
+    final msg = iapErrorNotifier.value;
+    if (msg == null || !mounted) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      showIapErrorSnackBar(context, msg);
+      iapErrorNotifier.value = null;
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => const ParkSmartApp();
 }
 
 class ParkSmartApp extends StatelessWidget {
@@ -145,38 +192,41 @@ class _MainShellState extends State<MainShell> {
           isDark ? Brightness.light : Brightness.dark,
     ));
 
-    return Scaffold(
-      body: IndexedStack(
-        index: _index,
-        children: _screens,
-      ),
-      bottomNavigationBar: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const BannerAdWidget(),
-          NavigationBar(
-            selectedIndex: _index,
-            onDestinationSelected: _onDestinationSelected,
-            labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
-            destinations: const [
-              NavigationDestination(
-                icon: Icon(Icons.map_outlined),
-                selectedIcon: Icon(Icons.map_rounded),
-                label: 'Carte',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.history_outlined),
-                selectedIcon: Icon(Icons.history_rounded),
-                label: 'Historique',
-              ),
-              NavigationDestination(
-                icon: Icon(Icons.settings_outlined),
-                selectedIcon: Icon(Icons.settings_rounded),
-                label: 'Paramètres',
-              ),
-            ],
-          ),
-        ],
+    return ValueListenableBuilder<bool>(
+      valueListenable: isSpanishNotifier,
+      builder: (context, isSp, _) => Scaffold(
+        body: IndexedStack(
+          index: _index,
+          children: _screens,
+        ),
+        bottomNavigationBar: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const BannerAdWidget(),
+            NavigationBar(
+              selectedIndex: _index,
+              onDestinationSelected: _onDestinationSelected,
+              labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
+              destinations: [
+                NavigationDestination(
+                  icon: const Icon(Icons.map_outlined),
+                  selectedIcon: const Icon(Icons.map_rounded),
+                  label: isSp ? 'Mapa' : 'Map',
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.history_outlined),
+                  selectedIcon: const Icon(Icons.history_rounded),
+                  label: isSp ? 'Historial' : 'History',
+                ),
+                NavigationDestination(
+                  icon: const Icon(Icons.settings_outlined),
+                  selectedIcon: const Icon(Icons.settings_rounded),
+                  label: isSp ? 'Ajustes' : 'Settings',
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
