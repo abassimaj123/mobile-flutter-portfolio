@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../core/language/language_notifier.dart';
+import '../core/freemium/freemium_service.dart';
 import '../core/freemium/iap_service.dart';
 import '../core/theme/app_theme.dart';
 
@@ -85,6 +86,31 @@ class SettingsScreen extends StatelessWidget {
               _SectionHeader(isSp ? 'Más' : 'More'),
               _Card(
                 child: Column(children: [
+                  ValueListenableBuilder<bool>(
+                    valueListenable: freemiumService.isPremiumNotifier,
+                    builder: (ctx, isPremium, _) => isPremium
+                        ? const SizedBox.shrink()
+                        : Column(mainAxisSize: MainAxisSize.min, children: [
+                            _Tile(
+                              icon: Icons.workspace_premium_rounded,
+                              label: isSp ? 'Obtener Premium' : 'Get Premium',
+                              onTap: () => showModalBottomSheet(
+                                context: ctx,
+                                isScrollControlled: true,
+                                backgroundColor: Colors.transparent,
+                                builder: (_) => PaywallHard(
+                                  isSpanish: isSp,
+                                  onPurchase: () async {
+                                    Navigator.pop(ctx);
+                                    IAPService.instance.buy();
+                                  },
+                                  onDismiss: () => Navigator.pop(ctx),
+                                ),
+                              ),
+                            ),
+                            const Divider(height: 1),
+                          ]),
+                  ),
                   _Tile(
                     icon: Icons.privacy_tip_rounded,
                     label: isSp ? 'Política de privacidad' : 'Privacy Policy',
