@@ -15,10 +15,13 @@ class DatabaseHelper {
     final p = join(await getDatabasesPath(), 'job_offer_us.db');
     return openDatabase(
       p,
-      version: 1,
+      version: 2,
       onCreate: _onCreate,
       onUpgrade: (db, oldVersion, newVersion) async {
-        // Future schema migrations go here
+        if (oldVersion < 2) {
+          await db.execute(
+              'ALTER TABLE history ADD COLUMN signing_bonus REAL NOT NULL DEFAULT 0');
+        }
       },
     );
   }
@@ -36,6 +39,7 @@ class DatabaseHelper {
         stock_options REAL NOT NULL DEFAULT 0,
         relocation REAL NOT NULL DEFAULT 0,
         pto INTEGER NOT NULL DEFAULT 0,
+        signing_bonus REAL NOT NULL DEFAULT 0,
         net_salary REAL NOT NULL,
         monthly_net REAL NOT NULL,
         tax_rate REAL NOT NULL,

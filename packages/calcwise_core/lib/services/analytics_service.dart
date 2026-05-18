@@ -26,8 +26,14 @@ class CalcwiseAnalytics {
   late final _fa = FirebaseAnalytics.instance;
 
   /// Enable/disable analytics collection based on build mode.
+  /// Sets persistent user properties so every session is filterable by app.
   Future<void> initialize() async {
     await _fa.setAnalyticsCollectionEnabled(!kDebugMode);
+    if (!kDebugMode) {
+      // Persistent user properties — survive across sessions.
+      // Enables audience building + cross-app filtering in Firebase console.
+      await _fa.setUserProperty(name: 'app_name', value: appName);
+    }
   }
 
   // ── Universal events (same in every app) ──────────────────────────────────

@@ -15,6 +15,7 @@ class JobOffer {
   final double commuteMilesPerDay; // One-way miles (0 if remote)
   final double annualRaisePct; // Expected annual raise % for projection
   final bool isRemote; // Eliminates commute cost
+  final double signingBonus; // One-time signing/sign-on bonus USD
 
   const JobOffer({
     this.label = 'Offer',
@@ -32,6 +33,7 @@ class JobOffer {
     this.commuteMilesPerDay = 0,
     this.annualRaisePct = 3,
     this.isRemote = false,
+    this.signingBonus = 0,
   });
 
   JobOffer copyWith({
@@ -50,6 +52,7 @@ class JobOffer {
     double? commuteMilesPerDay,
     double? annualRaisePct,
     bool? isRemote,
+    double? signingBonus,
   }) =>
       JobOffer(
         label: label ?? this.label,
@@ -68,5 +71,6 @@ class JobOffer {
         commuteMilesPerDay: commuteMilesPerDay ?? this.commuteMilesPerDay,
         annualRaisePct: annualRaisePct ?? this.annualRaisePct,
         isRemote: isRemote ?? this.isRemote,
+        signingBonus: signingBonus ?? this.signingBonus,
       );
 }

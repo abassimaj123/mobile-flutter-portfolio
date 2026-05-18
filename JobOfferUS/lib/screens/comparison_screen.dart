@@ -70,6 +70,8 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         [isSpanish ? 'Impuesto estatal' : 'State Tax', fmt.format(a.stateTax), fmt.format(b.stateTax)],
         ['FICA', fmt.format(a.ficaTax), fmt.format(b.ficaTax)],
         [isSpanish ? 'Bono anual (neto)' : 'Annual Bonus (after tax)', fmt.format(a.bonusAfterTax), fmt.format(b.bonusAfterTax)],
+        if (a.signingBonusAfterTax > 0 || b.signingBonusAfterTax > 0)
+          [isSpanish ? 'Bono contratación (neto)' : 'Signing Bonus (after tax)', fmt.format(a.signingBonusAfterTax), fmt.format(b.signingBonusAfterTax)],
         [isSpanish ? 'Match 401k' : '401k Match', fmt.format(a.k401kMatch), fmt.format(b.k401kMatch)],
         [isSpanish ? 'Beneficios salud' : 'Health Benefits', fmt.format(a.healthBenefits), fmt.format(b.healthBenefits)],
         [isSpanish ? 'Valor PTO' : 'PTO Value', fmt.format(a.ptoValue), fmt.format(b.ptoValue)],
@@ -93,7 +95,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           SnackBar(
             content: Text(isSpanish ? 'Error al exportar CSV' : 'Failed to export CSV'),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red,
+            backgroundColor: CalcwiseSemanticColors.errorDark,
           ),
         );
       }
@@ -119,7 +121,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             content: Text(
                 isSpanish ? 'Error al generar PDF' : 'Failed to export PDF'),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red,
+            backgroundColor: CalcwiseSemanticColors.errorDark,
           ),
         );
       }
@@ -263,6 +265,9 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                   '${pctFmt.format(b.effectiveTaxRate)}%'),
               row(isSpanish ? 'Bono anual (neto)' : 'Annual Bonus (after tax)',
                   fmt.format(a.bonusAfterTax), fmt.format(b.bonusAfterTax)),
+              if (a.signingBonusAfterTax > 0 || b.signingBonusAfterTax > 0)
+                row(isSpanish ? 'Bono contratación (neto)' : 'Signing Bonus (net)',
+                    fmt.format(a.signingBonusAfterTax), fmt.format(b.signingBonusAfterTax)),
               row(isSpanish ? 'Match 401k' : '401k Match',
                   fmt.format(a.k401kMatch), fmt.format(b.k401kMatch)),
               row(isSpanish ? 'Beneficios de salud' : 'Health Benefits',
@@ -367,6 +372,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         'stock_options': widget.offerA.annualRsuValue,
         'relocation': 0.0,
         'pto': widget.offerA.ptoDays,
+        'signing_bonus': widget.offerA.signingBonus,
         'net_salary': a.netTakeHome,
         'monthly_net': a.monthlyTakeHome,
         'tax_rate': a.effectiveTaxRate,
@@ -385,6 +391,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         'stock_options': widget.offerB.annualRsuValue,
         'relocation': 0.0,
         'pto': widget.offerB.ptoDays,
+        'signing_bonus': widget.offerB.signingBonus,
         'net_salary': b.netTakeHome,
         'monthly_net': b.monthlyTakeHome,
         'tax_rate': b.effectiveTaxRate,
@@ -412,7 +419,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         SnackBar(
           content: Text(isSpanish ? 'Error al guardar' : 'Failed to save'),
           behavior: SnackBarBehavior.floating,
-          backgroundColor: Colors.red,
+          backgroundColor: CalcwiseSemanticColors.errorDark,
         ),
       );
     }
@@ -572,6 +579,18 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                   valueA: a.bonusAfterTax,
                   valueB: b.bonusAfterTax,
                   winner: widget.result.categoryWinners['bonus'],
+                  isSpanish: isSpanish,
+                ),
+              if (a.signingBonusAfterTax > 0 || b.signingBonusAfterTax > 0)
+                ComparisonBar(
+                  label: isSpanish
+                      ? 'Bono de contratación (neto)'
+                      : 'Signing bonus (after tax)',
+                  valueA: a.signingBonusAfterTax,
+                  valueB: b.signingBonusAfterTax,
+                  winner: a.signingBonusAfterTax >= b.signingBonusAfterTax
+                      ? widget.result.winner
+                      : (widget.result.winner == Winner.offerA ? Winner.offerB : Winner.offerA),
                   isSpanish: isSpanish,
                 ),
               if (a.k401kMatch > 0 || b.k401kMatch > 0)
