@@ -228,7 +228,7 @@ class _WinBanner extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         gradient: grad,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppRadius.xxl),
         boxShadow: [
           BoxShadow(
             color: color.withValues(alpha: 0.4),
@@ -288,7 +288,7 @@ class _WinBanner extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.18),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(AppRadius.xxl),
                 border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
               ),
               child: Text(
@@ -319,7 +319,7 @@ class _TieBanner extends StatelessWidget {
       decoration: BoxDecoration(
         gradient: const LinearGradient(
             colors: [Color(0xFFD97706), Color(0xFFF59E0B)]),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppRadius.xxl),
         boxShadow: [
           BoxShadow(
             color: const Color(0xFFF59E0B).withValues(alpha: 0.4),

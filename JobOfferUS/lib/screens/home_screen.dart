@@ -449,7 +449,7 @@ class _HeroBanner extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
       decoration: BoxDecoration(
         gradient: AppTheme.heroGradient,
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppRadius.xxl),
         boxShadow: [
           BoxShadow(
               color: const Color(0xFF3730A3).withValues(alpha: 0.4),
@@ -469,7 +469,7 @@ class _HeroBanner extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
               decoration: BoxDecoration(
                 color: AppTheme.accent.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(AppRadius.xxl),
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: const [
                 Icon(Icons.verified_rounded, color: AppTheme.accent, size: 13),
@@ -555,7 +555,7 @@ class _HChip extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
         color: color ?? Colors.white.withValues(alpha: 0.12),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppRadius.xxl),
         border: Border.all(color: Colors.white.withValues(alpha: 0.18)),
       ),
       child: Text(t,

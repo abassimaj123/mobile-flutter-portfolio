@@ -113,7 +113,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         border: Border.all(
           color: _expanded ? _c1.withValues(alpha: 0.35) : ct.cardBorder,
           width: _expanded ? 1.5 : 1,
@@ -123,7 +123,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
             : AppTheme.offerBCardShadow,
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(17),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         child: Column(children: [
           // ── gradient header ──────────────────────────────────────
           GestureDetector(
