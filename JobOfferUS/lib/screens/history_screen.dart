@@ -67,7 +67,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           SnackBar(
             content: Text(isEs ? 'Error al eliminar' : 'Failed to delete'),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red,
+            backgroundColor: CalcwiseSemanticColors.errorDark,
           ),
         );
       }
@@ -93,7 +93,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
               isEs ? 'Eliminar' : 'Delete',
-              style: const TextStyle(color: Colors.red),
+              style: const TextStyle(color: CalcwiseSemanticColors.errorDark),
             ),
           ),
         ],
@@ -118,7 +118,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(
               isEs ? 'Borrar' : 'Clear',
-              style: const TextStyle(color: Colors.red),
+              style: const TextStyle(color: CalcwiseSemanticColors.errorDark),
             ),
           ),
         ],
@@ -134,7 +134,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           SnackBar(
             content: Text(isEs ? 'Error al borrar' : 'Failed to clear'),
             behavior: SnackBarBehavior.floating,
-            backgroundColor: Colors.red,
+            backgroundColor: CalcwiseSemanticColors.errorDark,
           ),
         );
       }
@@ -155,7 +155,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 builder: (context, isPremium, _) {
                   if (isPremium && _history.isNotEmpty) {
                     return IconButton(
-                      icon: const Icon(Icons.delete_sweep, color: Colors.red),
+                      icon: const Icon(Icons.delete_sweep, color: CalcwiseSemanticColors.errorDark),
                       tooltip: isEs ? 'Borrar todo' : 'Clear all',
                       onPressed: () {
                         HapticFeedback.mediumImpact();
@@ -204,7 +204,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           const SizedBox(height: AppSpacing.xs),
                                           Row(children: [
                                             const Icon(Icons.lock_outline,
-                                                size: 14, color: Colors.amber),
+                                                size: 14, color: CalcwiseSemanticColors.warnIcon),
                                             const SizedBox(width: AppSpacing.xs),
                                             Expanded(
                                               child: Text(
@@ -285,7 +285,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 delegate: SliverChildBuilderDelegate(
                                   (context, i) => Padding(
                                     padding: const EdgeInsets.fromLTRB(
-                                        16, 0, 16, 10),
+                                        AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.smPlus),
                                     child:
                                         _buildCard(context, _history[i], isEs),
                                   ),
@@ -332,10 +332,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: AppSpacing.xl),
         decoration: BoxDecoration(
-          color: Colors.red.withValues(alpha: 0.15),
+          color: CalcwiseSemanticColors.errorDark.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(AppRadius.xl),
         ),
-        child: const Icon(Icons.delete_outline, color: Colors.red, size: 24),
+        child: const Icon(Icons.delete_outline, color: CalcwiseSemanticColors.errorDark, size: 24),
       ),
       child: GestureDetector(
         onTap: () {
@@ -449,9 +449,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
             const SizedBox(width: AppSpacing.xs),
             IconButton(
               icon:
-                  const Icon(Icons.delete_outline, color: Colors.red, size: 20),
+                  const Icon(Icons.delete_outline, color: CalcwiseSemanticColors.errorDark, size: 20),
               constraints: const BoxConstraints(),
-              padding: const EdgeInsets.all(6),
+              padding: const EdgeInsets.all(AppSpacing.xs),
               onPressed: () => _delete(id, context, isEs),
             ),
           ]),

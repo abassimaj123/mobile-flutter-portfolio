@@ -48,7 +48,7 @@ class SettingsScreen extends StatelessWidget {
                       onTap: () => _setSpanish(false),
                     ),
                   ),
-                  const SizedBox(width: 10),
+                  const SizedBox(width: AppSpacing.smPlus),
                   Expanded(
                     child: _LangChip(
                       label: 'Español',
@@ -157,7 +157,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(4, 16, 4, 8),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.xs, AppSpacing.lg, AppSpacing.xs, AppSpacing.sm),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(
@@ -178,7 +178,7 @@ class _Card extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: AppSpacing.sm),
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -203,7 +203,7 @@ class _LangChip extends StatelessWidget {
       onTap: onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.symmetric(vertical: 10),
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.smPlus),
         decoration: BoxDecoration(
           color: selected ? AppTheme.primary : ct.surfaceHigh,
           borderRadius: BorderRadius.circular(AppRadius.mdPlus),
