@@ -20,6 +20,7 @@ class AnalyticsService extends CalcwiseAnalytics {
         'location': location,
       });
 
+  Future<void> logOfferCompared() => log('offer_compared');
   Future<void> logOfferSaved() => log('offer_saved');
   Future<void> logOfferExported() => log('offer_exported');
 

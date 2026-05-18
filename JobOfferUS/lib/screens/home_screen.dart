@@ -90,6 +90,7 @@ class _HomeScreenState extends State<HomeScreen> {
       'salary_a': _offerA.baseSalary.round(),
       'salary_b': _offerB.baseSalary.round(),
     });
+    AnalyticsService.instance.logOfferCompared();
     final result = OfferEngine.compare(_offerA, _offerB);
     if (!mounted) return;
     Navigator.of(context).push(PageRouteBuilder(
