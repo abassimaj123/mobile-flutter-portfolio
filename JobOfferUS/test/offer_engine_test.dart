@@ -215,10 +215,10 @@ void main() {
           equals(0.0));
     });
 
-    test('20 miles one-way, 235 days — ≈ \$6580 (IRS 2025 \$0.70/mi)', () {
-      // 20 * 2 * 235 * 0.70 = 6580
+    test('20 miles one-way, 235 days — ≈ \$6815 (IRS 2026 \$0.725/mi)', () {
+      // 20 * 2 * 235 * 0.725 = 6815
       expect(OfferEngine.commuteCost(milesOneWay: 20, isRemote: false),
-          closeTo(6580, 50));
+          closeTo(6815, 50));
     });
 
     test('longer commute costs more', () {
