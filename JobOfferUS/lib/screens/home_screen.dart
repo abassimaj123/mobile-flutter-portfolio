@@ -207,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
           child: const Icon(Icons.compare_arrows_rounded,
               color: Colors.white, size: 18),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AppSpacing.sm),
         Flexible(
           child: RichText(
             overflow: TextOverflow.ellipsis,
@@ -246,9 +246,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 await prefs.setString('language', next ? 'es' : 'en');
               },
               child: Container(
-                margin: const EdgeInsets.only(right: 4),
+                margin: const EdgeInsets.only(right: AppSpacing.xs),
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: AppSpacing.smPlus, vertical: AppSpacing.smPlus),
                 decoration: BoxDecoration(
                   color: ct.surfaceHigh,
                   borderRadius: BorderRadius.circular(AppRadius.mdPlus),
@@ -317,7 +317,7 @@ class _ComparisonTab extends StatelessWidget {
 
   Widget _body(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 100),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, 100),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
@@ -329,7 +329,7 @@ class _ComparisonTab extends StatelessWidget {
               children: [
                 // ── Hero ──────────────────────────────────────────────────────
                 CalcwiseStaggerItem(index: 0, child: _HeroBanner(isSp: isSp)),
-                const SizedBox(height: 24),
+                const SizedBox(height: AppSpacing.xxl),
                 ValueListenableBuilder<bool>(
                   valueListenable: freemiumService.isPremiumNotifier,
                   builder: (_, isPremium, __) => Column(children: [
@@ -342,9 +342,9 @@ class _ComparisonTab extends StatelessWidget {
                           isSpanish: isSp,
                           onChanged: onOfferAChanged,
                         )),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.lg),
                     _VsDivider(),
-                    const SizedBox(height: 16),
+                    const SizedBox(height: AppSpacing.lg),
                     CalcwiseStaggerItem(
                         index: 2,
                         child: OfferFormCard(
@@ -368,7 +368,7 @@ class _ComparisonTab extends StatelessWidget {
     final bottom = MediaQuery.of(context).padding.bottom;
     final ct = CalcwiseTheme.of(context);
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 12, 16, bottom + 12),
+      padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, bottom + AppSpacing.md),
       decoration: BoxDecoration(
         color: ct.surface,
         border: Border(top: BorderSide(color: ct.cardBorder)),
@@ -417,7 +417,7 @@ class _ComparisonTab extends StatelessWidget {
                         ? Colors.white
                         : Colors.white.withValues(alpha: 0.35),
                     size: 22),
-                const SizedBox(width: 8),
+                const SizedBox(width: AppSpacing.sm),
                 Text(
                   isSp ? 'Comparar ofertas' : 'Compare Offers',
                   style: TextStyle(
@@ -446,7 +446,7 @@ class _HeroBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(20, 20, 20, 18),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, 18),
       decoration: BoxDecoration(
         gradient: AppTheme.heroGradient,
         borderRadius: BorderRadius.circular(AppRadius.xxl),
@@ -462,19 +462,19 @@ class _HeroBanner extends StatelessWidget {
         children: [
           Row(children: [
             _LetterBadge('A', AppTheme.offerALight, AppTheme.offerADeep),
-            const SizedBox(width: 8),
+            const SizedBox(width: AppSpacing.sm),
             _LetterBadge('B', AppTheme.offerBLight, AppTheme.offerBDeep),
             const Spacer(),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.smPlus, vertical: 5),
               decoration: BoxDecoration(
                 color: AppTheme.accent.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(AppRadius.xxl),
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: const [
                 Icon(Icons.verified_rounded, color: AppTheme.accent, size: 13),
-                SizedBox(width: 4),
-                Text('2025',
+                SizedBox(width: AppSpacing.xs),
+                Text('2026',
                     style: TextStyle(
                         color: AppTheme.accent,
                         fontSize: AppTextSize.sm,
@@ -482,7 +482,7 @@ class _HeroBanner extends StatelessWidget {
               ]),
             ),
           ]),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
           Text(
             isSp
                 ? 'Compara tu compensación real'
@@ -494,7 +494,7 @@ class _HeroBanner extends StatelessWidget {
               letterSpacing: -0.4,
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: AppSpacing.sm),
           Text(
             isSp
                 ? 'Salario neto, impuestos, beneficios y más'
@@ -504,11 +504,11 @@ class _HeroBanner extends StatelessWidget {
                 fontSize: AppTextSize.body,
                 height: 1.4),
           ),
-          const SizedBox(height: 16),
-          Wrap(spacing: 8, runSpacing: 6, children: [
+          const SizedBox(height: AppSpacing.lg),
+          Wrap(spacing: AppSpacing.sm, runSpacing: 6, children: [
             _HChip(isSp ? '51 estados' : '51 States'),
             _HChip(isSp ? '50+ ciudades' : '50+ Cities'),
-            _HChip('FICA · IRS 2025'),
+            _HChip('FICA · IRS 2026'),
             _HChip(isSp ? '★ 5 años' : '★ 5-yr',
                 color: AppTheme.accent.withValues(alpha: 0.25)),
           ]),
@@ -552,7 +552,7 @@ class _HChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.smPlus, vertical: 5),
       decoration: BoxDecoration(
         color: color ?? Colors.white.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(AppRadius.xxl),
@@ -581,7 +581,7 @@ class _VsDivider extends StatelessWidget {
                   colors: [Colors.transparent, AppTheme.offerADeep],
                 ),
               ))),
-      const SizedBox(width: 8),
+      const SizedBox(width: AppSpacing.sm),
       Container(
         width: 46,
         height: 46,
@@ -606,7 +606,7 @@ class _VsDivider extends StatelessWidget {
               )),
         ),
       ),
-      const SizedBox(width: 8),
+      const SizedBox(width: AppSpacing.sm),
       Expanded(
           child: Container(
               height: 1.5,

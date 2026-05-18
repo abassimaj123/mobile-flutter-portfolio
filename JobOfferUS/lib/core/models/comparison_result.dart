@@ -17,6 +17,7 @@ class OfferResult {
   final double totalCompensation; // all-in net annual value
   final double colAdjustedTakeHome; // purchasing-power adjusted (premium)
   final List<double> fiveYearProjection; // year 1–5 total comp (premium)
+  final double signingBonusAfterTax; // one-time signing bonus net of tax
 
   const OfferResult({
     required this.grossSalary,
@@ -36,6 +37,7 @@ class OfferResult {
     required this.totalCompensation,
     required this.colAdjustedTakeHome,
     required this.fiveYearProjection,
+    this.signingBonusAfterTax = 0,
   });
 
   double get monthlyTakeHome => netTakeHome / 12;

@@ -32,6 +32,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
       _label,
       _company,
       _bonus,
+      _signing,
       _match,
       _upTo,
       _health,
@@ -49,6 +50,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
     _label = _c(o.label);
     _company = _c(o.company);
     _bonus = _c(o.bonusPct > 0 ? o.bonusPct.toStringAsFixed(0) : '');
+    _signing = _c(o.signingBonus > 0 ? o.signingBonus.toStringAsFixed(0) : '');
     _match = _c(o.k401kMatchPct > 0 ? o.k401kMatchPct.toStringAsFixed(0) : '');
     _upTo = _c(o.k401kUpToPct > 0 ? o.k401kUpToPct.toStringAsFixed(0) : '');
     _health = _c(o.healthInsuranceSavings > 0
@@ -74,6 +76,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
       _label,
       _company,
       _bonus,
+      _signing,
       _match,
       _upTo,
       _health,
@@ -97,6 +100,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
         company: _company.text,
         baseSalary: double.tryParse(_salary.text) ?? 0,
         bonusPct: double.tryParse(_bonus.text) ?? 0,
+        signingBonus: double.tryParse(_signing.text) ?? 0,
         k401kMatchPct: double.tryParse(_match.text) ?? 0,
         k401kUpToPct: double.tryParse(_upTo.text) ?? 0,
         healthInsuranceSavings: double.tryParse(_health.text) ?? 0,
@@ -129,7 +133,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
           GestureDetector(
             onTap: () => setState(() => _expanded = !_expanded),
             child: Container(
-              padding: const EdgeInsets.fromLTRB(16, 14, 14, 14),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.mdPlus, AppSpacing.mdPlus, AppSpacing.mdPlus),
               decoration: BoxDecoration(gradient: _grad),
               child: Row(children: [
                 Container(
@@ -151,7 +155,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                         fontSize: AppTextSize.bodyLg),
                   )),
                 ),
-                const SizedBox(width: 12),
+                const SizedBox(width: AppSpacing.md),
                 Expanded(
                     child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -205,7 +209,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                 children: [
                   // Paste offer letter (AI-style parser)
                   _pasteOfferButton(),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   // Name + Company
                   Row(children: [
                     Expanded(
@@ -214,7 +218,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                             label: widget.isSpanish ? 'Nombre' : 'Offer name',
                             hint: _offerLabel,
                             icon: Icons.label_outline_rounded)),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: AppSpacing.smPlus),
                     Expanded(
                         child: _tf(
                             ctrl: _company,
@@ -222,12 +226,12 @@ class _OfferFormCardState extends State<OfferFormCard> {
                             hint: 'Google, Meta…',
                             icon: Icons.business_rounded)),
                   ]),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   // Salary (accent)
                   _salaryField(),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   _stateDropdown(),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: AppSpacing.md),
                   // Bonus + PTO
                   Row(children: [
                     Expanded(
@@ -239,7 +243,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                             num: true,
                             icon: Icons.card_giftcard_rounded,
                             onCh: (_) => _emit())),
-                    const SizedBox(width: 10),
+                    const SizedBox(width: AppSpacing.smPlus),
                     Expanded(
                         child: _tf(
                             ctrl: _pto,
@@ -249,7 +253,18 @@ class _OfferFormCardState extends State<OfferFormCard> {
                             icon: Icons.beach_access_rounded,
                             onCh: (_) => _emit())),
                   ]),
-                  const SizedBox(height: 14),
+                  const SizedBox(height: AppSpacing.md),
+                  // Signing bonus
+                  _tf(
+                    ctrl: _signing,
+                    label: widget.isSpanish ? 'Bono de contratación (\$)' : 'Signing Bonus (\$)',
+                    hint: '10000',
+                    prefix: '\$',
+                    num: true,
+                    icon: Icons.monetization_on_rounded,
+                    onCh: (_) => _emit(),
+                  ),
+                  const SizedBox(height: AppSpacing.mdPlus),
                   // Benefits toggle
                   _BenefitsToggle(
                     expanded: _showBenefits,
@@ -258,7 +273,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                     onTap: () => setState(() => _showBenefits = !_showBenefits),
                   ),
                   if (_showBenefits) ...[
-                    const SizedBox(height: 14),
+                    const SizedBox(height: AppSpacing.mdPlus),
                     Row(children: [
                       Expanded(
                           child: _tf(
@@ -269,7 +284,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               num: true,
                               icon: Icons.savings_rounded,
                               onCh: (_) => _emit())),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: AppSpacing.smPlus),
                       Expanded(
                           child: _tf(
                               ctrl: _upTo,
@@ -280,7 +295,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               num: true,
                               onCh: (_) => _emit())),
                     ]),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.md),
                     Row(children: [
                       Expanded(
                           child: _tf(
@@ -294,7 +309,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               isCurrency: true,
                               icon: Icons.health_and_safety_rounded,
                               onCh: (_) => _emit())),
-                      const SizedBox(width: 10),
+                      const SizedBox(width: AppSpacing.smPlus),
                       Expanded(
                           child: _tf(
                               ctrl: _dental,
@@ -307,7 +322,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               isCurrency: true,
                               onCh: (_) => _emit())),
                     ]),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.md),
                     _tf(
                         ctrl: _rsu,
                         label: widget.isSpanish
@@ -319,10 +334,10 @@ class _OfferFormCardState extends State<OfferFormCard> {
                         isCurrency: true,
                         icon: Icons.trending_up_rounded,
                         onCh: (_) => _emit()),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.md),
                     _remoteToggle(),
                     if (!widget.value.isRemote) ...[
-                      const SizedBox(height: 12),
+                      const SizedBox(height: AppSpacing.md),
                       _tf(
                           ctrl: _commute,
                           label: widget.isSpanish
@@ -334,9 +349,9 @@ class _OfferFormCardState extends State<OfferFormCard> {
                           icon: Icons.directions_car_rounded,
                           onCh: (_) => _emit()),
                     ],
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.md),
                     _cityDropdown(),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: AppSpacing.md),
                     _tf(
                         ctrl: _raise,
                         label: widget.isSpanish
@@ -378,7 +393,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
           ),
           child: Row(children: [
             Icon(Icons.auto_awesome_rounded, color: _c1, size: 18),
-            const SizedBox(width: 10),
+            const SizedBox(width: AppSpacing.smPlus),
             Expanded(
               child: Text(
                 widget.isSpanish
@@ -428,6 +443,8 @@ class _OfferFormCardState extends State<OfferFormCard> {
           _company.text = filled.company;
           _bonus.text =
               filled.bonusPct > 0 ? filled.bonusPct.toStringAsFixed(0) : '';
+          _signing.text =
+              filled.signingBonus > 0 ? filled.signingBonus.toStringAsFixed(0) : '';
           _match.text = filled.k401kMatchPct > 0
               ? filled.k401kMatchPct.toStringAsFixed(0)
               : '';
@@ -612,7 +629,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
           size: 18,
           color: active ? ct.successGreen : ct.textSecondary,
         ),
-        const SizedBox(width: 10),
+        const SizedBox(width: AppSpacing.smPlus),
         Expanded(
             child: Text(
           widget.isSpanish ? 'Trabajo remoto' : 'Remote work',
@@ -664,7 +681,7 @@ class _BenefitsToggle extends StatelessWidget {
             color: color,
             size: 18,
           ),
-          const SizedBox(width: 8),
+          const SizedBox(width: AppSpacing.sm),
           Text(
             isSp
                 ? (expanded

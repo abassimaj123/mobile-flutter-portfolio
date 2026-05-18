@@ -103,8 +103,20 @@ class OfferEngine {
     int workDaysPerYear = 235, // excludes PTO + holidays
   }) {
     if (isRemote || milesOneWay <= 0) return 0;
-    const irsRate = 0.70; // 2025
+    const irsRate = 0.725; // IRS 2026
     return milesOneWay * 2 * workDaysPerYear * irsRate;
+  }
+
+  /// After-tax value of a one-time signing bonus.
+  /// Signing bonus is taxed at supplemental federal rate (22%) + state + FICA.
+  static double signingBonusAfterTax(double signingBonus, double annualSalary, String stateCode) {
+    if (signingBonus <= 0) return 0;
+    // Supplemental federal rate 22% (flat withholding for bonuses ≤ $1M).
+    // For high earners, use marginal approach on total income.
+    final totalInc = annualSalary + signingBonus;
+    final taxOnTotal = federalTax(totalInc) + stateTax(totalInc, stateCode);
+    final taxOnSalary = federalTax(annualSalary) + stateTax(annualSalary, stateCode);
+    return signingBonus - (taxOnTotal - taxOnSalary);
   }
 
   /// After-tax value of annual bonus.
@@ -208,6 +220,7 @@ class OfferEngine {
 
     final bonus = o.baseSalary * (o.bonusPct / 100);
     final bonusNet = bonusAfterTax(o.baseSalary, o.bonusPct, o.stateCode);
+    final signingNet = signingBonusAfterTax(o.signingBonus, o.baseSalary, o.stateCode);
     final match = k401kMatchValue(o.baseSalary,
         matchPct: o.k401kMatchPct, upToPct: o.k401kUpToPct);
     final health = o.healthInsuranceSavings + o.dentalVisionSavings;
@@ -217,8 +230,9 @@ class OfferEngine {
     final colAdj = CityColData.adjust(
         salary: takeHome, fromCity: o.city, toCity: 'National Average');
 
+    // Total comp includes signing bonus in year-1 value
     final totalComp =
-        takeHome + bonusNet + match + health + pto + o.annualRsuValue - commute;
+        takeHome + bonusNet + match + health + pto + o.annualRsuValue - commute + signingNet;
 
     final projection = fiveYearProjection(
       baseSalary: o.baseSalary,
@@ -249,6 +263,7 @@ class OfferEngine {
       totalCompensation: totalComp,
       colAdjustedTakeHome: colAdj,
       fiveYearProjection: projection,
+      signingBonusAfterTax: signingNet,
     );
   }
 
