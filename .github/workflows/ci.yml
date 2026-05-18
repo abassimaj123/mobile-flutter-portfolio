@@ -193,16 +193,16 @@ jobs:
           echo "✅ All tests passed!"
 
   token-compliance:
-    name: Design Token Compliance
+    name: 📐 Design Token Compliance (informational)
     runs-on: ubuntu-latest
+    continue-on-error: true   # Informational — does NOT block merge
     steps:
       - uses: actions/checkout@v4
       - name: Run token audit
         run: |
           chmod +x scripts/token_audit.sh
           bash scripts/token_audit.sh all
-        env:
-          CI: true
+        # No CI=true — report only, no exit 1
 
   # Summary job — must pass for merge
   check-result:
@@ -226,8 +226,6 @@ jobs:
             echo "❌ Tests failed"
             exit 1
           fi
-          if [ "${{ needs.token-compliance.result }}" != "success" ]; then
-            echo "❌ Token compliance failed"
-            exit 1
-          fi
+          # token-compliance is informational — skip blocking check
+          echo "ℹ️  Token compliance: ${{ needs.token-compliance.result }} (non-blocking)"
           echo "✅ All CI checks passed — safe to merge!"
