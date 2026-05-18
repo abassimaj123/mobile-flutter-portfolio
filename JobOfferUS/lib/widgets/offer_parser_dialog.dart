@@ -172,7 +172,7 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
                 child: Row(children: [
                   const Icon(Icons.auto_awesome_rounded,
                       color: AppTheme.primary, size: 18),
-                  const SizedBox(width: 8),
+                  const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: Text(
                       _isSp
@@ -186,7 +186,7 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
                   ),
                 ]),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               Expanded(
                 child: TextField(
                   controller: _ctrl,
@@ -204,16 +204,16 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
                 ),
               ),
               if (_error != null) ...[
-                const SizedBox(height: 10),
+                const SizedBox(height: AppSpacing.smPlus),
                 Text(_error!,
                     style: TextStyle(
                         color: ct.errorRed, fontSize: AppTextSize.sm)),
               ],
               if (_parsed != null && !_parsed!.isEmpty) ...[
-                const SizedBox(height: 12),
+                const SizedBox(height: AppSpacing.md),
                 _resultsCard(ct),
               ],
-              const SizedBox(height: 12),
+              const SizedBox(height: AppSpacing.md),
               Row(children: [
                 Expanded(
                   child: OutlinedButton.icon(
@@ -228,7 +228,7 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
                     label: Text(_isSp ? 'Analizar' : 'Parse'),
                   ),
                 ),
-                const SizedBox(width: 10),
+                const SizedBox(width: AppSpacing.smPlus),
                 Expanded(
                   child: FilledButton.icon(
                     onPressed: (_parsed != null && !_parsed!.isEmpty)
@@ -303,7 +303,7 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
     }
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.xs),
       decoration: BoxDecoration(
         color: ct.surfaceHigh,
         borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -317,7 +317,7 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
             child: Row(children: [
               Icon(Icons.check_circle_rounded,
                   color: ct.successGreen, size: 16),
-              const SizedBox(width: 6),
+              const SizedBox(width: AppSpacing.xs),
               Text(
                 _isSp
                     ? '${p.fieldCount} campos detectados'

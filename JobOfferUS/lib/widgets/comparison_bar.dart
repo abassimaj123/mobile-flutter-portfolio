@@ -264,7 +264,7 @@ class _WinBanner extends StatelessWidget {
                           fontSize: AppTextSize.xs,
                           fontWeight: FontWeight.w900)))),
         ]),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppSpacing.lg),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -283,7 +283,7 @@ class _WinBanner extends StatelessWidget {
                   fontSize: AppTextSize.md,
                   height: 1.4,
                 )),
-            const SizedBox(height: 10),
+            const SizedBox(height: AppSpacing.smPlus),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
@@ -339,7 +339,7 @@ class _TieBanner extends StatelessWidget {
             child: const Center(
                 child: Icon(Icons.balance_rounded,
                     color: Colors.white, size: 34))),
-        const SizedBox(width: 16),
+        const SizedBox(width: AppSpacing.lg),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -350,7 +350,7 @@ class _TieBanner extends StatelessWidget {
                     fontSize: AppTextSize.titleLg,
                     fontWeight: FontWeight.w800,
                     letterSpacing: -0.5)),
-            const SizedBox(height: 6),
+            const SizedBox(height: AppSpacing.xs),
             Text(
               isSp
                   ? 'Ambas ofertas son prácticamente iguales'
