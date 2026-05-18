@@ -18,7 +18,9 @@ import '../widgets/comparison_bar.dart';
 import '../widgets/insight_card.dart';
 import '../widgets/paywall_hard.dart';
 import '../widgets/paywall_soft.dart';
-import '../core/ads/ad_footer.dart';
+import 'dart:convert';
+import 'dart:typed_data';
+import 'package:share_plus/share_plus.dart';
 import '../main.dart' show adService;
 import 'history_screen.dart';
 
@@ -40,6 +42,63 @@ class ComparisonScreen extends StatefulWidget {
 
 class _ComparisonScreenState extends State<ComparisonScreen> {
   bool _saved = false;
+
+  Future<void> _onExportCsv(bool isSpanish) async {
+    HapticFeedback.mediumImpact();
+    if (!freemiumService.isPremium) {
+      _showPaywall(context, isSpanish);
+      return;
+    }
+    try {
+      final fmt = NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 0);
+      final pctFmt = NumberFormat('0.0#', 'en_US');
+      final a = widget.result.resultA;
+      final b = widget.result.resultB;
+      final labelA = widget.offerA.label.isNotEmpty ? widget.offerA.label : 'Offer A';
+      final labelB = widget.offerB.label.isNotEmpty ? widget.offerB.label : 'Offer B';
+
+      final rows = [
+        ['Field', labelA, labelB],
+        [isSpanish ? 'Empresa' : 'Company', widget.offerA.company, widget.offerB.company],
+        [isSpanish ? 'Ciudad' : 'City', widget.offerA.city, widget.offerB.city],
+        [isSpanish ? 'Estado' : 'State', widget.offerA.stateCode, widget.offerB.stateCode],
+        [isSpanish ? 'Salario bruto' : 'Gross Salary', fmt.format(a.grossSalary), fmt.format(b.grossSalary)],
+        [isSpanish ? 'Ingreso neto anual' : 'Net Annual Take-Home', fmt.format(a.netTakeHome), fmt.format(b.netTakeHome)],
+        [isSpanish ? 'Ingreso neto mensual' : 'Net Monthly', fmt.format(a.monthlyTakeHome), fmt.format(b.monthlyTakeHome)],
+        [isSpanish ? 'Tasa efectiva' : 'Effective Tax Rate', '${pctFmt.format(a.effectiveTaxRate)}%', '${pctFmt.format(b.effectiveTaxRate)}%'],
+        [isSpanish ? 'Impuesto federal' : 'Federal Tax', fmt.format(a.federalTax), fmt.format(b.federalTax)],
+        [isSpanish ? 'Impuesto estatal' : 'State Tax', fmt.format(a.stateTax), fmt.format(b.stateTax)],
+        ['FICA', fmt.format(a.ficaTax), fmt.format(b.ficaTax)],
+        [isSpanish ? 'Bono anual (neto)' : 'Annual Bonus (after tax)', fmt.format(a.bonusAfterTax), fmt.format(b.bonusAfterTax)],
+        [isSpanish ? 'Match 401k' : '401k Match', fmt.format(a.k401kMatch), fmt.format(b.k401kMatch)],
+        [isSpanish ? 'Beneficios salud' : 'Health Benefits', fmt.format(a.healthBenefits), fmt.format(b.healthBenefits)],
+        [isSpanish ? 'Valor PTO' : 'PTO Value', fmt.format(a.ptoValue), fmt.format(b.ptoValue)],
+        [isSpanish ? 'RSU anual' : 'Annual RSU', fmt.format(a.annualRsuValue), fmt.format(b.annualRsuValue)],
+        [isSpanish ? 'Costo traslado' : 'Commute Cost', fmt.format(a.commuteCost), fmt.format(b.commuteCost)],
+        [isSpanish ? 'Compensación total neta' : 'Total Net Compensation', fmt.format(a.totalCompensation), fmt.format(b.totalCompensation)],
+      ];
+
+      final csv = rows.map((r) => r.map((cell) => '"$cell"').join(',')).join('\n');
+      final bytes = Uint8List.fromList(utf8.encode(csv));
+      final filename = 'job_comparison_${DateFormat('yyyyMMdd').format(DateTime.now())}.csv';
+
+      await Share.shareXFiles(
+        [XFile.fromData(bytes, name: filename, mimeType: 'text/csv')],
+        subject: filename,
+      );
+      AnalyticsService.instance.logResultShared();
+    } catch (_) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(isSpanish ? 'Error al exportar CSV' : 'Failed to export CSV'),
+            behavior: SnackBarBehavior.floating,
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    }
+  }
 
   Future<void> _exportPdf(bool isSpanish) async {
     HapticFeedback.mediumImpact();
@@ -383,6 +442,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                       },
                 tooltip: isSpanish ? 'Guardar' : 'Save',
               ),
+              IconButton(
+                icon: const Icon(Icons.table_chart_outlined),
+                onPressed: () => _onExportCsv(isSpanish),
+                tooltip: isSpanish ? 'Exportar CSV' : 'Export CSV',
+              ),
               if (isPremium)
                 IconButton(
                   icon: const Icon(Icons.picture_as_pdf_rounded),
@@ -641,7 +705,12 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
 
           // ── Smart insights ─────────────────────────────────────────────
           InsightCard(insights: insights, isSpanish: isSpanish),
-          const SizedBox(height: AppSpacing.xl),
+          const SizedBox(height: AppSpacing.md),
+
+          // ── Negotiation Tips ───────────────────────────────────────────
+          if (!widget.result.isTie)
+            _NegotiationTipsCard(result: widget.result, isSpanish: isSpanish),
+          if (!widget.result.isTie) const SizedBox(height: AppSpacing.md),
 
           // ── Share / PDF CTA ────────────────────────────────────────────
           if (isPremium)
@@ -657,7 +726,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           const SizedBox(height: AppSpacing.xl),
 
           // ── Ad footer ──────────────────────────────────────────────────
-          const AdFooter(),
+          const CalcwiseAdFooter(),
         ],
       ),
     );
@@ -948,6 +1017,115 @@ class _ProjectionCard extends StatelessWidget {
                   valueB: totalB,
                   winner: totalA >= totalB ? Winner.offerA : Winner.offerB,
                   isSpanish: isSpanish,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ── Negotiation Tips card ────────────────────────────────────────────────────
+
+class _NegotiationTipsCard extends StatelessWidget {
+  final ComparisonResult result;
+  final bool isSpanish;
+
+  const _NegotiationTipsCard({
+    required this.result,
+    required this.isSpanish,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final fmt = NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 0);
+    final ct = CalcwiseTheme.of(context);
+    final a = result.resultA;
+    final b = result.resultB;
+    final isAWinner = result.winner == Winner.offerA;
+    final loserNet = isAWinner ? b.netTakeHome : a.netTakeHome;
+    final winnerNet = isAWinner ? a.netTakeHome : b.netTakeHome;
+    final gap = winnerNet - loserNet;
+    final counterTarget = loserNet + gap * 0.5;
+    final loserLabel = isAWinner
+        ? (isSpanish ? 'Oferta B' : 'Offer B')
+        : (isSpanish ? 'Oferta A' : 'Offer A');
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        border: Border.all(color: AppTheme.accent.withValues(alpha: 0.35)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(
+                AppSpacing.lg, AppSpacing.mdPlus, AppSpacing.lg, AppSpacing.sm),
+            child: Row(children: [
+              const Icon(Icons.handshake_outlined, size: 18, color: AppTheme.accent),
+              const SizedBox(width: AppSpacing.sm),
+              Text(
+                isSpanish ? 'Consejos de Negociación' : 'Negotiation Tips',
+                style: const TextStyle(
+                    fontSize: AppTextSize.md,
+                    fontWeight: FontWeight.w700,
+                    color: AppTheme.accent),
+              ),
+            ]),
+          ),
+          Divider(height: 1, color: ct.cardBorder),
+          Padding(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      isSpanish ? 'Brecha entre ofertas' : 'Offer gap',
+                      style: TextStyle(
+                          fontSize: AppTextSize.sm, color: ct.textSecondary),
+                    ),
+                    Text(
+                      fmt.format(gap),
+                      style: const TextStyle(
+                          fontSize: AppTextSize.md,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.primary),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Container(
+                  padding: const EdgeInsets.all(AppSpacing.md),
+                  decoration: BoxDecoration(
+                    color: AppTheme.accent.withValues(alpha: 0.08),
+                    borderRadius: BorderRadius.circular(AppRadius.md),
+                  ),
+                  child: Text(
+                    isSpanish
+                        ? 'Si está negociando $loserLabel, pida ${fmt.format(counterTarget)} neto anual para dividir la diferencia a la mitad.'
+                        : 'If negotiating $loserLabel, counter at ${fmt.format(counterTarget)}/yr net to split the difference.',
+                    style: TextStyle(
+                        fontSize: AppTextSize.sm,
+                        color: ct.textPrimary,
+                        height: 1.5),
+                  ),
+                ),
+                const SizedBox(height: AppSpacing.sm),
+                Text(
+                  isSpanish
+                      ? 'También considera: PTO extra, trabajo remoto, bono de firma o revisión salarial a 6 meses.'
+                      : 'Also consider: extra PTO, remote work, signing bonus, or a 6-month salary review.',
+                  style: TextStyle(
+                      fontSize: AppTextSize.xs,
+                      color: ct.textSecondary,
+                      height: 1.5),
                 ),
               ],
             ),

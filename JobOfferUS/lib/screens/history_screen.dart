@@ -7,7 +7,7 @@ import '../core/freemium/freemium_service.dart';
 import '../core/freemium/iap_service.dart';
 import '../core/language/language_notifier.dart';
 import '../core/theme/app_theme.dart';
-import '../core/ads/ad_footer.dart';
+import 'history_detail_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
@@ -299,7 +299,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         ),
                       ),
               ),
-              const AdFooter(),
+              const CalcwiseAdFooter(),
             ],
           ),
         );
@@ -337,7 +337,17 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ),
         child: const Icon(Icons.delete_outline, color: Colors.red, size: 24),
       ),
-      child: Container(
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => HistoryDetailScreen(row: row, isSpanish: isEs),
+            ),
+          );
+        },
+        child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(AppRadius.xl),
@@ -447,6 +457,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ]),
         ),
       ),
+      ), // GestureDetector
     );
   }
 }
