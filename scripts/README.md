@@ -231,3 +231,21 @@ Total portfolio check = 20 minutes (vs 2+ hours manual)
 ## Next: Hotfix Automation
 
 See `.github/workflows/hotfix-cascade.yml` for auto-rebuild all apps when calcwise_core changes.
+
+---
+
+## token_audit.sh
+
+Scans design token compliance across the portfolio.
+
+```bash
+# Scan all apps
+bash scripts/token_audit.sh all
+
+# Scan a specific app
+bash scripts/token_audit.sh MortgageUS
+```
+
+**Grading**: A+ = 0 violations, A = 1-5, B = 6-15, C = 16-30, D = 31+
+
+**Exclusions**: Files importing `package:pdf/` are excluded to avoid false positives from PDF generation code.

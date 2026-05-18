@@ -192,11 +192,23 @@ jobs:
           fi
           echo "✅ All tests passed!"
 
+  token-compliance:
+    name: Design Token Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run token audit
+        run: |
+          chmod +x scripts/token_audit.sh
+          bash scripts/token_audit.sh all
+        env:
+          CI: true
+
   # Summary job — must pass for merge
   check-result:
     name: ✅ CI Summary
     runs-on: ubuntu-latest
-    needs: [analyze, format, test]
+    needs: [analyze, format, test, token-compliance]
     if: always()
 
     steps:
@@ -212,6 +224,10 @@ jobs:
           fi
           if [ "${{ needs.test.result }}" != "success" ] && [ "${{ needs.test.result }}" != "skipped" ]; then
             echo "❌ Tests failed"
+            exit 1
+          fi
+          if [ "${{ needs.token-compliance.result }}" != "success" ]; then
+            echo "❌ Token compliance failed"
             exit 1
           fi
           echo "✅ All CI checks passed — safe to merge!"
