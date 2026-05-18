@@ -181,7 +181,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             SliverToBoxAdapter(
                               child: Padding(
                                 padding:
-                                    const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                                    const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.sm),
                                 child: ValueListenableBuilder<bool>(
                                   valueListenable:
                                       freemiumService.isPremiumNotifier,
@@ -201,11 +201,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           ),
                                         ),
                                         if (!isPremium) ...[
-                                          const SizedBox(height: 6),
+                                          const SizedBox(height: AppSpacing.xs),
                                           Row(children: [
                                             const Icon(Icons.lock_outline,
                                                 size: 14, color: Colors.amber),
-                                            const SizedBox(width: 6),
+                                            const SizedBox(width: AppSpacing.xs),
                                             Expanded(
                                               child: Text(
                                                 isEs
@@ -253,7 +253,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           color: CalcwiseTheme.of(context)
                                               .textSecondary
                                               .withValues(alpha: 0.4)),
-                                      const SizedBox(height: 16),
+                                      const SizedBox(height: AppSpacing.lg),
                                       Text(
                                         isEs
                                             ? 'No hay ofertas guardadas'
@@ -264,7 +264,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                             fontSize: AppTextSize.bodyLg,
                                             fontWeight: FontWeight.w600),
                                       ),
-                                      const SizedBox(height: 8),
+                                      const SizedBox(height: AppSpacing.sm),
                                       Text(
                                         isEs
                                             ? 'Guarda tu primera comparación para verla aquí'
@@ -294,7 +294,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
 
                             const SliverToBoxAdapter(
-                                child: SizedBox(height: 16)),
+                                child: SizedBox(height: AppSpacing.lg)),
                           ],
                         ),
                       ),
@@ -330,7 +330,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
       },
       background: Container(
         alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 20),
+        padding: const EdgeInsets.only(right: AppSpacing.xl),
         decoration: BoxDecoration(
           color: Colors.red.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(AppRadius.xl),
@@ -351,7 +351,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
           ],
         ),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.mdPlus, vertical: AppSpacing.md),
           child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
             // ── Left: colored dot ───────────────────────────────────────
             Container(
@@ -364,7 +364,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               child: const Icon(Icons.work_outline,
                   color: AppTheme.primary, size: 20),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: AppSpacing.md),
 
             // ── Center: job info ────────────────────────────────────────
             Expanded(
@@ -390,14 +390,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis),
                   ],
-                  const SizedBox(height: 2),
+                  const SizedBox(height: AppSpacing.xxs),
                   Row(children: [
                     Text(
                       '${_fmtUSD.format(monthlyNet)}/mo',
                       style: TextStyle(
                           fontSize: AppTextSize.sm, color: ct.textSecondary),
                     ),
-                    const SizedBox(width: 8),
+                    const SizedBox(width: AppSpacing.sm),
                     Text(
                       '· ${isEs ? 'Imp.' : 'Tax'} ${taxRate.toStringAsFixed(1)}%',
                       style: TextStyle(
@@ -436,7 +436,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ),
               ],
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: AppSpacing.xs),
             IconButton(
               icon:
                   const Icon(Icons.delete_outline, color: Colors.red, size: 20),

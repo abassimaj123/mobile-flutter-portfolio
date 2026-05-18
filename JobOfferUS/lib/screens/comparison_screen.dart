@@ -413,17 +413,17 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         InsightEngine.generate(widget.result, isSpanish: isSpanish);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 32),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xxxl),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ── Winner banner ──────────────────────────────────────────────
           WinnerBanner(result: widget.result, isSpanish: isSpanish),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
 
           // ── Hero KPI card ──────────────────────────────────────────────
           _HeroKpiCard(result: widget.result, isSpanish: isSpanish),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
 
           // ── Offer labels header ────────────────────────────────────────
           _OfferHeader(
@@ -436,7 +436,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             companyA: widget.offerA.company,
             companyB: widget.offerB.company,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppSpacing.lg),
 
           // ── Core comparison card ───────────────────────────────────────
           _SectionCard(
@@ -468,7 +468,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
 
           // ── Tax breakdown ──────────────────────────────────────────────
           _SectionCard(
@@ -494,7 +494,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
 
           // ── Benefits & extras ──────────────────────────────────────────
           _SectionCard(
@@ -555,7 +555,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
 
           // ── Total compensation ─────────────────────────────────────────
           _SectionCard(
@@ -580,7 +580,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: AppSpacing.md),
 
           // ── CoL-adjusted (Premium) ─────────────────────────────────────
           if (isPremium) ...[
@@ -600,7 +600,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
           ] else ...[
             PaywallSoft(
               featureTitle: isSpanish
@@ -612,7 +612,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               isSpanish: isSpanish,
               onUnlock: () => _showPaywall(context, isSpanish),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
           ],
 
           // ── 5-year projection (Premium) ────────────────────────────────
@@ -624,7 +624,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               labelB: widget.offerB.label,
               isSpanish: isSpanish,
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
           ] else if (!isPremium) ...[
             PaywallSoft(
               featureTitle: isSpanish
@@ -636,12 +636,12 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               isSpanish: isSpanish,
               onUnlock: () => _showPaywall(context, isSpanish),
             ),
-            const SizedBox(height: 12),
+            const SizedBox(height: AppSpacing.md),
           ],
 
           // ── Smart insights ─────────────────────────────────────────────
           InsightCard(insights: insights, isSpanish: isSpanish),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.xl),
 
           // ── Share / PDF CTA ────────────────────────────────────────────
           if (isPremium)
@@ -654,7 +654,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               label: Text(
                   isSpanish ? 'Exportar reporte PDF' : 'Export PDF Report'),
             ),
-          const SizedBox(height: 20),
+          const SizedBox(height: AppSpacing.xl),
 
           // ── Ad footer ──────────────────────────────────────────────────
           const AdFooter(),
@@ -767,7 +767,7 @@ class _OfferHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(children: [
       Expanded(child: _OfferChip(label: labelA, company: companyA, isA: true)),
-      const SizedBox(width: 8),
+      const SizedBox(width: AppSpacing.sm),
       Expanded(child: _OfferChip(label: labelB, company: companyB, isA: false)),
     ]);
   }
@@ -783,7 +783,7 @@ class _OfferChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final color = AppTheme.offerColor(isA);
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.smPlus),
       decoration: BoxDecoration(
         color: AppTheme.offerColorLight(isA),
         borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -801,7 +801,7 @@ class _OfferChip extends StatelessWidget {
                       fontSize: AppTextSize.xs,
                       fontWeight: FontWeight.w800))),
         ),
-        const SizedBox(width: 8),
+        const SizedBox(width: AppSpacing.sm),
         Expanded(
             child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -862,7 +862,7 @@ class _SectionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.mdPlus, AppSpacing.lg, AppSpacing.sm),
             child: Text(title,
                 style: TextStyle(
                   fontSize: AppTextSize.md,
@@ -872,7 +872,7 @@ class _SectionCard extends StatelessWidget {
           ),
           Divider(height: 1, color: ct.cardBorder),
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.md),
             child: Column(children: children),
           ),
         ],
@@ -911,7 +911,7 @@ class _ProjectionCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.mdPlus, AppSpacing.lg, AppSpacing.sm),
             child: Text(
               isSpanish ? 'Proyección 5 Años' : '5-Year Projection',
               style: const TextStyle(
@@ -926,7 +926,7 @@ class _ProjectionCard extends StatelessWidget {
                 ...List.generate(
                     5,
                     (i) => Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 3),
+                          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xxs),
                           child: ComparisonBar(
                             label: isSpanish ? 'Año ${i + 1}' : 'Year ${i + 1}',
                             valueA: i < projA.length ? projA[i] : 0,
@@ -939,9 +939,9 @@ class _ProjectionCard extends StatelessWidget {
                             isSpanish: isSpanish,
                           ),
                         )),
-                const SizedBox(height: 8),
+                const SizedBox(height: AppSpacing.sm),
                 const Divider(),
-                const SizedBox(height: 4),
+                const SizedBox(height: AppSpacing.xs),
                 ComparisonBar(
                   label: isSpanish ? 'TOTAL 5 años' : 'TOTAL 5 years',
                   valueA: totalA,
