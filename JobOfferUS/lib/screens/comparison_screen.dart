@@ -419,7 +419,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         children: [
           // ── Winner banner ──────────────────────────────────────────────
           WinnerBanner(result: widget.result, isSpanish: isSpanish),
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
+
+          // ── Hero KPI card ──────────────────────────────────────────────
+          _HeroKpiCard(result: widget.result, isSpanish: isSpanish),
+          const SizedBox(height: 16),
 
           // ── Offer labels header ────────────────────────────────────────
           _OfferHeader(
@@ -661,6 +665,94 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
 }
 
 // ── Sub-widgets ──────────────────────────────────────────────────────────────
+
+class _HeroKpiCard extends StatelessWidget {
+  final ComparisonResult result;
+  final bool isSpanish;
+
+  const _HeroKpiCard({required this.result, required this.isSpanish});
+
+  @override
+  Widget build(BuildContext context) {
+    final fmt =
+        NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 0);
+    final a = result.resultA;
+    final b = result.resultB;
+
+    final String heroLabel;
+    final String heroValue;
+    final String heroSecondary;
+    final String statLabelA;
+    final String statLabelB;
+
+    if (result.isTie) {
+      heroLabel = isSpanish ? 'Compensación total' : 'Total Compensation';
+      heroValue = fmt.format(a.totalCompensation);
+      heroSecondary = isSpanish ? 'Las dos ofertas son equivalentes' : 'Both offers are equivalent';
+      statLabelA = isSpanish ? 'Neto anual A' : 'Annual net A';
+      statLabelB = isSpanish ? 'Neto anual B' : 'Annual net B';
+    } else {
+      final isAWinner = result.winner == Winner.offerA;
+      final winnerResult = isAWinner ? a : b;
+      final winnerLabel = isAWinner
+          ? (isSpanish ? 'Oferta A' : 'Offer A')
+          : (isSpanish ? 'Oferta B' : 'Offer B');
+      heroLabel = isSpanish
+          ? '$winnerLabel — Neto anual'
+          : '$winnerLabel — Annual Net';
+      heroValue = fmt.format(winnerResult.netTakeHome);
+      heroSecondary = isSpanish
+          ? 'Ventaja: ${fmt.format(result.annualAdvantage)}/año'
+          : 'Advantage: ${fmt.format(result.annualAdvantage)}/yr';
+      statLabelA = isSpanish ? 'Tasa efectiva' : 'Effective rate';
+      statLabelB = isSpanish ? 'Comp. total' : 'Total comp';
+
+      return Semantics(
+        label: isSpanish
+            ? '$winnerLabel gana con ${fmt.format(winnerResult.netTakeHome)} neto anual, ventaja de ${fmt.format(result.annualAdvantage)}'
+            : '$winnerLabel wins with ${fmt.format(winnerResult.netTakeHome)} annual net, advantage of ${fmt.format(result.annualAdvantage)}',
+        child: CalcwiseHeroCard(
+          label: heroLabel,
+          value: heroValue,
+          secondary: heroSecondary,
+          backgroundColor: AppTheme.primary,
+          stats: [
+            (
+              label: statLabelA,
+              value: '${winnerResult.effectiveTaxRate.toStringAsFixed(1)}%',
+            ),
+            (
+              label: statLabelB,
+              value: fmt.format(winnerResult.totalCompensation),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Semantics(
+      label: isSpanish
+          ? 'Las dos ofertas son equivalentes. Compensación total: ${fmt.format(a.totalCompensation)}'
+          : 'Both offers are equivalent. Total compensation: ${fmt.format(a.totalCompensation)}',
+      child: CalcwiseHeroCard(
+        label: heroLabel,
+        value: heroValue,
+        secondary: heroSecondary,
+        backgroundColor: AppTheme.primary,
+        stats: [
+          (
+            label: statLabelA,
+            value: fmt.format(a.netTakeHome),
+          ),
+          (
+            label: statLabelB,
+            value: fmt.format(b.netTakeHome),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class _OfferHeader extends StatelessWidget {
   final String labelA, labelB, companyA, companyB;
