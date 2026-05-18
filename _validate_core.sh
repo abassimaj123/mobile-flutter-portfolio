@@ -80,13 +80,23 @@ validate_app() {
     return
   fi
 
-  # ── Step 3: flutter build apk ────────────────────────────────
+  # ── Step 3: flutter build apk (with one retry for transient Gradle issues) ──
   local build_last
   build_last=$(flutter build apk --debug $extra_args 2>&1 \
     | grep -E "Built |FAILED|Error" | tail -1)
 
   if [[ -z "$build_last" ]]; then
     build_last="(no output captured)"
+  fi
+
+  # Retry once for transient Dart engine / Gradle daemon issues
+  if echo "$build_last" | grep -qi "FAILED\|Error"; then
+    sleep 5
+    build_last=$(flutter build apk --debug $extra_args 2>&1 \
+      | grep -E "Built |FAILED|Error" | tail -1)
+    if [[ -z "$build_last" ]]; then
+      build_last="(no output captured on retry)"
+    fi
   fi
 
   if echo "$build_last" | grep -qi "FAILED\|Error"; then
