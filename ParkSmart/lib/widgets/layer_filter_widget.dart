@@ -199,7 +199,7 @@ class _FilterSheetState extends State<_FilterSheet> {
                   child: Text(
                     'Masquer tout',
                     style: TextStyle(
-                      color: _noneActive ? const Color(0xFF64748B) : Colors.red,
+                      color: _noneActive ? const Color(0xFF64748B) : CalcwiseSemanticColors.errorDark,
                     ),
                   ),
                 ),

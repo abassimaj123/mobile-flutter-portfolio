@@ -17,7 +17,7 @@ class SessionAlertBanner extends StatelessWidget {
 
   Color get _bgColor {
     if (session.isOverLimit) return const Color(0xFFB71C1C);
-    if (session.isUrgent) return const Color(0xFFD32F2F);
+    if (session.isUrgent) return CalcwiseSemanticColors.errorDark;
     if (session.isNearingLimit) return const Color(0xFFE65100);
     return const Color(0xFF1A237E);
   }

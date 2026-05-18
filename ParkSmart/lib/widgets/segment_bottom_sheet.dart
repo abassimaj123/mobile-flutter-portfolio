@@ -33,7 +33,7 @@ class SegmentBottomSheet extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.xxl)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -182,21 +182,21 @@ class SegmentBottomSheet extends StatelessWidget {
                     Container(
                       padding: const EdgeInsets.all(AppSpacing.smPlus),
                       decoration: BoxDecoration(
-                        color: Colors.amber.shade100.withValues(alpha: 0.3),
+                        color: CalcwiseSemanticColors.warnBg,
                         borderRadius: BorderRadius.circular(AppRadius.md),
-                        border: Border.all(color: Colors.amber.shade300),
+                        border: Border.all(color: CalcwiseSemanticColors.warnIcon),
                       ),
                       child: Row(
                         children: [
                           Icon(Icons.info_outline,
-                              size: 14, color: Colors.amber[800]),
+                              size: 14, color: CalcwiseSemanticColors.warnIcon),
                           const SizedBox(width: 6),
                           Expanded(
                             child: Text(
                               segment.notes!,
                               style: TextStyle(
                                 fontSize: AppTextSize.sm,
-                                color: Colors.amber[900],
+                                color: CalcwiseSemanticColors.warnIcon,
                               ),
                             ),
                           ),
@@ -220,7 +220,7 @@ class SegmentBottomSheet extends StatelessWidget {
             ),
           ),
           Padding(
-            padding: const EdgeInsets.fromLTRB(20, 4, 20, 16),
+            padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xs, AppSpacing.xl, AppSpacing.lg),
             child: _StartSessionButton(
               segment: segment,
               viewTime: viewTime,
@@ -282,7 +282,7 @@ class _StatusBadge extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
                 color: zoneColor.withAlpha(38),
-                borderRadius: BorderRadius.circular(20),
+                borderRadius: BorderRadius.circular(AppRadius.full),
               ),
               child: Text(
                 'Max ${_formatDuration(result.activeRule!.maxMinutes!)}',
@@ -492,21 +492,21 @@ class _AlternatingInfo extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
-        color: Colors.orange[50],
+        color: CalcwiseSemanticColors.warnBg,
         borderRadius: BorderRadius.circular(AppRadius.mdPlus),
-        border: Border.all(color: Colors.orange.withAlpha(120)),
+        border: Border.all(color: CalcwiseSemanticColors.warnIcon.withAlpha(120)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              const Icon(Icons.swap_horiz, color: Colors.orange, size: 18),
+              const Icon(Icons.swap_horiz, color: CalcwiseSemanticColors.warnIcon, size: 18),
               const SizedBox(width: 8),
               Text(
                 cycleLabel,
                 style: const TextStyle(
-                  color: Colors.orange,
+                  color: CalcwiseSemanticColors.warnIcon,
                   fontWeight: FontWeight.w700,
                   fontSize: AppTextSize.md,
                 ),
@@ -518,7 +518,7 @@ class _AlternatingInfo extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: Colors.orange.withAlpha(30),
+              color: CalcwiseSemanticColors.warnIcon.withAlpha(30),
               borderRadius: BorderRadius.circular(AppRadius.sm),
             ),
             child: Text(
@@ -723,7 +723,7 @@ class _RuleRow extends StatelessWidget {
                             .colorScheme
                             .onSurfaceVariant
                             .withAlpha(20),
-                    borderRadius: BorderRadius.circular(20),
+                    borderRadius: BorderRadius.circular(AppRadius.full),
                     border: Border.all(
                       color: active
                           ? color.withAlpha(80)
@@ -837,7 +837,7 @@ class _ConfidenceBar extends StatelessWidget {
 
   Color get _color {
     if (confidence >= 0.85) return AppTheme.free;
-    if (confidence >= 0.65) return Colors.amber;
+    if (confidence >= 0.65) return CalcwiseSemanticColors.warnIcon;
     return AppTheme.restricted;
   }
 
@@ -1112,7 +1112,7 @@ class _StartSessionButton extends StatelessWidget {
           ),
         ),
         style: FilledButton.styleFrom(
-          backgroundColor: hasSession ? Colors.red[700] : AppTheme.primary,
+          backgroundColor: hasSession ? CalcwiseSemanticColors.errorDark : AppTheme.primary,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppRadius.xl),
           ),

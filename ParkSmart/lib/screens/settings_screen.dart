@@ -164,7 +164,7 @@ class SettingsScreen extends StatelessWidget {
               ],
             ),
             Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.sm),
               child: Text(
                 isSp
                     ? 'Datos de estacionamiento proporcionados solo con fines informativos. '
@@ -207,7 +207,7 @@ class _LangButton extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected ? AppTheme.accent : ct.surfaceHigh,
           border: Border.all(color: selected ? AppTheme.accent : ct.cardBorder),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.mdPlus),
         ),
         alignment: Alignment.center,
         child: Text(

@@ -208,7 +208,7 @@ class _ContributionSheetState extends State<ContributionSheet> {
       builder: (_, scrollCtrl) => Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(AppRadius.xxl)),
         ),
         child: Column(
           children: [
@@ -225,7 +225,7 @@ class _ContributionSheetState extends State<ContributionSheet> {
             Expanded(
               child: ListView(
                 controller: scrollCtrl,
-                padding: const EdgeInsets.fromLTRB(20, 14, 20, 24),
+                padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.mdPlus, AppSpacing.xl, AppSpacing.xxl),
                 children: [
                   // ── Header ──────────────────────────────────────────────
                   Row(
