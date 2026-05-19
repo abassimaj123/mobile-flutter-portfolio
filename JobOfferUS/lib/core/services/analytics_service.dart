@@ -41,6 +41,31 @@ class AnalyticsService extends CalcwiseAnalytics {
   Future<void> logThemeChanged(String theme) =>
       log('theme_changed', {'theme': theme});
 
+  // ── Universal events (Phase 2) ────────────────────────────────────────────
+
+  Future<void> logScreenView(String screenName) =>
+      log('screen_view', {'screen_name': screenName});
+  Future<void> logOnboardingComplete() => log('onboarding_complete');
+  Future<void> logOnboardingSkipped()  => log('onboarding_skipped');
+  Future<void> logFirstCalculate()     => log('first_calculate');
+  Future<void> logDarkModeToggled(bool enabled) =>
+      log('dark_mode_toggled', {'enabled': '$enabled'});
+  Future<void> logLanguageChanged(String lang) =>
+      log('language_changed', {'language': lang});
+  Future<void> logShareTapped()   => log('share_tapped');
+  Future<void> logExportStarted() => log('export_started');
+  Future<void> logUpgradeButtonTapped(String source) =>
+      log('upgrade_tapped', {'source': source});
+  Future<void> logFeatureGated(String feature) =>
+      log('feature_gated', {'feature': feature});
+
+  // ── JobOfferUS domain events (Phase 2) ───────────────────────────────────
+
+  Future<void> logSigningBonusAdded()    => log('signing_bonus_added');
+  Future<void> logRsuCalculated()        => log('rsu_calculated');
+  Future<void> logColAdjusted()          => log('col_adjusted');
+  Future<void> logFiveYearProjected()    => log('five_year_projected');
+
   // ── Helpers ───────────────────────────────────────────────────────────────
 
   String _salaryBucket(double salary) {

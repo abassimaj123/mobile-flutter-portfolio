@@ -42,6 +42,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logScreenView('home');
     iapErrorNotifier.addListener(_onIapError);
     WidgetsBinding.instance.addPostFrameCallback(
         (_) async => await paywallSession.recordSession());
