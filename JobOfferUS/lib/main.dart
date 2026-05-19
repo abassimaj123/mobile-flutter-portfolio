@@ -5,7 +5,9 @@ import 'package:calcwise_core/calcwise_core.dart'
         CalcwiseAdService,
         CalcwiseAdConfig,
         PaywallSessionService,
-        CalcwiseAdFooter;
+        CalcwiseAdFooter,
+        CalcwiseRemoteConfig,
+        CalcwiseRevenueCat;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -38,6 +40,11 @@ final paywallSession = PaywallSessionService(appKey: 'joboffer');
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await CalcwiseRemoteConfig.initialize();
+  await CalcwiseRevenueCat.initialize(
+    androidKey: 'appl_REPLACE_WITH_YOUR_REVENUECAT_ANDROID_KEY',
+    iosKey:     'appl_REPLACE_WITH_YOUR_REVENUECAT_IOS_KEY',
+  );
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
