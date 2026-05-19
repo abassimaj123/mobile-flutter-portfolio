@@ -116,6 +116,7 @@ class _MapScreenState extends State<MapScreen>
   @override
   void initState() {
     super.initState();
+    AnalyticsService.instance.logScreenView('map');
 
     // Refresh every 10s (faster for demo)
     _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
