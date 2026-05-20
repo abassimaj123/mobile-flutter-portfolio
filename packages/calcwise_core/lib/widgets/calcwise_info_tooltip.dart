@@ -23,7 +23,7 @@ class CalcwiseInfoTooltip extends StatelessWidget {
       label: 'Information about $title',
       hint: 'Double tap for details',
       child: GestureDetector(
-        onTap: () => showDialog(
+        onTap: () => showDialog<void>(
           context: context,
           builder: (_) => AlertDialog(
             title: Text(title,

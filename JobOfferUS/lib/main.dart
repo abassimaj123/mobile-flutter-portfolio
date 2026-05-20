@@ -20,6 +20,7 @@ import 'core/freemium/iap_service.dart';
 import 'core/ads/ad_config.dart';
 import 'core/services/analytics_service.dart';
 import 'core/language/language_notifier.dart';
+import 'core/services/deadline_notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'screens/splash_screen.dart';
 
@@ -73,13 +74,13 @@ void main() async {
     onGetPremium: () => IAPService.instance.buy(),
   );
 
+  await DeadlineNotificationService.instance.initialize();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
+  // Initial style — brightness-aware override applied per-screen in build()
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-    systemNavigationBarColor: Color(0xFF0D0B1E),
-    systemNavigationBarIconBrightness: Brightness.light,
   ));
 
   runApp(const JobOfferApp());

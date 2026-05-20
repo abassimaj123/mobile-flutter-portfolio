@@ -66,6 +66,7 @@ class _CalcwiseSplashState extends State<CalcwiseSplash>
   late final Animation<double>  _nameOpacity, _tagOpacity, _chipsOpacity;
 
   bool _logoDone = false;
+  // ignore: unused_field
   bool _contentDone = false;
   bool _exited = false;
   bool _canSkip = false;

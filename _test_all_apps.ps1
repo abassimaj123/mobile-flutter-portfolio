@@ -1,4 +1,5 @@
-# Full screenshot test for all 24 apps - with screen kept on
+# Full screenshot test for all 22 apps - with screen kept on
+# ARCHIVÉS 2026-05-19: RideProfit (22) + ParkSmart (23) retirés
 $apps = @(
     @{label="01_MortgageUS";    pkg="com.mortgageus.calculator";       act="com.mortgageus.calculator/com.mortgageus.mortgage_us.MainActivity"},
     @{label="02_MortgageCA";    pkg="com.mortgageca.calculator";       act="com.mortgageca.calculator/.MainActivity"},
@@ -21,9 +22,9 @@ $apps = @(
     @{label="19_HouseFlip";     pkg="com.houseflip.us.calculator";     act="com.houseflip.us.calculator/.MainActivity"},
     @{label="20_LandlordCashFlow"; pkg="com.landlord.cashflow.calculator"; act="com.landlord.cashflow.calculator/.MainActivity"},
     @{label="21_SalaryApp";     pkg="com.salary.us.calculator";        act="com.salary.us.calculator/.MainActivity"},
-    @{label="22_RideProfit";    pkg="com.rideprofit.app";              act="com.rideprofit.app/.MainActivity"},
-    @{label="23_ParkSmart";     pkg="com.parksmart.app";               act="com.parksmart.app/.MainActivity"},
-    @{label="24_TaxeCA";        pkg="com.taxeca.calculator";           act="com.taxeca.calculator/.MainActivity"}
+    # @{label="22_RideProfit"; pkg="com.rideprofit.app"; ...}  ← ARCHIVÉ 2026-05-19
+    # @{label="23_ParkSmart";  pkg="com.parksmart.app";  ...}  ← ARCHIVÉ 2026-05-19
+    @{label="22_TaxeCA";        pkg="com.taxeca.calculator";           act="com.taxeca.calculator/.MainActivity"}
 )
 
 $outDir = "D:\mob\_screenshots"

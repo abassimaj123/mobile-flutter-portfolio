@@ -140,6 +140,24 @@
       "languageVersion": "3.2"
     },
     {
+      "name": "firebase_remote_config",
+      "rootUri": "file:///C:/Users/DALI/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_remote_config-5.5.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_remote_config_platform_interface",
+      "rootUri": "file:///C:/Users/DALI/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_remote_config_platform_interface-2.0.0",
+      "packageUri": "lib/",
+      "languageVersion": "3.2"
+    },
+    {
+      "name": "firebase_remote_config_web",
+      "rootUri": "file:///C:/Users/DALI/AppData/Local/Pub/Cache/hosted/pub.dev/firebase_remote_config_web-1.8.9",
+      "packageUri": "lib/",
+      "languageVersion": "3.4"
+    },
+    {
       "name": "flutter",
       "rootUri": "file:///D:/flutter/flutter/packages/flutter",
       "packageUri": "lib/",
@@ -180,6 +198,12 @@
       "rootUri": "file:///D:/flutter/flutter/packages/flutter_web_plugins",
       "packageUri": "lib/",
       "languageVersion": "3.9"
+    },
+    {
+      "name": "freezed_annotation",
+      "rootUri": "file:///C:/Users/DALI/AppData/Local/Pub/Cache/hosted/pub.dev/freezed_annotation-2.4.4",
+      "packageUri": "lib/",
+      "languageVersion": "3.0"
     },
     {
       "name": "google_mobile_ads",
@@ -354,6 +378,12 @@
       "rootUri": "file:///C:/Users/DALI/AppData/Local/Pub/Cache/hosted/pub.dev/posix-6.5.0",
       "packageUri": "lib/",
       "languageVersion": "3.0"
+    },
+    {
+      "name": "purchases_flutter",
+      "rootUri": "file:///C:/Users/DALI/AppData/Local/Pub/Cache/hosted/pub.dev/purchases_flutter-8.11.0",
+      "packageUri": "lib/",
+      "languageVersion": "2.18"
     },
     {
       "name": "qr",

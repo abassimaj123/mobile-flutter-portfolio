@@ -1,5 +1,4 @@
 import 'package:calcwise_core/calcwise_core.dart';
-import '../core/ads/ad_footer.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,7 +32,7 @@ class SettingsScreen extends StatelessWidget {
           appBar: AppBar(
             title: Text(isSp ? 'Ajustes' : 'Settings'),
           ),
-          bottomNavigationBar: const AdFooter(),
+          bottomNavigationBar: const CalcwiseAdFooter(),
           body: ListView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
@@ -119,7 +118,6 @@ class SettingsScreen extends StatelessWidget {
                   const Divider(height: 1),
                   CalcwiseRateAppTile(
                       label: isSp ? 'Calificar la app' : 'Rate the App'),
-                  const Divider(height: 1),
                   const Divider(height: 1),
                   _Tile(
                     icon: Icons.restore_rounded,

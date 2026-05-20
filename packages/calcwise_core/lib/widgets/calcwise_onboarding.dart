@@ -167,7 +167,7 @@ class _CalcwiseOnboardingState extends State<CalcwiseOnboarding> {
     if (widget.onDone != null) {
       widget.onDone!();
     } else {
-      Navigator.of(context).pushReplacement(PageRouteBuilder(
+      Navigator.of(context).pushReplacement(PageRouteBuilder<void>(
         pageBuilder:        (_, __, ___) => widget.nextScreen!,
         transitionsBuilder: (_, anim, __, child) =>
             FadeTransition(opacity: anim, child: child),

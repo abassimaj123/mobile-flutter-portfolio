@@ -123,7 +123,7 @@ class _AdFooterState extends State<AdFooter> {
         color: AppTheme.accentGood.withValues(alpha: 0.08),
         child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
           Icon(Icons.timer_rounded, size: 15, color: AppTheme.accentGood),
-          const SizedBox(width: 6),
+          const SizedBox(width: AppSpacing.xs),
           Text(label,
               style: TextStyle(
                   color: AppTheme.accentGood,
@@ -140,8 +140,8 @@ class _AdFooterState extends State<AdFooter> {
       right: false,
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         Container(
-          color: const Color(0xFFF8FAFC),
-          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          color: AppTheme.surfaceHigh,
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
           child: Row(children: [
             // Watch ad button
             GestureDetector(
@@ -149,7 +149,7 @@ class _AdFooterState extends State<AdFooter> {
                   ? null
                   : _watch,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   _watchLoading
                       ? const SizedBox(
@@ -158,7 +158,7 @@ class _AdFooterState extends State<AdFooter> {
                           child: CircularProgressIndicator(strokeWidth: 2))
                       : Icon(Icons.play_circle_outline,
                           size: 15, color: AppTheme.primary),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppSpacing.xxs),
                   Text(
                     _watchLoading
                         ? (isEs ? 'Cargando...' : 'Loading...')
@@ -174,8 +174,7 @@ class _AdFooterState extends State<AdFooter> {
             GestureDetector(
               onTap: () => IAPService.instance.buy(),
               child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.smPlus, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppTheme.primary,
                   borderRadius: BorderRadius.circular(AppRadius.md),
@@ -183,7 +182,7 @@ class _AdFooterState extends State<AdFooter> {
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   const Icon(Icons.workspace_premium,
                       size: 14, color: Colors.white),
-                  const SizedBox(width: 4),
+                  const SizedBox(width: AppSpacing.xxs),
                   Text(isEs ? 'Obtener Premium' : 'Get Premium',
                       style: const TextStyle(
                           fontSize: AppTextSize.xs,
@@ -192,7 +191,7 @@ class _AdFooterState extends State<AdFooter> {
                 ]),
               ),
             ),
-            const SizedBox(width: 4),
+            const SizedBox(width: AppSpacing.xxs),
           ]),
         ),
         if (_bannerLoaded && _banner != null)
@@ -202,7 +201,7 @@ class _AdFooterState extends State<AdFooter> {
             child: AdWidget(ad: _banner!),
           )
         else
-          const SizedBox(height: 50),
+          const SizedBox(height: 50), // AdSize.banner fixed height — intentional
       ]),
     );
   }

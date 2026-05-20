@@ -10,7 +10,8 @@ import '../core/theme/app_theme.dart';
 import 'history_detail_screen.dart';
 
 class HistoryScreen extends StatefulWidget {
-  const HistoryScreen({super.key});
+  final VoidCallback? onSwitchToCompare;
+  const HistoryScreen({super.key, this.onSwitchToCompare});
 
   static final refreshNotifier = ValueNotifier<int>(0);
 
@@ -24,7 +25,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
 
   final _fmtUSD =
       NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 0);
-  final _fmtDate = DateFormat('MMM d, yyyy – HH:mm');
+  final _fmtDate = DateFormat('MMM d, yyyy');
 
   @override
   void initState() {
@@ -172,7 +173,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             children: [
               Expanded(
                 child: _firstLoad
-                    ? const Center(child: CircularProgressIndicator())
+                    ? const _HistorySkeleton()
                     : RefreshIndicator(
                         onRefresh: _load,
                         child: CustomScrollView(
@@ -276,6 +277,20 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                             fontSize: AppTextSize.md),
                                         textAlign: TextAlign.center,
                                       ),
+                                      if (widget.onSwitchToCompare != null) ...[
+                                        const SizedBox(height: AppSpacing.xl),
+                                        FilledButton.icon(
+                                          icon: const Icon(Icons.compare_arrows_rounded, size: 18),
+                                          label: Text(isEs ? 'Comparar ahora' : 'Compare Now'),
+                                          onPressed: widget.onSwitchToCompare,
+                                          style: FilledButton.styleFrom(
+                                            backgroundColor: AppTheme.primary,
+                                            minimumSize: const Size.fromHeight(52),
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.circular(AppRadius.lg)),
+                                          ),
+                                        ),
+                                      ],
                                     ],
                                   ),
                                 ),
@@ -337,7 +352,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
         ),
         child: const Icon(Icons.delete_outline, color: CalcwiseSemanticColors.errorDark, size: 24),
       ),
-      child: GestureDetector(
+      child: InkWell(
         onTap: () {
           HapticFeedback.selectionClick();
           Navigator.push(
@@ -347,6 +362,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             ),
           );
         },
+        borderRadius: BorderRadius.circular(AppRadius.xl),
         child: Container(
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
@@ -425,7 +441,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
             ),
 
-            // ── Right: hero net salary + delete ────────────────────────
+            // ── Right: hero net salary ─────────────────────────────────
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisSize: MainAxisSize.min,
@@ -446,18 +462,28 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 ),
               ],
             ),
-            const SizedBox(width: AppSpacing.xs),
-            IconButton(
-              icon:
-                  const Icon(Icons.delete_outline, color: CalcwiseSemanticColors.errorDark, size: 20),
-              constraints: const BoxConstraints(),
-              padding: const EdgeInsets.all(AppSpacing.xs),
-              onPressed: () => _delete(id, context, isEs),
-            ),
           ]),
         ),
       ),
-      ), // GestureDetector
+      ), // InkWell
+    );
+  }
+}
+
+class _HistorySkeleton extends StatelessWidget {
+  const _HistorySkeleton();
+  @override
+  Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return Padding(
+      padding: const EdgeInsets.all(16),
+      child: Column(children: List.generate(4, (i) => Padding(
+        padding: const EdgeInsets.only(bottom: 12),
+        child: Container(height: 80, decoration: BoxDecoration(
+          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
+          borderRadius: BorderRadius.circular(16),
+        )),
+      ))),
     );
   }
 }

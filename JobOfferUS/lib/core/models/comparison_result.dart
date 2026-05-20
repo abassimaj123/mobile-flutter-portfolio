@@ -44,11 +44,12 @@ class OfferResult {
   double get monthlyTotalComp => totalCompensation / 12;
 }
 
-enum Winner { offerA, offerB, tie }
+enum Winner { offerA, offerB, offerC, tie }
 
 class ComparisonResult {
   final OfferResult resultA;
   final OfferResult resultB;
+  final OfferResult? resultC; // null if no third offer
   final Winner winner;
   final double annualAdvantage; // absolute $ difference (winner vs loser)
   final Map<String, Winner>
@@ -57,6 +58,7 @@ class ComparisonResult {
   const ComparisonResult({
     required this.resultA,
     required this.resultB,
+    this.resultC,
     required this.winner,
     required this.annualAdvantage,
     required this.categoryWinners,
@@ -65,5 +67,8 @@ class ComparisonResult {
   bool get isTie => winner == Winner.tie;
 
   /// Which OfferResult won?
-  OfferResult get winnerResult => winner == Winner.offerA ? resultA : resultB;
+  OfferResult get winnerResult {
+    if (winner == Winner.offerC && resultC != null) return resultC!;
+    return winner == Winner.offerA ? resultA : resultB;
+  }
 }

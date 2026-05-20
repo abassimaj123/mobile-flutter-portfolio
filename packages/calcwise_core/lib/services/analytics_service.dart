@@ -40,12 +40,40 @@ class CalcwiseAnalytics {
 
   Future<void> logAppOpen()                          => log('app_open');
   Future<void> logCalculate()                        => log('calculate');
+  Future<void> logFirstCalculate()                   => log('first_calculate');
   Future<void> logTabChanged(String tabName)         => log('tab_changed', {'tab': tabName});
   Future<void> logHistorySaved()                     => log('history_saved');
   Future<void> logHistoryViewed()                    => log('history_viewed');
   Future<void> logShareText()                        => log('share_text');
+  Future<void> logShareTapped()                      => log('share_tapped');
   Future<void> logLanguageChanged(String lang)       => log('language_changed', {'language': lang});
   Future<void> logPdfExported()                      => log('pdf_exported');
+  Future<void> logExportStarted()                    => log('export_started');
+
+  // ── Screen tracking ───────────────────────────────────────────────────────
+
+  Future<void> logScreenView(String screenName) =>
+      log('screen_view', {'screen_name': screenName});
+
+  // ── Onboarding funnel ─────────────────────────────────────────────────────
+
+  Future<void> logOnboardingComplete()   => log('onboarding_complete');
+  Future<void> logOnboardingSkipped()    => log('onboarding_skipped');
+  Future<void> logOnboardingStepViewed(int step) =>
+      log('onboarding_step', {'step': '$step'});
+
+  // ── Settings ──────────────────────────────────────────────────────────────
+
+  Future<void> logDarkModeToggled(bool enabled) =>
+      log('dark_mode_toggled', {'enabled': '$enabled'});
+  Future<void> logSettingsOpened()       => log('settings_opened');
+
+  // ── Premium upgrade funnel ────────────────────────────────────────────────
+
+  Future<void> logUpgradeButtonTapped(String source) =>
+      log('upgrade_tapped', {'source': source});
+  Future<void> logFeatureGated(String feature) =>
+      log('feature_gated', {'feature': feature});
 
   // ── Paywall / monetisation ────────────────────────────────────────────────
 

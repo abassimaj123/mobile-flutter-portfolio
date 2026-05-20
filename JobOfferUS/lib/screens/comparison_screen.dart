@@ -27,12 +27,14 @@ import 'history_screen.dart';
 class ComparisonScreen extends StatefulWidget {
   final JobOffer offerA;
   final JobOffer offerB;
+  final JobOffer? offerC;
   final ComparisonResult result;
 
   const ComparisonScreen({
     super.key,
     required this.offerA,
     required this.offerB,
+    this.offerC,
     required this.result,
   });
 
@@ -304,6 +306,66 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
     AnalyticsService.instance.logResultShared();
   }
 
+  void _showExportSheet(BuildContext context, bool isSpanish, bool isPremium) {
+    HapticFeedback.lightImpact();
+    final ct = CalcwiseTheme.of(context);
+    showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: Colors.transparent,
+      builder: (_) => Container(
+        padding: EdgeInsets.fromLTRB(
+            AppSpacing.lg, AppSpacing.md, AppSpacing.lg,
+            MediaQuery.of(context).padding.bottom + AppSpacing.lg),
+        decoration: BoxDecoration(
+          color: ct.surface,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        ),
+        child: Column(mainAxisSize: MainAxisSize.min, children: [
+          Container(
+              width: 40, height: 4,
+              decoration: BoxDecoration(
+                  color: ct.cardBorder,
+                  borderRadius: BorderRadius.circular(2))),
+          const SizedBox(height: AppSpacing.lg),
+          Text(isSpanish ? 'Exportar' : 'Export',
+              style: TextStyle(
+                  fontSize: AppTextSize.subtitle,
+                  fontWeight: FontWeight.w700,
+                  color: ct.textPrimary)),
+          const SizedBox(height: AppSpacing.lg),
+          // CSV
+          _ExportTile(
+            icon: Icons.table_chart_outlined,
+            label: isSpanish ? 'Exportar CSV' : 'Export CSV',
+            subtitle: isSpanish ? 'Compatible con Excel y Sheets' : 'Open in Excel or Sheets',
+            onTap: () { Navigator.pop(context); _onExportCsv(isSpanish); },
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          // PDF
+          _ExportTile(
+            icon: Icons.picture_as_pdf_rounded,
+            label: isSpanish ? 'Exportar PDF' : 'Export PDF',
+            subtitle: isPremium
+                ? (isSpanish ? 'Reporte completo' : 'Full report')
+                : (isSpanish ? 'Premium — desbloquear' : 'Premium — unlock'),
+            isPremium: !isPremium,
+            onTap: () {
+              Navigator.pop(context);
+              if (isPremium) _exportPdf(isSpanish);
+              else _showPaywall(context, isSpanish);
+            },
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(isSpanish ? 'Cancelar' : 'Cancel',
+                style: TextStyle(color: ct.textSecondary)),
+          ),
+        ]),
+      ),
+    );
+  }
+
   void _showPaywall(BuildContext context, bool isSpanish) {
     AnalyticsService.instance.logPaywallViewed('comparison_history_limit');
     showModalBottomSheet(
@@ -433,7 +495,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         valueListenable: freemiumService.isPremiumNotifier,
         builder: (_, isPremium, __) => Scaffold(
           appBar: AppBar(
-            title: Text(isSpanish ? 'Resultado' : 'Comparison'),
+            title: Text(
+              '${widget.offerA.label} vs ${widget.offerB.label}${widget.offerC != null ? ' vs ${widget.offerC!.label}' : ''}',
+              overflow: TextOverflow.ellipsis,
+            ),
             leading: const BackButton(),
             actions: [
               IconButton(
@@ -450,25 +515,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 tooltip: isSpanish ? 'Guardar' : 'Save',
               ),
               IconButton(
-                icon: const Icon(Icons.table_chart_outlined),
-                onPressed: () => _onExportCsv(isSpanish),
-                tooltip: isSpanish ? 'Exportar CSV' : 'Export CSV',
+                icon: const Icon(Icons.ios_share_rounded),
+                tooltip: isSpanish ? 'Exportar' : 'Export',
+                onPressed: () => _showExportSheet(context, isSpanish, isPremium),
               ),
-              if (isPremium)
-                IconButton(
-                  icon: const Icon(Icons.picture_as_pdf_rounded),
-                  onPressed: () {
-                    HapticFeedback.lightImpact();
-                    _exportPdf(isSpanish);
-                  },
-                  tooltip: isSpanish ? 'Exportar PDF' : 'Export PDF',
-                )
-              else
-                IconButton(
-                  icon: const Icon(Icons.picture_as_pdf_rounded),
-                  onPressed: () => _showPaywall(context, isSpanish),
-                  tooltip: isSpanish ? 'Premium: PDF' : 'Premium: PDF',
-                ),
             ],
           ),
           body: _buildBody(context, isSpanish, isPremium),
@@ -480,8 +530,40 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
   Widget _buildBody(BuildContext context, bool isSpanish, bool isPremium) {
     final a = widget.result.resultA;
     final b = widget.result.resultB;
+    final c = widget.result.resultC;
+    final has3 = c != null;
     final insights =
         InsightEngine.generate(widget.result, isSpanish: isSpanish);
+
+    // Helper: build a bar — 2-way or 3-way depending on offer C presence
+    Widget bar({
+      required String label,
+      required double va,
+      required double vb,
+      double? vc,
+      Winner? winner,
+      String Function(double)? formatter,
+    }) {
+      if (has3) {
+        return ThreeWayBar(
+          label: label,
+          valueA: va,
+          valueB: vb,
+          valueC: vc ?? 0,
+          winner: winner,
+          isSpanish: isSpanish,
+          formatter: formatter,
+        );
+      }
+      return ComparisonBar(
+        label: label,
+        valueA: va,
+        valueB: vb,
+        winner: winner,
+        isSpanish: isSpanish,
+        formatter: formatter,
+      );
+    }
 
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xxxl),
@@ -493,7 +575,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           const SizedBox(height: AppSpacing.lg),
 
           // ── Hero KPI card ──────────────────────────────────────────────
-          _HeroKpiCard(result: widget.result, isSpanish: isSpanish),
+          _HeroKpiCard(
+              result: widget.result,
+              offerC: widget.offerC,
+              isSpanish: isSpanish),
           const SizedBox(height: AppSpacing.lg),
 
           // ── Offer labels header ────────────────────────────────────────
@@ -506,6 +591,12 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 : (isSpanish ? 'Oferta B' : 'Offer B'),
             companyA: widget.offerA.company,
             companyB: widget.offerB.company,
+            labelC: has3
+                ? (widget.offerC!.label.isNotEmpty
+                    ? widget.offerC!.label
+                    : (isSpanish ? 'Oferta C' : 'Offer C'))
+                : null,
+            companyC: has3 ? widget.offerC!.company : null,
           ),
           const SizedBox(height: AppSpacing.lg),
 
@@ -513,28 +604,28 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           _SectionCard(
             title: isSpanish ? 'Salario Neto' : 'After-Tax Income',
             children: [
-              ComparisonBar(
+              bar(
                 label: isSpanish ? 'Salario neto anual' : 'Annual take-home',
-                valueA: a.netTakeHome,
-                valueB: b.netTakeHome,
+                va: a.netTakeHome,
+                vb: b.netTakeHome,
+                vc: c?.netTakeHome,
                 winner: widget.result.categoryWinners['takeHome'],
-                isSpanish: isSpanish,
               ),
-              ComparisonBar(
+              bar(
                 label: isSpanish ? 'Mensual' : 'Monthly',
-                valueA: a.monthlyTakeHome,
-                valueB: b.monthlyTakeHome,
+                va: a.monthlyTakeHome,
+                vb: b.monthlyTakeHome,
+                vc: c?.monthlyTakeHome,
                 winner: widget.result.categoryWinners['takeHome'],
-                isSpanish: isSpanish,
               ),
-              ComparisonBar(
+              bar(
                 label: isSpanish
                     ? 'Tasa impositiva efectiva'
                     : 'Effective tax rate',
-                valueA: a.effectiveTaxRate,
-                valueB: b.effectiveTaxRate,
+                va: a.effectiveTaxRate,
+                vb: b.effectiveTaxRate,
+                vc: c?.effectiveTaxRate,
                 winner: widget.result.categoryWinners['takeHome'],
-                isSpanish: isSpanish,
                 formatter: (v) => '${v.toStringAsFixed(1)}%',
               ),
             ],
@@ -545,23 +636,23 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           _SectionCard(
             title: isSpanish ? 'Desglose de Impuestos' : 'Tax Breakdown',
             children: [
-              ComparisonBar(
+              bar(
                 label: isSpanish ? 'Impuesto federal' : 'Federal tax',
-                valueA: a.federalTax,
-                valueB: b.federalTax,
-                isSpanish: isSpanish,
+                va: a.federalTax,
+                vb: b.federalTax,
+                vc: c?.federalTax,
               ),
-              ComparisonBar(
+              bar(
                 label: isSpanish ? 'Impuesto estatal' : 'State tax',
-                valueA: a.stateTax,
-                valueB: b.stateTax,
-                isSpanish: isSpanish,
+                va: a.stateTax,
+                vb: b.stateTax,
+                vc: c?.stateTax,
               ),
-              ComparisonBar(
+              bar(
                 label: 'FICA (SS + Medicare)',
-                valueA: a.ficaTax,
-                valueB: b.ficaTax,
-                isSpanish: isSpanish,
+                va: a.ficaTax,
+                vb: b.ficaTax,
+                vc: c?.ficaTax,
               ),
             ],
           ),
@@ -571,70 +662,79 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           _SectionCard(
             title: isSpanish ? 'Beneficios y Extras' : 'Benefits & Extras',
             children: [
-              if (a.annualBonus > 0 || b.annualBonus > 0)
-                ComparisonBar(
+              if (a.annualBonus > 0 || b.annualBonus > 0 || (c?.annualBonus ?? 0) > 0)
+                bar(
                   label: isSpanish
                       ? 'Bono neto anual'
                       : 'Annual bonus (after tax)',
-                  valueA: a.bonusAfterTax,
-                  valueB: b.bonusAfterTax,
+                  va: a.bonusAfterTax,
+                  vb: b.bonusAfterTax,
+                  vc: c?.bonusAfterTax,
                   winner: widget.result.categoryWinners['bonus'],
-                  isSpanish: isSpanish,
                 ),
-              if (a.signingBonusAfterTax > 0 || b.signingBonusAfterTax > 0)
-                ComparisonBar(
+              if (a.signingBonusAfterTax > 0 ||
+                  b.signingBonusAfterTax > 0 ||
+                  (c?.signingBonusAfterTax ?? 0) > 0)
+                bar(
                   label: isSpanish
                       ? 'Bono de contratación (neto)'
                       : 'Signing bonus (after tax)',
-                  valueA: a.signingBonusAfterTax,
-                  valueB: b.signingBonusAfterTax,
-                  winner: a.signingBonusAfterTax >= b.signingBonusAfterTax
-                      ? widget.result.winner
-                      : (widget.result.winner == Winner.offerA ? Winner.offerB : Winner.offerA),
-                  isSpanish: isSpanish,
+                  va: a.signingBonusAfterTax,
+                  vb: b.signingBonusAfterTax,
+                  vc: c?.signingBonusAfterTax,
                 ),
-              if (a.k401kMatch > 0 || b.k401kMatch > 0)
-                ComparisonBar(
+              if (a.k401kMatch > 0 || b.k401kMatch > 0 || (c?.k401kMatch ?? 0) > 0)
+                bar(
                   label: isSpanish
                       ? '401k (aporte empleador)'
                       : '401k employer match',
-                  valueA: a.k401kMatch,
-                  valueB: b.k401kMatch,
+                  va: a.k401kMatch,
+                  vb: b.k401kMatch,
+                  vc: c?.k401kMatch,
                   winner: widget.result.categoryWinners['benefits'],
-                  isSpanish: isSpanish,
                 ),
-              if (a.healthBenefits > 0 || b.healthBenefits > 0)
-                ComparisonBar(
+              if (a.healthBenefits > 0 ||
+                  b.healthBenefits > 0 ||
+                  (c?.healthBenefits ?? 0) > 0)
+                bar(
                   label: isSpanish ? 'Salud + dental' : 'Health + dental',
-                  valueA: a.healthBenefits,
-                  valueB: b.healthBenefits,
+                  va: a.healthBenefits,
+                  vb: b.healthBenefits,
+                  vc: c?.healthBenefits,
                   winner: widget.result.categoryWinners['benefits'],
-                  isSpanish: isSpanish,
                 ),
-              if (a.ptoValue > 0 || b.ptoValue > 0)
-                ComparisonBar(
-                  label: isSpanish ? 'Valor vacaciones (PTO)' : 'PTO value',
-                  valueA: a.ptoValue,
-                  valueB: b.ptoValue,
-                  winner: widget.result.categoryWinners['pto'],
-                  isSpanish: isSpanish,
-                ),
-              if (a.annualRsuValue > 0 || b.annualRsuValue > 0)
-                ComparisonBar(
-                  label: isSpanish ? 'RSU / Stock anual' : 'Annual RSU / Stock',
-                  valueA: a.annualRsuValue,
-                  valueB: b.annualRsuValue,
-                  winner: widget.result.categoryWinners['rsu'],
-                  isSpanish: isSpanish,
-                ),
-              if (a.commuteCost > 0 || b.commuteCost > 0)
-                ComparisonBar(
+              if (a.ptoValue > 0 || b.ptoValue > 0 || (c?.ptoValue ?? 0) > 0)
+                bar(
                   label:
-                      isSpanish ? 'Costo transporte (−)' : 'Commute cost (−)',
-                  valueA: a.commuteCost,
-                  valueB: b.commuteCost,
+                      isSpanish ? 'Valor vacaciones (PTO)' : 'PTO value',
+                  va: a.ptoValue,
+                  vb: b.ptoValue,
+                  vc: c?.ptoValue,
+                  winner: widget.result.categoryWinners['pto'],
+                ),
+              if (a.annualRsuValue > 0 ||
+                  b.annualRsuValue > 0 ||
+                  (c?.annualRsuValue ?? 0) > 0)
+                bar(
+                  label: isSpanish
+                      ? 'RSU / Stock anual'
+                      : 'Annual RSU / Stock',
+                  va: a.annualRsuValue,
+                  vb: b.annualRsuValue,
+                  vc: c?.annualRsuValue,
+                  winner: widget.result.categoryWinners['rsu'],
+                ),
+              if (a.commuteCost > 0 ||
+                  b.commuteCost > 0 ||
+                  (c?.commuteCost ?? 0) > 0)
+                bar(
+                  label: isSpanish
+                      ? 'Costo transporte (−)'
+                      : 'Commute cost (−)',
+                  va: a.commuteCost,
+                  vb: b.commuteCost,
+                  vc: c?.commuteCost,
                   winner: widget.result.categoryWinners['commute'],
-                  isSpanish: isSpanish,
                 ),
             ],
           ),
@@ -647,19 +747,19 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 : 'Net Total Compensation',
             highlight: true,
             children: [
-              ComparisonBar(
+              bar(
                 label: isSpanish ? 'Total anual neto' : 'Total annual net',
-                valueA: a.totalCompensation,
-                valueB: b.totalCompensation,
+                va: a.totalCompensation,
+                vb: b.totalCompensation,
+                vc: c?.totalCompensation,
                 winner: widget.result.categoryWinners['total'],
-                isSpanish: isSpanish,
               ),
-              ComparisonBar(
+              bar(
                 label: isSpanish ? 'Total mensual neto' : 'Total monthly net',
-                valueA: a.monthlyTotalComp,
-                valueB: b.monthlyTotalComp,
+                va: a.monthlyTotalComp,
+                vb: b.monthlyTotalComp,
+                vc: c?.monthlyTotalComp,
                 winner: widget.result.categoryWinners['total'],
-                isSpanish: isSpanish,
               ),
             ],
           ),
@@ -672,14 +772,14 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                   ? 'Poder Adquisitivo Real'
                   : 'Real Purchasing Power (CoL-adjusted)',
               children: [
-                ComparisonBar(
+                bar(
                   label: isSpanish
                       ? 'Salario ajustado por costo de vida'
                       : 'CoL-adjusted take-home',
-                  valueA: a.colAdjustedTakeHome,
-                  valueB: b.colAdjustedTakeHome,
+                  va: a.colAdjustedTakeHome,
+                  vb: b.colAdjustedTakeHome,
+                  vc: c?.colAdjustedTakeHome,
                   winner: widget.result.categoryWinners['col'],
-                  isSpanish: isSpanish,
                 ),
               ],
             ),
@@ -726,10 +826,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           InsightCard(insights: insights, isSpanish: isSpanish),
           const SizedBox(height: AppSpacing.md),
 
-          // ── Negotiation Tips ───────────────────────────────────────────
-          if (!widget.result.isTie)
+          // ── Negotiation Tips (only for 2-way) ──────────────────────────
+          if (!widget.result.isTie && !has3)
             _NegotiationTipsCard(result: widget.result, isSpanish: isSpanish),
-          if (!widget.result.isTie) const SizedBox(height: AppSpacing.md),
+          if (!widget.result.isTie && !has3)
+            const SizedBox(height: AppSpacing.md),
 
           // ── Share / PDF CTA ────────────────────────────────────────────
           if (isPremium)
@@ -756,9 +857,11 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
 
 class _HeroKpiCard extends StatelessWidget {
   final ComparisonResult result;
+  final JobOffer? offerC;
   final bool isSpanish;
 
-  const _HeroKpiCard({required this.result, required this.isSpanish});
+  const _HeroKpiCard(
+      {required this.result, this.offerC, required this.isSpanish});
 
   @override
   Widget build(BuildContext context) {
@@ -781,10 +884,19 @@ class _HeroKpiCard extends StatelessWidget {
       statLabelB = isSpanish ? 'Neto anual B' : 'Annual net B';
     } else {
       final isAWinner = result.winner == Winner.offerA;
-      final winnerResult = isAWinner ? a : b;
-      final winnerLabel = isAWinner
-          ? (isSpanish ? 'Oferta A' : 'Offer A')
-          : (isSpanish ? 'Oferta B' : 'Offer B');
+      final isCWinner = result.winner == Winner.offerC;
+      final winnerResult = result.winnerResult;
+      final String winnerLabel;
+      if (isCWinner) {
+        winnerLabel = isSpanish ? 'Oferta C' : 'Offer C';
+      } else {
+        winnerLabel = isAWinner
+            ? (isSpanish ? 'Oferta A' : 'Offer A')
+            : (isSpanish ? 'Oferta B' : 'Offer B');
+      }
+      final bgColor = isCWinner
+          ? AppTheme.offerCDeep
+          : (isAWinner ? AppTheme.offerADeep : AppTheme.offerBDeep);
       heroLabel = isSpanish
           ? '$winnerLabel — Neto anual'
           : '$winnerLabel — Annual Net';
@@ -803,7 +915,7 @@ class _HeroKpiCard extends StatelessWidget {
           label: heroLabel,
           value: heroValue,
           secondary: heroSecondary,
-          backgroundColor: AppTheme.primary,
+          backgroundColor: bgColor,
           stats: [
             (
               label: statLabelA,
@@ -844,11 +956,14 @@ class _HeroKpiCard extends StatelessWidget {
 
 class _OfferHeader extends StatelessWidget {
   final String labelA, labelB, companyA, companyB;
+  final String? labelC, companyC;
   const _OfferHeader({
     required this.labelA,
     required this.labelB,
     required this.companyA,
     required this.companyB,
+    this.labelC,
+    this.companyC,
   });
 
   @override
@@ -857,6 +972,15 @@ class _OfferHeader extends StatelessWidget {
       Expanded(child: _OfferChip(label: labelA, company: companyA, isA: true)),
       const SizedBox(width: AppSpacing.sm),
       Expanded(child: _OfferChip(label: labelB, company: companyB, isA: false)),
+      if (labelC != null) ...[
+        const SizedBox(width: AppSpacing.sm),
+        Expanded(
+            child: _OfferChip(
+                label: labelC!,
+                company: companyC ?? '',
+                isA: false,
+                isC: true)),
+      ],
     ]);
   }
 }
@@ -864,16 +988,32 @@ class _OfferHeader extends StatelessWidget {
 class _OfferChip extends StatelessWidget {
   final String label, company;
   final bool isA;
+  final bool isC;
   const _OfferChip(
-      {required this.label, required this.company, required this.isA});
+      {required this.label,
+      required this.company,
+      required this.isA,
+      this.isC = false});
 
   @override
   Widget build(BuildContext context) {
-    final color = AppTheme.offerColor(isA);
+    final Color color;
+    final Color bgColor;
+    final String letter;
+    if (isC) {
+      color = AppTheme.offerC;
+      bgColor = AppTheme.offerCDeep.withValues(alpha: 0.15);
+      letter = 'C';
+    } else {
+      color = AppTheme.offerColor(isA);
+      bgColor = AppTheme.offerColorLight(isA);
+      letter = isA ? 'A' : 'B';
+    }
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.smPlus),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.smPlus),
       decoration: BoxDecoration(
-        color: AppTheme.offerColorLight(isA),
+        color: bgColor,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(color: color.withValues(alpha: 0.3)),
       ),
@@ -883,7 +1023,7 @@ class _OfferChip extends StatelessWidget {
           height: 24,
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           child: Center(
-              child: Text(isA ? 'A' : 'B',
+              child: Text(letter,
                   style: const TextStyle(
                       color: Colors.white,
                       fontSize: AppTextSize.xs,
@@ -1150,6 +1290,83 @@ class _NegotiationTipsCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ── Export sheet tile ────────────────────────────────────────────────────────
+
+class _ExportTile extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final bool isPremium;
+  final VoidCallback onTap;
+
+  const _ExportTile({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.onTap,
+    this.isPremium = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ct = CalcwiseTheme.of(context);
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(AppRadius.xl),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg, vertical: AppSpacing.md),
+        decoration: BoxDecoration(
+          color: ct.surfaceHigh,
+          borderRadius: BorderRadius.circular(AppRadius.xl),
+          border: Border.all(color: ct.cardBorder),
+        ),
+        child: Row(children: [
+          Container(
+            width: 44, height: 44,
+            decoration: BoxDecoration(
+              color: AppTheme.primary.withValues(alpha: 0.12),
+              shape: BoxShape.circle,
+            ),
+            child: Icon(icon, color: AppTheme.primary, size: 22),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label,
+                  style: TextStyle(
+                      fontSize: AppTextSize.body,
+                      fontWeight: FontWeight.w600,
+                      color: ct.textPrimary)),
+              Text(subtitle,
+                  style: TextStyle(
+                      fontSize: AppTextSize.sm,
+                      color: ct.textSecondary)),
+            ],
+          )),
+          if (isPremium)
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
+              decoration: BoxDecoration(
+                color: AppTheme.accent.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(AppRadius.md),
+              ),
+              child: const Text('PRO',
+                  style: TextStyle(
+                      fontSize: AppTextSize.xs,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.accent)),
+            )
+          else
+            Icon(Icons.chevron_right_rounded, color: ct.textSecondary),
+        ]),
       ),
     );
   }

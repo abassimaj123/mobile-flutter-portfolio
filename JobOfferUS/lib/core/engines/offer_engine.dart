@@ -189,24 +189,62 @@ class OfferEngine {
 
   // ── Main comparison ───────────────────────────────────────────────────────
 
-  /// Full comparison of two job offers. Returns [ComparisonResult].
-  static ComparisonResult compare(JobOffer offerA, JobOffer offerB) {
+  /// Full comparison of two or three job offers. Returns [ComparisonResult].
+  /// [offerC] is optional. When null, behaves exactly as before (2-way).
+  static ComparisonResult compare(JobOffer offerA, JobOffer offerB,
+      [JobOffer? offerC]) {
     final a = _evaluate(offerA);
     final b = _evaluate(offerB);
+    final c = offerC != null ? _evaluate(offerC) : null;
 
-    final diff = a.totalCompensation - b.totalCompensation;
-    final winner = diff > 1
-        ? Winner.offerA
-        : diff < -1
-            ? Winner.offerB
-            : Winner.tie;
+    final tcA = a.totalCompensation;
+    final tcB = b.totalCompensation;
+    final tcC = c?.totalCompensation ?? double.negativeInfinity;
+
+    Winner winner;
+    double advantage;
+
+    if (c != null) {
+      // 3-way comparison
+      final maxTc = [tcA, tcB, tcC].reduce((x, y) => x > y ? x : y);
+
+      if (maxTc == tcC &&
+          (tcC - tcA).abs() > 1 &&
+          (tcC - tcB).abs() > 1) {
+        winner = Winner.offerC;
+        advantage = tcC - [tcA, tcB].reduce((x, y) => x > y ? x : y);
+      } else if (maxTc == tcA &&
+          (tcA - tcB).abs() > 1 &&
+          (tcA - tcC).abs() > 1) {
+        winner = Winner.offerA;
+        advantage = tcA - [tcB, tcC].reduce((x, y) => x > y ? x : y);
+      } else if (maxTc == tcB &&
+          (tcB - tcA).abs() > 1 &&
+          (tcB - tcC).abs() > 1) {
+        winner = Winner.offerB;
+        advantage = tcB - [tcA, tcC].reduce((x, y) => x > y ? x : y);
+      } else {
+        winner = Winner.tie;
+        advantage = 0;
+      }
+    } else {
+      // Original 2-way
+      final diff = tcA - tcB;
+      winner = diff > 1
+          ? Winner.offerA
+          : diff < -1
+              ? Winner.offerB
+              : Winner.tie;
+      advantage = diff.abs();
+    }
 
     return ComparisonResult(
       resultA: a,
       resultB: b,
+      resultC: c,
       winner: winner,
-      annualAdvantage: diff.abs(),
-      categoryWinners: _categoryWinners(a, b),
+      annualAdvantage: advantage,
+      categoryWinners: _categoryWinnersThree(a, b, c),
     );
   }
 
@@ -267,23 +305,53 @@ class OfferEngine {
     );
   }
 
-  static Map<String, Winner> _categoryWinners(OfferResult a, OfferResult b) {
-    Winner w(double va, double vb, {bool lowerIsBetter = false}) {
-      if ((va - vb).abs() < 0.5) return Winner.tie;
-      if (lowerIsBetter) return va < vb ? Winner.offerA : Winner.offerB;
-      return va > vb ? Winner.offerA : Winner.offerB;
+  static Map<String, Winner> _categoryWinnersThree(
+      OfferResult a, OfferResult b, OfferResult? c) {
+    Winner w3(double va, double vb, double? vc,
+        {bool lowerIsBetter = false}) {
+      final vals = <Winner, double>{
+        Winner.offerA: va,
+        Winner.offerB: vb,
+      };
+      if (vc != null) vals[Winner.offerC] = vc;
+
+      if (lowerIsBetter) {
+        final best =
+            vals.entries.reduce((x, y) => x.value < y.value ? x : y);
+        final second = vals.entries
+            .where((e) => e.key != best.key)
+            .reduce((x, y) => x.value < y.value ? x : y);
+        if ((best.value - second.value).abs() < 0.5) return Winner.tie;
+        return best.key;
+      } else {
+        final best =
+            vals.entries.reduce((x, y) => x.value > y.value ? x : y);
+        final second = vals.entries
+            .where((e) => e.key != best.key)
+            .reduce((x, y) => x.value > y.value ? x : y);
+        if ((best.value - second.value).abs() < 0.5) return Winner.tie;
+        return best.key;
+      }
     }
 
     return {
-      'takeHome': w(a.netTakeHome, b.netTakeHome),
-      'bonus': w(a.bonusAfterTax, b.bonusAfterTax),
-      'benefits':
-          w(a.k401kMatch + a.healthBenefits, b.k401kMatch + b.healthBenefits),
-      'pto': w(a.ptoValue, b.ptoValue),
-      'rsu': w(a.annualRsuValue, b.annualRsuValue),
-      'commute': w(a.commuteCost, b.commuteCost, lowerIsBetter: true),
-      'col': w(a.colAdjustedTakeHome, b.colAdjustedTakeHome),
-      'total': w(a.totalCompensation, b.totalCompensation),
+      'takeHome': w3(a.netTakeHome, b.netTakeHome, c?.netTakeHome),
+      'bonus': w3(a.bonusAfterTax, b.bonusAfterTax, c?.bonusAfterTax),
+      'benefits': w3(a.k401kMatch + a.healthBenefits,
+          b.k401kMatch + b.healthBenefits,
+          c != null ? c.k401kMatch + c.healthBenefits : null),
+      'pto': w3(a.ptoValue, b.ptoValue, c?.ptoValue),
+      'rsu': w3(a.annualRsuValue, b.annualRsuValue, c?.annualRsuValue),
+      'commute': w3(a.commuteCost, b.commuteCost, c?.commuteCost,
+          lowerIsBetter: true),
+      'col': w3(a.colAdjustedTakeHome, b.colAdjustedTakeHome,
+          c?.colAdjustedTakeHome),
+      'total': w3(a.totalCompensation, b.totalCompensation,
+          c?.totalCompensation),
     };
   }
+
+  // Keep old 2-arg method delegating to the new one.
+  static Map<String, Winner> _categoryWinners(OfferResult a, OfferResult b) =>
+      _categoryWinnersThree(a, b, null);
 }

@@ -41,7 +41,9 @@ class CalcwiseEmptyState extends StatelessWidget {
     final ct      = CalcwiseTheme.of(context);
     final primary = Theme.of(context).colorScheme.primary;
 
-    return Center(
+    return Semantics(
+      label: body != null ? '$title. $body' : title,
+      child: Center(
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxxl, vertical: AppSpacing.xxl),
         child: Column(
@@ -91,6 +93,7 @@ class CalcwiseEmptyState extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }

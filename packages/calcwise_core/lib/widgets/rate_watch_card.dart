@@ -153,7 +153,7 @@ class _RateWatchCardState extends State<RateWatchCard> {
         Switch.adaptive(
           value:  _enabled,
           onChanged: _toggle,
-          activeColor: primary,
+          activeTrackColor: primary,
         ),
       ]),
     );
