@@ -98,6 +98,20 @@ class JobOfferApp extends StatelessWidget {
         builder: (_, themeMode, __) => MaterialApp(
           title: isSpanish ? 'Comparar Ofertas' : 'Job Offer US',
           debugShowCheckedModeBanner: false,
+          builder: (context, child) {
+            if (!MediaQuery.of(context).disableAnimations) return child!;
+            return Theme(
+              data: Theme.of(context).copyWith(
+                pageTransitionsTheme: const PageTransitionsTheme(
+                  builders: {
+                    TargetPlatform.android: _NoAnimPageTransitionsBuilder(),
+                    TargetPlatform.iOS: _NoAnimPageTransitionsBuilder(),
+                  },
+                ),
+              ),
+              child: child!,
+            );
+          },
           theme: AppTheme.theme,
           darkTheme: AppTheme.dark,
           themeMode: themeMode,
@@ -106,4 +120,17 @@ class JobOfferApp extends StatelessWidget {
       ),
     );
   }
+}
+
+class _NoAnimPageTransitionsBuilder extends PageTransitionsBuilder {
+  const _NoAnimPageTransitionsBuilder();
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) =>
+      child;
 }
