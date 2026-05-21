@@ -94,7 +94,7 @@ packages:
     description:
       path: "."
       ref: "feat/analytics-user-property-widget-tests"
-      resolved-ref: "87eae5d804b6ca8216bad60b36c112eb6c2c595c"
+      resolved-ref: ea92a506a31715a0de3659c703f44a185acc71c4
       url: "https://github.com/abassimaj123/calcwise_core.git"
     source: git
     version: "1.0.0"

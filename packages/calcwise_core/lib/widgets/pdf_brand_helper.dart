@@ -3,11 +3,11 @@ import 'package:pdf/widgets.dart' as pw;
 
 /// Reusable branded PDF header/footer for all calcwise apps.
 ///
-/// Use [pageTheme] for a one-liner that bakes in branded header + footer,
-/// or call [header] / [footer] individually inside `pw.MultiPage`.
+/// Use `pageTheme` for a one-liner that bakes in branded header + footer,
+/// or call `header` / `footer` individually inside `pw.MultiPage`.
 ///
-/// Premium hook: pass [customBrandName], [customContactInfo], and
-/// [customLogo] to override defaults — wire this to a premium-only
+/// Premium hook: pass `customBrandName`, `customContactInfo`, and
+/// `customLogo` to override defaults — wire this to a premium-only
 /// "custom branding" feature where users attach their own logo + info.
 class PdfBrandHelper {
   /// Brand color for headers (default: calcwise blue).

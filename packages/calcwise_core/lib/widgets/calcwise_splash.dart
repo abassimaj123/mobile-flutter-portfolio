@@ -44,7 +44,7 @@ class CalcwiseSplash extends StatefulWidget {
     this.badgeSymbol = '',
     this.badgeIcon,
     required this.onComplete,
-    this.durationMs = 1500,
+    this.durationMs = 900,
     this.backgroundColor = const Color(0xFF0D0B1E),
   });
 
@@ -60,7 +60,6 @@ class _CalcwiseSplashState extends State<CalcwiseSplash>
   late final AnimationController _content;
 
   late final Animation<double> _bgScale;
-  late final Animation<double> _logoScale, _logoOpacity;
   late final Animation<double> _glowOpacity, _glowSize;
   late final Animation<Offset>  _nameSlide;
   late final Animation<double>  _nameOpacity, _tagOpacity, _chipsOpacity;
@@ -82,10 +81,6 @@ class _CalcwiseSplashState extends State<CalcwiseSplash>
 
     _logo = AnimationController(vsync: this,
         duration: const Duration(milliseconds: 900));
-    _logoScale   = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: _logo, curve: const Interval(0.0, 0.75, curve: Curves.elasticOut)));
-    _logoOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
-        CurvedAnimation(parent: _logo, curve: const Interval(0.0, 0.35, curve: Curves.easeOut)));
     _glowOpacity = Tween<double>(begin: 0.0, end: 1.0).animate(
         CurvedAnimation(parent: _logo, curve: const Interval(0.3, 1.0, curve: Curves.easeOut)));
     _glowSize    = Tween<double>(begin: 80, end: 160).animate(
@@ -185,18 +180,14 @@ class _CalcwiseSplashState extends State<CalcwiseSplash>
         SafeArea(child: Column(children: [
           const Flexible(flex: 5, child: SizedBox()),
 
-          // Badge
+          // Badge — shown immediately at full size, no scale animation
           AnimatedBuilder(animation: _logo, builder: (_, __) =>
-            Opacity(opacity: _logoOpacity.value,
-              child: Transform.scale(scale: _logoScale.value,
-                child: _Badge(
-                  badgeSymbol: widget.badgeSymbol,
-                  badgeIcon:   widget.badgeIcon,
-                  ct:          ct,
-                  glowOpacity: _glowOpacity.value,
-                  glowSize:    _glowSize.value,
-                ),
-              ),
+            _Badge(
+              badgeSymbol: widget.badgeSymbol,
+              badgeIcon:   widget.badgeIcon,
+              ct:          ct,
+              glowOpacity: _glowOpacity.value,
+              glowSize:    _glowSize.value,
             ),
           ),
 

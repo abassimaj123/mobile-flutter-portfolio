@@ -39,4 +39,7 @@ class AppSpacing {
 
   /// 32px — screen-level section gap
   static const double xxxl = 32.0;
+
+  /// 80px — bottom list padding to clear CalcwiseAdFooter height
+  static const double listBottomInset = 80.0;
 }

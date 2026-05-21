@@ -42,4 +42,8 @@ class CalcwiseSemanticColors {
   static const Color infoBorder = Color(0xFFBFDBFE); // blue-200
   static const Color infoIcon   = Color(0xFF1D4ED8); // blue-700
   static const Color infoText   = Color(0xFF1E3A8A); // blue-900
+
+  // ── Premium (gold) ────────────────────────────────────────────────────────
+  /// Premium gold — star/crown icons, paywall CTA accents
+  static const Color premiumGold = Color(0xFFFFB300); // amber.shade700
 }

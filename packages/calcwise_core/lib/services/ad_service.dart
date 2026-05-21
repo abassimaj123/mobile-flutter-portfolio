@@ -155,7 +155,7 @@ class CalcwiseAdService {
   bool get isRewardedReady =>
       _rewarded != null && freemium.canWatchRewarded();
 
-  /// Shows rewarded ad. Returns [true] only if user fully watched it.
+  /// Shows rewarded ad. Returns `true` only if user fully watched it.
   Future<bool> showRewarded() async {
     if (_rewarded == null) return false;
     final completer = Completer<bool>();

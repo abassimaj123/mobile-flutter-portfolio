@@ -5,11 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///
 /// Tracks user sessions and actions to decide when to show soft vs hard paywall.
 /// Sessions 1–3 : free, no interruption
-/// Sessions 4–6 : soft paywall after [softActionThreshold] actions
-/// Sessions 7+  : hard paywall after [hardActionThreshold] actions
+/// Sessions 4–6 : soft paywall after `softActionThreshold` actions
+/// Sessions 7+  : hard paywall after `hardActionThreshold` actions
 ///
-/// Usage — instantiate once as singleton, call [recordSession] on app launch
-/// and [recordAction] on every tab switch or calculation:
+/// Usage — instantiate once as singleton, call `recordSession` on app launch
+/// and `recordAction` on every tab switch or calculation:
 /// ```dart
 /// final paywallSession = PaywallSessionService(appKey: 'mortgageus');
 /// await paywallSession.initialize();

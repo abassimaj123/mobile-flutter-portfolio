@@ -85,16 +85,20 @@ class ThemeModeService {
 
   /// Label for current mode.
   String label({bool isFrench = false, bool isSpanish = false}) {
-    if (isFrench) return switch (notifier.value) {
-      ThemeMode.dark   => 'Mode sombre',
-      ThemeMode.light  => 'Mode clair',
-      ThemeMode.system => 'Auto (système)',
-    };
-    if (isSpanish) return switch (notifier.value) {
-      ThemeMode.dark   => 'Modo oscuro',
-      ThemeMode.light  => 'Modo claro',
-      ThemeMode.system => 'Auto (sistema)',
-    };
+    if (isFrench) {
+      return switch (notifier.value) {
+        ThemeMode.dark   => 'Mode sombre',
+        ThemeMode.light  => 'Mode clair',
+        ThemeMode.system => 'Auto (système)',
+      };
+    }
+    if (isSpanish) {
+      return switch (notifier.value) {
+        ThemeMode.dark   => 'Modo oscuro',
+        ThemeMode.light  => 'Modo claro',
+        ThemeMode.system => 'Auto (sistema)',
+      };
+    }
     return switch (notifier.value) {
       ThemeMode.dark   => 'Dark mode',
       ThemeMode.light  => 'Light mode',

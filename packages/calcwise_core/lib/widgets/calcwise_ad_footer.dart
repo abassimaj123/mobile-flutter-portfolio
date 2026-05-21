@@ -142,8 +142,10 @@ class _CalcwiseAdFooterState extends State<CalcwiseAdFooter> {
       return const SizedBox.shrink(); // not configured yet
     }
 
-    // Premium — no ads
-    if (_fr.isPremium) return const SizedBox.shrink();
+    // Premium — no ads, but still consume bottom inset to avoid nav-bar overflow
+    if (_fr.isPremium) {
+      return SizedBox(height: MediaQuery.of(context).padding.bottom);
+    }
 
     final ct = CalcwiseTheme.of(context);
 
@@ -153,16 +155,19 @@ class _CalcwiseAdFooterState extends State<CalcwiseAdFooter> {
       final label = _isEs
           ? 'Sin anuncios — $mins min restantes'
           : 'Ad-free — $mins min remaining';
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        color: ct.successGreen.withValues(alpha: 0.08),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Icon(Icons.timer_rounded, size: 15, color: ct.successGreen),
-          const SizedBox(width: 6),
-          Text(label, style: TextStyle(
-              color: ct.successGreen, fontSize: 12, fontWeight: FontWeight.w600)),
-        ]),
+      return SafeArea(
+        top: false, left: false, right: false,
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          color: ct.successGreen.withValues(alpha: 0.08),
+          child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+            Icon(Icons.timer_rounded, size: 15, color: ct.successGreen),
+            const SizedBox(width: 6),
+            Text(label, style: TextStyle(
+                color: ct.successGreen, fontSize: 12, fontWeight: FontWeight.w600)),
+          ]),
+        ),
       );
     }
 

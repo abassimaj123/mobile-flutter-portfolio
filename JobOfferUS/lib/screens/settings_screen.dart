@@ -36,6 +36,49 @@ class SettingsScreen extends StatelessWidget {
           body: ListView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
+              // ── Premium ───────────────────────────────────────
+              _SectionHeader(isSp ? 'Premium' : 'Premium'),
+              _Card(
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: freemiumService.isPremiumNotifier,
+                  builder: (ctx, isPremium, _) => isPremium
+                      ? ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.verified_rounded,
+                              color: CalcwiseSemanticColors.warnIcon),
+                          title: Text(
+                            isSp ? '¡Eres Premium!' : 'You\'re Premium!',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        )
+                      : Column(mainAxisSize: MainAxisSize.min, children: [
+                          _Tile(
+                            icon: Icons.workspace_premium_rounded,
+                            label: isSp ? 'Obtener Premium' : 'Get Premium',
+                            onTap: () => showModalBottomSheet(
+                              context: ctx,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (_) => PaywallHard(
+                                isSpanish: isSp,
+                                onPurchase: () async {
+                                  Navigator.pop(ctx);
+                                  IAPService.instance.buy();
+                                },
+                                onDismiss: () => Navigator.pop(ctx),
+                              ),
+                            ),
+                          ),
+                          const Divider(height: 1),
+                          _Tile(
+                            icon: Icons.restore_rounded,
+                            label: isSp ? 'Restaurar compra' : 'Restore Purchase',
+                            onTap: () => IAPService.instance.restore(),
+                          ),
+                        ]),
+                ),
+              ),
+
               // ── Language ──────────────────────────────────────
               _SectionHeader(isSp ? 'Idioma' : 'Language'),
               _Card(
@@ -85,31 +128,6 @@ class SettingsScreen extends StatelessWidget {
               _SectionHeader(isSp ? 'Más' : 'More'),
               _Card(
                 child: Column(children: [
-                  ValueListenableBuilder<bool>(
-                    valueListenable: freemiumService.isPremiumNotifier,
-                    builder: (ctx, isPremium, _) => isPremium
-                        ? const SizedBox.shrink()
-                        : Column(mainAxisSize: MainAxisSize.min, children: [
-                            _Tile(
-                              icon: Icons.workspace_premium_rounded,
-                              label: isSp ? 'Obtener Premium' : 'Get Premium',
-                              onTap: () => showModalBottomSheet(
-                                context: ctx,
-                                isScrollControlled: true,
-                                backgroundColor: Colors.transparent,
-                                builder: (_) => PaywallHard(
-                                  isSpanish: isSp,
-                                  onPurchase: () async {
-                                    Navigator.pop(ctx);
-                                    IAPService.instance.buy();
-                                  },
-                                  onDismiss: () => Navigator.pop(ctx),
-                                ),
-                              ),
-                            ),
-                            const Divider(height: 1),
-                          ]),
-                  ),
                   _Tile(
                     icon: Icons.privacy_tip_rounded,
                     label: isSp ? 'Política de privacidad' : 'Privacy Policy',
@@ -118,12 +136,6 @@ class SettingsScreen extends StatelessWidget {
                   const Divider(height: 1),
                   CalcwiseRateAppTile(
                       label: isSp ? 'Calificar la app' : 'Rate the App'),
-                  const Divider(height: 1),
-                  _Tile(
-                    icon: Icons.restore_rounded,
-                    label: isSp ? 'Restaurar compra' : 'Restore Purchase',
-                    onTap: () => IAPService.instance.restore(),
-                  ),
                   const Divider(height: 1),
                   _Tile(
                     icon: Icons.email_rounded,

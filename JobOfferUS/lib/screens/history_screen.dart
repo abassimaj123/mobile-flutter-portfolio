@@ -245,54 +245,18 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             if (_history.isEmpty)
                               SliverFillRemaining(
                                 hasScrollBody: false,
-                                child: Center(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.work_outline,
-                                          size: 64,
-                                          color: CalcwiseTheme.of(context)
-                                              .textSecondary
-                                              .withValues(alpha: 0.4)),
-                                      const SizedBox(height: AppSpacing.lg),
-                                      Text(
-                                        isEs
-                                            ? 'No hay ofertas guardadas'
-                                            : 'No saved offers',
-                                        style: TextStyle(
-                                            color: CalcwiseTheme.of(context)
-                                                .textSecondary,
-                                            fontSize: AppTextSize.bodyLg,
-                                            fontWeight: FontWeight.w600),
-                                      ),
-                                      const SizedBox(height: AppSpacing.sm),
-                                      Text(
-                                        isEs
-                                            ? 'Guarda tu primera comparación para verla aquí'
-                                            : 'Save your first comparison to see it here',
-                                        style: TextStyle(
-                                            color: CalcwiseTheme.of(context)
-                                                .textSecondary
-                                                .withValues(alpha: 0.6),
-                                            fontSize: AppTextSize.md),
-                                        textAlign: TextAlign.center,
-                                      ),
-                                      if (widget.onSwitchToCompare != null) ...[
-                                        const SizedBox(height: AppSpacing.xl),
-                                        FilledButton.icon(
-                                          icon: const Icon(Icons.compare_arrows_rounded, size: 18),
-                                          label: Text(isEs ? 'Comparar ahora' : 'Compare Now'),
-                                          onPressed: widget.onSwitchToCompare,
-                                          style: FilledButton.styleFrom(
-                                            backgroundColor: AppTheme.primary,
-                                            minimumSize: const Size.fromHeight(52),
-                                            shape: RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.circular(AppRadius.lg)),
-                                          ),
-                                        ),
-                                      ],
-                                    ],
-                                  ),
+                                child: CalcwiseEmptyState(
+                                  icon: Icons.work_outline,
+                                  title: isEs
+                                      ? 'No hay ofertas guardadas'
+                                      : 'No saved offers',
+                                  body: isEs
+                                      ? 'Guarda tu primera comparación para verla aquí'
+                                      : 'Save your first comparison to see it here',
+                                  actionLabel: widget.onSwitchToCompare != null
+                                      ? (isEs ? 'Comparar ahora' : 'Compare Now')
+                                      : null,
+                                  onAction: widget.onSwitchToCompare,
                                 ),
                               )
                             else
