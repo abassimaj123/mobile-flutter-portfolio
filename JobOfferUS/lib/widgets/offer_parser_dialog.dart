@@ -116,6 +116,9 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
     if (_checks['baseSalary'] == true && p.baseSalary != null) {
       o = o.copyWith(baseSalary: p.baseSalary);
     }
+    if (_checks['signOnBonus'] == true && p.signOnBonus != null) {
+      o = o.copyWith(signingBonus: p.signOnBonus);
+    }
     if (_checks['annualBonus'] == true && p.annualBonusPct != null) {
       o = o.copyWith(bonusPct: p.annualBonusPct);
     } else if (_checks['annualBonus'] == true &&
