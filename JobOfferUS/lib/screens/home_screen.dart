@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:calcwise_core/calcwise_core.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../core/engines/offer_engine.dart';
 import '../core/freemium/freemium_service.dart';
 import '../core/language/language_notifier.dart';
@@ -12,7 +11,7 @@ import '../core/models/job_offer.dart';
 import '../core/theme/app_theme.dart';
 import '../widgets/offer_form_card.dart';
 import '../widgets/paywall_hard.dart';
-import '../main.dart' show paywallSession;
+import '../main.dart' show paywallSession, isSpanishNotifier;
 import 'comparison_screen.dart';
 import 'history_screen.dart';
 import 'settings_screen.dart';
@@ -39,14 +38,17 @@ class _HomeScreenState extends State<HomeScreen> {
   bool _showOfferC = false;
 
   Timer? _debounce;
+  bool _wasPremium = false;
 
   bool get _canCompare => _offerA.baseSalary > 0 && _offerB.baseSalary > 0;
 
   @override
   void initState() {
     super.initState();
+    _wasPremium = freemiumService.hasFullAccess;
     AnalyticsService.instance.logScreenView('home');
     iapErrorNotifier.addListener(_onIapError);
+    freemiumService.isPremiumNotifier.addListener(_onPremiumChange);
     WidgetsBinding.instance.addPostFrameCallback(
         (_) async => await paywallSession.recordSession());
   }
@@ -54,8 +56,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void dispose() {
     iapErrorNotifier.removeListener(_onIapError);
+    freemiumService.isPremiumNotifier.removeListener(_onPremiumChange);
     _debounce?.cancel();
     super.dispose();
+  }
+
+  void _onPremiumChange() {
+    final now = freemiumService.hasFullAccess;
+    if (now && !_wasPremium && mounted) {
+      showPremiumWelcomeSnackBar(context, isSpanish: isSpanishNotifier.value);
+    }
+    _wasPremium = now;
   }
 
   void _onIapError() {
@@ -138,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
       systemNavigationBarColor: Theme.of(context).scaffoldBackgroundColor,
       systemNavigationBarIconBrightness:
           isDark ? Brightness.light : Brightness.dark,
@@ -243,39 +254,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ]),
       actions: [
-        Tooltip(
-          message: isSp ? 'Switch to English' : 'Cambiar a Español',
-          child: Semantics(
-            label: isSp
-                ? 'Language: Spanish. Tap to switch to English'
-                : 'Language: English. Tap to switch to Spanish',
-            button: true,
-            child: InkWell(
-              onTap: () async {
-                final next = !isSpanishNotifier.value;
-                isSpanishNotifier.value = next;
-                final prefs = await SharedPreferences.getInstance();
-                await prefs.setString('language', next ? 'es' : 'en');
-              },
-              borderRadius: BorderRadius.circular(AppRadius.mdPlus),
-              child: Container(
-                margin: const EdgeInsets.only(right: AppSpacing.xs),
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AppSpacing.smPlus, vertical: AppSpacing.smPlus),
-                decoration: BoxDecoration(
-                  color: ct.surfaceHigh,
-                  borderRadius: BorderRadius.circular(AppRadius.mdPlus),
-                  border: Border.all(color: ct.cardBorder),
-                ),
-                child: Text(isSp ? '🇺🇸 EN' : '🇲🇽 ES',
-                    style: TextStyle(
-                        fontSize: AppTextSize.sm,
-                        fontWeight: FontWeight.w600,
-                        color: ct.textPrimary)),
-              ),
-            ),
-          ),
-        ),
         CalcwiseAppBarActions(
           freemium: freemiumService,
           session: paywallSession,
@@ -288,6 +266,7 @@ class _HomeScreenState extends State<HomeScreen> {
               transitionDuration: AppDuration.base,
             ),
           ),
+          onPremium: () => PaywallHard.show(context),
         ),
       ],
     );
@@ -338,7 +317,7 @@ class _ComparisonTab extends StatelessWidget {
 
   Widget _body(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, 100),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xl),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),

@@ -6,8 +6,10 @@ import 'package:calcwise_core/calcwise_core.dart'
         CalcwiseAdConfig,
         PaywallSessionService,
         CalcwiseAdFooter,
+        CalcwiseRewardAdSheet,
         CalcwiseRemoteConfig,
-        CalcwiseRevenueCat;
+        CalcwiseRevenueCat,
+        requestCalcwiseConsent;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -51,6 +53,7 @@ void main() async {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+  await requestCalcwiseConsent();
   await MobileAds.instance.initialize();
   if (AdConfig.adsEnabled) await adService.initialize();
   await freemiumService.initialize();
@@ -72,6 +75,12 @@ void main() async {
     adService: adService,
     freemium: freemiumService,
     onGetPremium: () => IAPService.instance.buy(),
+  );
+
+  CalcwiseRewardAdSheet.configure(
+    adService: adService,
+    freemium: freemiumService,
+    isSpanishNotifier: isSpanishNotifier,
   );
 
   await DeadlineNotificationService.instance.initialize();

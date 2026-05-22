@@ -152,6 +152,25 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ]),
               ),
+
+              // ── Legal Disclaimer ──────────────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.lg,
+                ),
+                child: Text(
+                  isSp
+                      ? 'Esta aplicación es solo para fines informativos. Consulte a un profesional antes de tomar decisiones financieras.'
+                      : 'This app is for informational purposes only. Consult a financial professional before making any career or compensation decisions.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: AppTextSize.xs,
+                    color: CalcwiseTheme.of(context).textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+              ),
             ],
           ),
         );

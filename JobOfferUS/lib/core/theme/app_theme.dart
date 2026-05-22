@@ -122,16 +122,13 @@ class AppTheme {
       ];
 
   // ── ThemeData ─────────────────────────────────────────────────────────────
-  /// Light theme (system default)
+  /// Light theme
   static ThemeData get theme =>
-      CalcwiseThemeFactory.buildDark(primary: primary, accent: accent);
+      CalcwiseThemeFactory.buildLight(primary: primary, accent: accent);
 
   /// Dark theme
   static ThemeData get dark =>
       CalcwiseThemeFactory.buildDark(primary: primary, accent: accent);
-
-  /// Light theme alias
-  static ThemeData get lightTheme => theme;
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   static Color offerColor(bool isA) => isA ? offerA : offerB;
