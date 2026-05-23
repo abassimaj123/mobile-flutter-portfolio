@@ -8,7 +8,6 @@ import 'package:calcwise_core/calcwise_core.dart'
         CalcwiseAdFooter,
         CalcwiseRewardAdSheet,
         CalcwiseRemoteConfig,
-        CalcwiseRevenueCat,
         requestCalcwiseConsent;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -44,10 +43,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await CalcwiseRemoteConfig.initialize();
-  await CalcwiseRevenueCat.initialize(
-    androidKey: 'appl_REPLACE_WITH_YOUR_REVENUECAT_ANDROID_KEY',
-    iosKey:     'appl_REPLACE_WITH_YOUR_REVENUECAT_IOS_KEY',
-  );
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
