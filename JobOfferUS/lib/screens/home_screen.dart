@@ -28,11 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   JobOffer _offerA = const JobOffer(
       label: 'Offer A',
-      baseSalary: 0,
+      baseSalary: 85000,
       stateCode: 'CA',
       city: 'San Francisco, CA');
   JobOffer _offerB = const JobOffer(
-      label: 'Offer B', baseSalary: 0, stateCode: 'TX', city: 'Austin, TX');
+      label: 'Offer B',
+      baseSalary: 90000,
+      stateCode: 'TX',
+      city: 'Austin, TX');
   JobOffer _offerC = const JobOffer(
       label: 'Offer C', baseSalary: 0, stateCode: 'NY', city: 'New York, NY');
   bool _showOfferC = false;
