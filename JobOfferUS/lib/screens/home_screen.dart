@@ -408,7 +408,10 @@ class _ComparisonTab extends StatelessWidget {
       child: InkWell(
         onTap: canCompare ? onCompare : null,
         borderRadius: BorderRadius.circular(AppRadius.xl),
-        child: AnimatedSwitcher(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+        AnimatedSwitcher(
           duration: AppDuration.base,
           switchInCurve: Curves.easeOut,
           transitionBuilder: (child, animation) => FadeTransition(
@@ -463,6 +466,20 @@ class _ComparisonTab extends StatelessWidget {
               ],
             ),
           ),
+        ),
+        if (!isPremium) ...[
+          const SizedBox(height: AppSpacing.xs),
+          Text(
+            isSp ? 'Función premium' : 'Premium feature',
+            style: TextStyle(
+              fontSize: AppTextSize.xs,
+              color: Colors.grey.shade500,
+              fontWeight: FontWeight.w500,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+          ],
         ),
       ),
     );
