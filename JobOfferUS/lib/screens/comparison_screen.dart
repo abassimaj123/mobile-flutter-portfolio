@@ -23,6 +23,7 @@ import 'dart:typed_data';
 import 'package:share_plus/share_plus.dart';
 import '../main.dart' show adService;
 import 'history_screen.dart';
+import '../core/engines/offer_engine.dart' show OfferEngine;
 
 class ComparisonScreen extends StatefulWidget {
   final JobOffer offerA;
@@ -648,6 +649,13 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 vb: b.stateTax,
                 vc: c?.stateTax,
               ),
+              if (a.localTax > 0 || b.localTax > 0 || (c?.localTax ?? 0) > 0)
+                bar(
+                  label: isSpanish ? 'Impuesto ciudad' : 'City/local tax',
+                  va: a.localTax,
+                  vb: b.localTax,
+                  vc: c?.localTax,
+                ),
               bar(
                 label: 'FICA (SS + Medicare)',
                 va: a.ficaTax,
@@ -739,6 +747,19 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             ],
           ),
           const SizedBox(height: AppSpacing.md),
+
+          // ── RSU Vesting Schedule ───────────────────────────────────────
+          if (a.annualRsuValue > 0 || b.annualRsuValue > 0 || (c?.annualRsuValue ?? 0) > 0) ...[
+            _RsuVestingCard(
+              offerA: widget.offerA,
+              offerB: widget.offerB,
+              offerC: widget.offerC,
+              resultA: a,
+              resultB: b,
+              isSpanish: isSpanish,
+            ),
+            const SizedBox(height: AppSpacing.md),
+          ],
 
           // ── Total compensation ─────────────────────────────────────────
           _SectionCard(
@@ -1182,6 +1203,378 @@ class _ProjectionCard extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+// ── RSU Vesting Schedule card ─────────────────────────────────────────────────
+
+class _RsuVestingCard extends StatefulWidget {
+  final JobOffer offerA;
+  final JobOffer offerB;
+  final JobOffer? offerC;
+  final dynamic resultA;
+  final dynamic resultB;
+  final bool isSpanish;
+
+  const _RsuVestingCard({
+    required this.offerA,
+    required this.offerB,
+    this.offerC,
+    required this.resultA,
+    required this.resultB,
+    required this.isSpanish,
+  });
+
+  @override
+  State<_RsuVestingCard> createState() => _RsuVestingCardState();
+}
+
+class _RsuVestingCardState extends State<_RsuVestingCard> {
+  bool _expanded = false;
+
+  /// Build 4-year cliff+monthly vesting schedule.
+  /// Year 1: 25% cliff. Years 2–4: remaining 75% monthly (1/36 per month per year).
+  static List<_VestYear> _schedule(double totalGrant) {
+    if (totalGrant <= 0) return [];
+    final cliff = totalGrant * 0.25;
+    final remainder = totalGrant * 0.75;
+    final monthlyVest = remainder / 36;
+    return [
+      _VestYear(year: 1, vested: cliff, cumulative: cliff),
+      _VestYear(
+          year: 2,
+          vested: monthlyVest * 12,
+          cumulative: cliff + monthlyVest * 12),
+      _VestYear(
+          year: 3,
+          vested: monthlyVest * 12,
+          cumulative: cliff + monthlyVest * 24),
+      _VestYear(
+          year: 4,
+          vested: monthlyVest * 12,
+          cumulative: totalGrant),
+    ];
+  }
+
+  /// Estimate tax on RSU vesting (taxed as ordinary income on top of salary).
+  static double _rsuTaxRate(double salary, double rsuIncome, String stateCode) {
+    if (salary <= 0 && rsuIncome <= 0) return 0;
+    final total = salary + rsuIncome;
+    final taxTotal = OfferEngine.federalTax(total) + OfferEngine.stateTax(total, stateCode);
+    final taxSalary = OfferEngine.federalTax(salary) + OfferEngine.stateTax(salary, stateCode);
+    final taxOnRsu = taxTotal - taxSalary;
+    return rsuIncome > 0 ? (taxOnRsu / rsuIncome) : 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ct = CalcwiseTheme.of(context);
+    final fmt = NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 0);
+    final isSp = widget.isSpanish;
+
+    final grantA = widget.offerA.annualRsuValue * 4; // total 4-yr grant
+    final grantB = widget.offerB.annualRsuValue * 4;
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        border: Border.all(color: AppTheme.accent.withValues(alpha: 0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header — tappable
+          GestureDetector(
+            onTap: () => setState(() => _expanded = !_expanded),
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg, AppSpacing.mdPlus, AppSpacing.mdPlus, AppSpacing.mdPlus),
+              child: Row(children: [
+                Icon(Icons.trending_up_rounded, color: AppTheme.accent, size: 18),
+                const SizedBox(width: AppSpacing.sm),
+                Expanded(
+                  child: Text(
+                    isSp ? 'Calendario de Adquisición RSU' : 'RSU Vesting Schedule',
+                    style: const TextStyle(
+                        fontSize: AppTextSize.md,
+                        fontWeight: FontWeight.w700,
+                        color: AppTheme.accent),
+                  ),
+                ),
+                Icon(
+                  _expanded ? Icons.expand_less_rounded : Icons.expand_more_rounded,
+                  color: AppTheme.accent,
+                  size: 20,
+                ),
+              ]),
+            ),
+          ),
+          if (_expanded) ...[
+            Divider(height: 1, color: ct.cardBorder),
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.lg),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Grant summary row
+                  Row(children: [
+                    Expanded(child: _GrantChip(
+                      label: isSp ? 'Total concesión A' : 'Total grant A',
+                      value: fmt.format(grantA),
+                      color: AppTheme.offerADeep,
+                    )),
+                    const SizedBox(width: AppSpacing.sm),
+                    Expanded(child: _GrantChip(
+                      label: isSp ? 'Total concesión B' : 'Total grant B',
+                      value: fmt.format(grantB),
+                      color: AppTheme.offerBDeep,
+                    )),
+                  ]),
+                  const SizedBox(height: AppSpacing.mdPlus),
+                  // Vesting table header
+                  _VestHeader(isSp: isSp),
+                  const Divider(height: 12),
+                  // Year rows for Offer A
+                  if (grantA > 0) ...[
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                      child: Text(
+                        isSp ? 'Oferta A' : 'Offer A',
+                        style: TextStyle(
+                            fontSize: AppTextSize.xs,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.offerADeep),
+                      ),
+                    ),
+                    ..._schedule(grantA).map((y) {
+                      final rate = _rsuTaxRate(
+                          widget.offerA.baseSalary, y.vested, widget.offerA.stateCode);
+                      final netVested = y.vested * (1 - rate);
+                      return _VestRow(
+                        year: y.year,
+                        vested: y.vested,
+                        cumulative: y.cumulative,
+                        netVested: netVested,
+                        taxRate: rate,
+                        total: grantA,
+                        color: AppTheme.offerADeep,
+                        fmt: fmt,
+                        isSp: isSp,
+                      );
+                    }),
+                  ],
+                  // Year rows for Offer B
+                  if (grantB > 0) ...[
+                    const SizedBox(height: AppSpacing.md),
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                      child: Text(
+                        isSp ? 'Oferta B' : 'Offer B',
+                        style: TextStyle(
+                            fontSize: AppTextSize.xs,
+                            fontWeight: FontWeight.w700,
+                            color: AppTheme.offerBDeep),
+                      ),
+                    ),
+                    ..._schedule(grantB).map((y) {
+                      final rate = _rsuTaxRate(
+                          widget.offerB.baseSalary, y.vested, widget.offerB.stateCode);
+                      final netVested = y.vested * (1 - rate);
+                      return _VestRow(
+                        year: y.year,
+                        vested: y.vested,
+                        cumulative: y.cumulative,
+                        netVested: netVested,
+                        taxRate: rate,
+                        total: grantB,
+                        color: AppTheme.offerBDeep,
+                        fmt: fmt,
+                        isSp: isSp,
+                      );
+                    }),
+                  ],
+                  const SizedBox(height: AppSpacing.md),
+                  // Disclaimer
+                  Container(
+                    padding: const EdgeInsets.all(AppSpacing.md),
+                    decoration: BoxDecoration(
+                      color: AppTheme.accent.withValues(alpha: 0.07),
+                      borderRadius: BorderRadius.circular(AppRadius.md),
+                      border: Border.all(color: AppTheme.accent.withValues(alpha: 0.2)),
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Icon(Icons.info_outline_rounded,
+                            size: 14, color: AppTheme.accent),
+                        const SizedBox(width: AppSpacing.sm),
+                        Expanded(
+                          child: Text(
+                            isSp
+                                ? 'Las RSU se gravan como ingreso ordinario en la fecha de adquisición. Los valores mostrados son estimaciones previas a impuestos. El valor real depende del precio de la acción al momento de la adquisición.'
+                                : 'RSU values shown are pre-tax estimates. Actual vesting value depends on stock price at vesting date. RSUs are taxed as ordinary income.',
+                            style: TextStyle(
+                                fontSize: AppTextSize.xs,
+                                color: ct.textSecondary,
+                                height: 1.4),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _VestYear {
+  final int year;
+  final double vested;
+  final double cumulative;
+  const _VestYear({required this.year, required this.vested, required this.cumulative});
+}
+
+class _GrantChip extends StatelessWidget {
+  final String label, value;
+  final Color color;
+  const _GrantChip({required this.label, required this.value, required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.smPlus),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(AppRadius.lg),
+        border: Border.all(color: color.withValues(alpha: 0.25)),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Text(label,
+            style: TextStyle(
+                fontSize: AppTextSize.xs,
+                color: color,
+                fontWeight: FontWeight.w500)),
+        Text(value,
+            style: TextStyle(
+                fontSize: AppTextSize.md,
+                fontWeight: FontWeight.w800,
+                color: color)),
+      ]),
+    );
+  }
+}
+
+class _VestHeader extends StatelessWidget {
+  final bool isSp;
+  const _VestHeader({required this.isSp});
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      SizedBox(
+          width: 48,
+          child: Text(isSp ? 'Año' : 'Year',
+              style: const TextStyle(
+                  fontSize: AppTextSize.xs,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF64748B)))),
+      Expanded(
+          child: Text(isSp ? 'Vest bruto' : 'Gross vest',
+              style: const TextStyle(
+                  fontSize: AppTextSize.xs,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF64748B)))),
+      Expanded(
+          child: Text(isSp ? 'Neto (est.)' : 'Net (est.)',
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                  fontSize: AppTextSize.xs,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF64748B)))),
+      SizedBox(
+          width: 52,
+          child: Text(isSp ? 'Progreso' : 'Progress',
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                  fontSize: AppTextSize.xs,
+                  fontWeight: FontWeight.w700,
+                  color: Color(0xFF64748B)))),
+    ]);
+  }
+}
+
+class _VestRow extends StatelessWidget {
+  final int year;
+  final double vested, cumulative, netVested, taxRate, total;
+  final Color color;
+  final NumberFormat fmt;
+  final bool isSp;
+
+  const _VestRow({
+    required this.year,
+    required this.vested,
+    required this.cumulative,
+    required this.netVested,
+    required this.taxRate,
+    required this.total,
+    required this.color,
+    required this.fmt,
+    required this.isSp,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final pct = total > 0 ? (cumulative / total) * 100 : 0.0;
+    final yearLabel = year == 1
+        ? (isSp ? 'Año 1 (cliff)' : 'Year 1 (cliff)')
+        : (isSp ? 'Año $year' : 'Year $year');
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+      child: Row(children: [
+        SizedBox(
+          width: 48,
+          child: Text(yearLabel,
+              style: TextStyle(
+                  fontSize: AppTextSize.xs,
+                  color: color,
+                  fontWeight: FontWeight.w600)),
+        ),
+        Expanded(
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text(fmt.format(vested),
+                style: const TextStyle(
+                    fontSize: AppTextSize.sm, fontWeight: FontWeight.w600)),
+            Text('${(taxRate * 100).toStringAsFixed(1)}% tax est.',
+                style: const TextStyle(
+                    fontSize: 9, color: Color(0xFF94A3B8))),
+          ]),
+        ),
+        Expanded(
+          child: Text(fmt.format(netVested),
+              textAlign: TextAlign.right,
+              style: TextStyle(
+                  fontSize: AppTextSize.sm,
+                  fontWeight: FontWeight.w700,
+                  color: color)),
+        ),
+        SizedBox(
+          width: 52,
+          child: Text('${pct.toStringAsFixed(0)}%',
+              textAlign: TextAlign.right,
+              style: const TextStyle(
+                  fontSize: AppTextSize.sm,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF64748B))),
+        ),
+      ]),
     );
   }
 }

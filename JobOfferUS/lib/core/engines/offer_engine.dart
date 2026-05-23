@@ -2,6 +2,7 @@ import '../models/job_offer.dart';
 import '../models/comparison_result.dart';
 import '../data/state_tax_data.dart';
 import '../data/city_col_data.dart';
+import '../data/local_taxes.dart';
 
 /// Pure Dart calculation engine — no Flutter dependencies.
 /// All monetary values are annual USD unless noted.
@@ -57,19 +58,27 @@ class OfferEngine {
   static double stateTax(double grossIncome, String stateCode) =>
       StateTaxData.calculate(grossIncome, stateCode);
 
-  /// Annual net take-home = gross − federal − state − FICA.
-  static double netTakeHome(double grossIncome, String stateCode) {
+  /// Local/city income tax for [cityName].
+  static double localTax(double grossIncome, String cityName) =>
+      LocalTaxData.calculate(grossIncome, cityName);
+
+  /// Annual net take-home = gross − federal − state − local − FICA.
+  static double netTakeHome(double grossIncome, String stateCode,
+      [String cityName = '']) {
     return grossIncome -
         federalTax(grossIncome) -
         stateTax(grossIncome, stateCode) -
+        localTax(grossIncome, cityName) -
         ficaTax(grossIncome);
   }
 
-  /// Annual effective tax rate as percentage.
-  static double effectiveTaxRate(double grossIncome, String stateCode) {
+  /// Annual effective tax rate as percentage (includes local tax).
+  static double effectiveTaxRate(double grossIncome, String stateCode,
+      [String cityName = '']) {
     if (grossIncome <= 0) return 0;
     final total = federalTax(grossIncome) +
         stateTax(grossIncome, stateCode) +
+        localTax(grossIncome, cityName) +
         ficaTax(grossIncome);
     return (total / grossIncome) * 100;
   }
@@ -108,29 +117,36 @@ class OfferEngine {
   }
 
   /// After-tax value of a one-time signing bonus.
-  /// Signing bonus is taxed at supplemental federal rate (22%) + state + FICA.
-  static double signingBonusAfterTax(double signingBonus, double annualSalary, String stateCode) {
+  /// Signing bonus is taxed at supplemental federal rate (22%) + state + local + FICA.
+  static double signingBonusAfterTax(double signingBonus, double annualSalary,
+      String stateCode, [String cityName = '']) {
     if (signingBonus <= 0) return 0;
-    // Supplemental federal rate 22% (flat withholding for bonuses ≤ $1M).
-    // For high earners, use marginal approach on total income.
+    // Marginal approach on total income.
     final totalInc = annualSalary + signingBonus;
-    final taxOnTotal = federalTax(totalInc) + stateTax(totalInc, stateCode);
-    final taxOnSalary = federalTax(annualSalary) + stateTax(annualSalary, stateCode);
+    final taxOnTotal = federalTax(totalInc) +
+        stateTax(totalInc, stateCode) +
+        localTax(totalInc, cityName);
+    final taxOnSalary = federalTax(annualSalary) +
+        stateTax(annualSalary, stateCode) +
+        localTax(annualSalary, cityName);
     return signingBonus - (taxOnTotal - taxOnSalary);
   }
 
   /// After-tax value of annual bonus.
   static double bonusAfterTax(
-      double annualSalary, double bonusPct, String stateCode) {
+      double annualSalary, double bonusPct, String stateCode,
+      [String cityName = '']) {
     if (bonusPct <= 0) return 0;
     final bonus = annualSalary * (bonusPct / 100);
     // Marginal tax on bonus ≈ same as top bracket of combined salary
     final totalInc = annualSalary + bonus;
     final taxOnTotal = federalTax(totalInc) +
         stateTax(totalInc, stateCode) +
+        localTax(totalInc, cityName) +
         ficaTax(totalInc);
     final taxOnSalary = federalTax(annualSalary) +
         stateTax(annualSalary, stateCode) +
+        localTax(annualSalary, cityName) +
         ficaTax(annualSalary);
     return bonus - (taxOnTotal - taxOnSalary);
   }
@@ -145,6 +161,7 @@ class OfferEngine {
     required String stateCode,
     required double benefits,
     required double commuteCostAnnual,
+    String cityName = '',
   }) {
     final result = <double>[];
     double salary = baseSalary;
@@ -155,6 +172,7 @@ class OfferEngine {
         k401kMatchPct: k401kMatchPct,
         k401kUpToPct: k401kUpToPct,
         stateCode: stateCode,
+        cityName: cityName,
         benefits: benefits,
         ptoValue: ptoValue(salary, 15), // assume 15 PTO for projection
         rsuValue: 0,
@@ -176,9 +194,10 @@ class OfferEngine {
     required double ptoValue,
     required double rsuValue,
     required double commuteCost,
+    String cityName = '',
   }) {
-    return netTakeHome(salary, stateCode) +
-        bonusAfterTax(salary, bonusPct, stateCode) +
+    return netTakeHome(salary, stateCode, cityName) +
+        bonusAfterTax(salary, bonusPct, stateCode, cityName) +
         k401kMatchValue(salary,
             matchPct: k401kMatchPct, upToPct: k401kUpToPct) +
         benefits +
@@ -251,14 +270,15 @@ class OfferEngine {
   static OfferResult _evaluate(JobOffer o) {
     final fed = federalTax(o.baseSalary);
     final state = stateTax(o.baseSalary, o.stateCode);
+    final local = localTax(o.baseSalary, o.city);
     final fica = ficaTax(o.baseSalary);
-    final totalTax = fed + state + fica;
+    final totalTax = fed + state + local + fica;
     final takeHome = (o.baseSalary - totalTax).clamp(0.0, double.infinity);
     final effRate = o.baseSalary > 0 ? (totalTax / o.baseSalary) * 100 : 0.0;
 
     final bonus = o.baseSalary * (o.bonusPct / 100);
-    final bonusNet = bonusAfterTax(o.baseSalary, o.bonusPct, o.stateCode);
-    final signingNet = signingBonusAfterTax(o.signingBonus, o.baseSalary, o.stateCode);
+    final bonusNet = bonusAfterTax(o.baseSalary, o.bonusPct, o.stateCode, o.city);
+    final signingNet = signingBonusAfterTax(o.signingBonus, o.baseSalary, o.stateCode, o.city);
     final match = k401kMatchValue(o.baseSalary,
         matchPct: o.k401kMatchPct, upToPct: o.k401kUpToPct);
     final health = o.healthInsuranceSavings + o.dentalVisionSavings;
@@ -279,6 +299,7 @@ class OfferEngine {
       k401kMatchPct: o.k401kMatchPct,
       k401kUpToPct: o.k401kUpToPct,
       stateCode: o.stateCode,
+      cityName: o.city,
       benefits: health,
       commuteCostAnnual: commute,
     );
@@ -287,6 +308,7 @@ class OfferEngine {
       grossSalary: o.baseSalary,
       federalTax: fed,
       stateTax: state,
+      localTax: local,
       ficaTax: fica,
       totalTax: totalTax,
       effectiveTaxRate: effRate,

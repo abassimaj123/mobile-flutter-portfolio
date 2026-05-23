@@ -3,6 +3,7 @@ class OfferResult {
   final double grossSalary;
   final double federalTax;
   final double stateTax;
+  final double localTax; // city/local income tax
   final double ficaTax;
   final double totalTax;
   final double effectiveTaxRate; // %
@@ -23,6 +24,7 @@ class OfferResult {
     required this.grossSalary,
     required this.federalTax,
     required this.stateTax,
+    this.localTax = 0,
     required this.ficaTax,
     required this.totalTax,
     required this.effectiveTaxRate,
