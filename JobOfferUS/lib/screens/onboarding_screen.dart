@@ -40,6 +40,17 @@ class OnboardingScreen extends StatelessWidget {
                 'Impuestos federales + estatales, 401k, seguro médico — todo calculado.',
             pillsEs: ['Impuesto federal', 'Impuesto estatal', '401k'],
           ),
+          OnboardingPage(
+            icon: Icons.bookmark_rounded,
+            title: 'Save Your\nBest Offers',
+            subtitle:
+                'Your saved offers are always ready to compare — set deadlines and revisit anytime.',
+            pills: ['History', 'Deadlines', 'Compare Offers'],
+            titleEs: 'Guarda tus\nmejores ofertas',
+            subtitleEs:
+                'Tus ofertas guardadas están listas para comparar — establece plazos y consulta cuando quieras.',
+            pillsEs: ['Historial', 'Fechas límite', 'Comparar ofertas'],
+          ),
         ],
       );
 }

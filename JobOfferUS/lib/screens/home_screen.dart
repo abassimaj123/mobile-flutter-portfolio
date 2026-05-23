@@ -169,6 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
             showOfferC: _showOfferC,
             canCompare: _canCompare,
             isSp: isSp,
+            isPremium: freemiumService.hasFullAccess,
             onOfferAChanged: (o) => setState(() => _offerA = o),
             onOfferBChanged: (o) => setState(() => _offerB = o),
             onOfferCChanged: (o) => setState(() => _offerC = o),
@@ -286,6 +287,7 @@ class _ComparisonTab extends StatelessWidget {
   final bool showOfferC;
   final bool canCompare;
   final bool isSp;
+  final bool isPremium;
   final ValueChanged<JobOffer> onOfferAChanged;
   final ValueChanged<JobOffer> onOfferBChanged;
   final ValueChanged<JobOffer> onOfferCChanged;
@@ -301,6 +303,7 @@ class _ComparisonTab extends StatelessWidget {
     required this.showOfferC,
     required this.canCompare,
     required this.isSp,
+    required this.isPremium,
     required this.onOfferAChanged,
     required this.onOfferBChanged,
     required this.onOfferCChanged,
@@ -452,6 +455,11 @@ class _ComparisonTab extends StatelessWidget {
                     fontWeight: FontWeight.w700,
                   ),
                 ),
+                if (!isPremium) ...[
+                  const SizedBox(width: AppSpacing.sm),
+                  Icon(Icons.star_rounded,
+                      color: Colors.white.withValues(alpha: 0.85), size: 16),
+                ],
               ],
             ),
           ),
