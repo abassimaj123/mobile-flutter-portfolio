@@ -11,6 +11,7 @@ import 'offer_parser_dialog.dart';
 
 class OfferFormCard extends StatefulWidget {
   final bool isOfferA;
+
   /// When true, this card represents Offer C (emerald color scheme).
   final bool isOfferC;
   final JobOffer value;
@@ -132,9 +133,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
   void _emit() {
     final isHourly = widget.value.isHourly;
     final hpw = double.tryParse(_hoursPerWeek.text) ?? 40.0;
-    final rawSalary = double.tryParse(
-            _salary.text.replaceAll(',', '')) ??
-        0;
+    final rawSalary = double.tryParse(_salary.text.replaceAll(',', '')) ?? 0;
     final annual = isHourly ? rawSalary * hpw * 52 : rawSalary;
 
     widget.onChanged(widget.value.copyWith(
@@ -263,16 +262,14 @@ class _OfferFormCardState extends State<OfferFormCard> {
                     Expanded(
                         child: _tf(
                             ctrl: _label,
-                            label:
-                                widget.isSpanish ? 'Nombre' : 'Offer name',
+                            label: widget.isSpanish ? 'Nombre' : 'Offer name',
                             hint: _offerLabel,
                             icon: Icons.label_outline_rounded)),
                     const SizedBox(width: AppSpacing.smPlus),
                     Expanded(
                         child: _tf(
                             ctrl: _company,
-                            label:
-                                widget.isSpanish ? 'Empresa' : 'Company',
+                            label: widget.isSpanish ? 'Empresa' : 'Company',
                             hint: 'Google, Meta…',
                             icon: Icons.business_rounded)),
                   ]),
@@ -312,11 +309,9 @@ class _OfferFormCardState extends State<OfferFormCard> {
                         final hpw = current.hoursPerWeek > 0
                             ? current.hoursPerWeek
                             : 40.0;
-                        final hourly =
-                            current.baseSalary / hpw / 52;
-                        _salary.text = hourly > 0
-                            ? hourly.toStringAsFixed(2)
-                            : '';
+                        final hourly = current.baseSalary / hpw / 52;
+                        _salary.text =
+                            hourly > 0 ? hourly.toStringAsFixed(2) : '';
                       } else if (!isHourly && current.isHourly) {
                         // Switching to annual — show annual equivalent
                         _salary.text = current.baseSalary > 0
@@ -355,9 +350,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                     Expanded(
                         child: _tf(
                             ctrl: _bonus,
-                            label: widget.isSpanish
-                                ? 'Bono (%)'
-                                : 'Bonus (%)',
+                            label: widget.isSpanish ? 'Bono (%)' : 'Bonus (%)',
                             hint: '10',
                             suffix: '%',
                             num: true,
@@ -367,9 +360,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                     Expanded(
                         child: _tf(
                             ctrl: _pto,
-                            label: widget.isSpanish
-                                ? 'Días PTO'
-                                : 'PTO days',
+                            label: widget.isSpanish ? 'Días PTO' : 'PTO days',
                             hint: '15',
                             num: true,
                             icon: Icons.beach_access_rounded,
@@ -394,8 +385,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                     expanded: _showBenefits,
                     isSp: widget.isSpanish,
                     color: _c1,
-                    onTap: () =>
-                        setState(() => _showBenefits = !_showBenefits),
+                    onTap: () => setState(() => _showBenefits = !_showBenefits),
                   ),
                   if (_showBenefits) ...[
                     const SizedBox(height: AppSpacing.mdPlus),
@@ -413,9 +403,8 @@ class _OfferFormCardState extends State<OfferFormCard> {
                       Expanded(
                           child: _tf(
                               ctrl: _upTo,
-                              label: widget.isSpanish
-                                  ? 'Hasta (%)'
-                                  : 'Up to (%)',
+                              label:
+                                  widget.isSpanish ? 'Hasta (%)' : 'Up to (%)',
                               hint: '4',
                               suffix: '%',
                               num: true,
@@ -532,8 +521,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
               ),
             ),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 2),
               decoration: BoxDecoration(
                 color: _c1.withValues(alpha: 0.18),
                 borderRadius: BorderRadius.circular(AppRadius.md),
@@ -600,8 +588,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
 
   Widget _salaryField() => TextFormField(
         controller: _salary,
-        keyboardType:
-            const TextInputType.numberWithOptions(decimal: true),
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
         inputFormatters: widget.value.isHourly
             ? [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))]
             : [CurrencyInputFormatter(locale: 'en_US')],
@@ -616,7 +603,9 @@ class _OfferFormCardState extends State<OfferFormCard> {
         ),
         decoration: InputDecoration(
           labelText: widget.value.isHourly
-              ? (widget.isSpanish ? 'Salario por hora (\$)' : 'Hourly rate (\$)')
+              ? (widget.isSpanish
+                  ? 'Salario por hora (\$)'
+                  : 'Hourly rate (\$)')
               : (widget.isSpanish
                   ? 'Salario anual (\$)'
                   : 'Annual salary (\$)'),
@@ -629,19 +618,16 @@ class _OfferFormCardState extends State<OfferFormCard> {
             color: _c1.withValues(alpha: 0.6),
           ),
           labelStyle: TextStyle(
-              color: _c1.withValues(alpha: 0.7),
-              fontWeight: FontWeight.w500),
+              color: _c1.withValues(alpha: 0.7), fontWeight: FontWeight.w500),
           floatingLabelStyle:
               TextStyle(color: _c1, fontWeight: FontWeight.w600),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppRadius.xl),
-            borderSide:
-                BorderSide(color: _c1.withValues(alpha: 0.25)),
+            borderSide: BorderSide(color: _c1.withValues(alpha: 0.25)),
           ),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppRadius.xl),
-            borderSide:
-                BorderSide(color: _c1.withValues(alpha: 0.22)),
+            borderSide: BorderSide(color: _c1.withValues(alpha: 0.22)),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(AppRadius.xl),
@@ -676,8 +662,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                 ? [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))]
                 : null),
         validator: num ? _numValidator : null,
-        autovalidateMode:
-            num ? AutovalidateMode.onUserInteraction : null,
+        autovalidateMode: num ? AutovalidateMode.onUserInteraction : null,
         onChanged: onCh ?? (_) => _emit(),
         decoration: InputDecoration(
           labelText: label,
@@ -698,21 +683,17 @@ class _OfferFormCardState extends State<OfferFormCard> {
           labelText: widget.isSpanish ? 'Estado' : 'State',
           floatingLabelStyle:
               TextStyle(color: _c1, fontWeight: FontWeight.w600),
-          prefixIcon:
-              const Icon(Icons.location_on_rounded, size: 17),
+          prefixIcon: const Icon(Icons.location_on_rounded, size: 17),
         ),
         items: StateTaxData.allStateCodes
             .map((s) => DropdownMenuItem(
                   value: s,
-                  child: Text(
-                      '$s — ${StateTaxData.stateNames[s] ?? s}',
-                      style:
-                          const TextStyle(fontSize: AppTextSize.md)),
+                  child: Text('$s — ${StateTaxData.stateNames[s] ?? s}',
+                      style: const TextStyle(fontSize: AppTextSize.md)),
                 ))
             .toList(),
         onChanged: (s) {
-          if (s != null)
-            widget.onChanged(widget.value.copyWith(stateCode: s));
+          if (s != null) widget.onChanged(widget.value.copyWith(stateCode: s));
         },
       );
 
@@ -730,26 +711,21 @@ class _OfferFormCardState extends State<OfferFormCard> {
         labelText: widget.isSpanish
             ? 'Ciudad (costo de vida)'
             : 'City (cost of living)',
-        floatingLabelStyle:
-            TextStyle(color: _c1, fontWeight: FontWeight.w600),
-        prefixIcon:
-            const Icon(Icons.location_city_rounded, size: 17),
-        suffixIcon: widget.isPremium
-            ? null
-            : const Icon(Icons.lock_outline, size: 16),
+        floatingLabelStyle: TextStyle(color: _c1, fontWeight: FontWeight.w600),
+        prefixIcon: const Icon(Icons.location_city_rounded, size: 17),
+        suffixIcon:
+            widget.isPremium ? null : const Icon(Icons.lock_outline, size: 16),
       ),
       items: cities
           .map((c) => DropdownMenuItem(
                 value: c,
-                child: Text(c,
-                    style:
-                        const TextStyle(fontSize: AppTextSize.md)),
+                child:
+                    Text(c, style: const TextStyle(fontSize: AppTextSize.md)),
               ))
           .toList(),
       onChanged: widget.isPremium
           ? (c) {
-              if (c != null)
-                widget.onChanged(widget.value.copyWith(city: c));
+              if (c != null) widget.onChanged(widget.value.copyWith(city: c));
             }
           : null,
     );
@@ -763,21 +739,16 @@ class _OfferFormCardState extends State<OfferFormCard> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
-        color: active
-            ? ct.successGreen.withValues(alpha: 0.1)
-            : ct.surfaceHigh,
+        color: active ? ct.successGreen.withValues(alpha: 0.1) : ct.surfaceHigh,
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(
-          color: active
-              ? ct.successGreen.withValues(alpha: 0.35)
-              : ct.cardBorder,
+          color:
+              active ? ct.successGreen.withValues(alpha: 0.35) : ct.cardBorder,
         ),
       ),
       child: Row(children: [
         Icon(
-          active
-              ? Icons.home_work_rounded
-              : Icons.directions_car_rounded,
+          active ? Icons.home_work_rounded : Icons.directions_car_rounded,
           size: 18,
           color: active ? ct.successGreen : ct.textSecondary,
         ),
@@ -858,14 +829,10 @@ class _Chip extends StatelessWidget {
         padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md, vertical: AppSpacing.xs + 2),
         decoration: BoxDecoration(
-          color: selected
-              ? color.withValues(alpha: 0.18)
-              : ct.surfaceHigh,
+          color: selected ? color.withValues(alpha: 0.18) : ct.surfaceHigh,
           borderRadius: BorderRadius.circular(AppRadius.xxl),
           border: Border.all(
-            color: selected
-                ? color.withValues(alpha: 0.55)
-                : ct.cardBorder,
+            color: selected ? color.withValues(alpha: 0.55) : ct.cardBorder,
             width: selected ? 1.5 : 1,
           ),
         ),
@@ -904,8 +871,7 @@ class _DeadlineRow extends StatelessWidget {
       const SizedBox(width: AppSpacing.smPlus),
       Text(
         isSpanish ? 'Fecha límite:' : 'Offer deadline:',
-        style: TextStyle(
-            fontSize: AppTextSize.sm, color: ct.textSecondary),
+        style: TextStyle(fontSize: AppTextSize.sm, color: ct.textSecondary),
       ),
       const SizedBox(width: AppSpacing.sm),
       Expanded(
@@ -913,7 +879,8 @@ class _DeadlineRow extends StatelessWidget {
           onTap: () async {
             final picked = await showDatePicker(
               context: context,
-              initialDate: deadline ?? DateTime.now().add(const Duration(days: 7)),
+              initialDate:
+                  deadline ?? DateTime.now().add(const Duration(days: 7)),
               firstDate: DateTime.now(),
               lastDate: DateTime.now().add(const Duration(days: 365)),
             );
@@ -931,8 +898,7 @@ class _DeadlineRow extends StatelessWidget {
           onTap: () => onDeadlineChanged(null),
           child: Padding(
             padding: const EdgeInsets.only(left: AppSpacing.xs),
-            child: Icon(Icons.close_rounded,
-                size: 16, color: ct.textSecondary),
+            child: Icon(Icons.close_rounded, size: 16, color: ct.textSecondary),
           ),
         ),
     ]);
@@ -963,8 +929,7 @@ class _DeadlineChip extends StatelessWidget {
         ),
         child: Text(
           isSpanish ? 'Sin fecha límite' : 'No deadline',
-          style: TextStyle(
-              fontSize: AppTextSize.sm, color: ct.textSecondary),
+          style: TextStyle(fontSize: AppTextSize.sm, color: ct.textSecondary),
         ),
       );
     }
@@ -1059,15 +1024,18 @@ class _BenchmarkChip extends StatelessWidget {
     if (pctDiff > 10) {
       chipColor = AppTheme.successGreen;
       final aboveStr = isSpanish ? 'sobre el mercado' : 'above market';
-      label = '📊 $stateCode ${isSpanish ? 'mediana' : 'median'}: \$${(median / 1000).round()}k — $absDiff% $aboveStr';
+      label =
+          '📊 $stateCode ${isSpanish ? 'mediana' : 'median'}: \$${(median / 1000).round()}k — $absDiff% $aboveStr';
     } else if (pctDiff < -10) {
       chipColor = AppTheme.warningOrange;
       final belowStr = isSpanish ? 'bajo el mercado' : 'below market';
-      label = '📊 $stateCode ${isSpanish ? 'mediana' : 'median'}: \$${(median / 1000).round()}k — $absDiff% $belowStr';
+      label =
+          '📊 $stateCode ${isSpanish ? 'mediana' : 'median'}: \$${(median / 1000).round()}k — $absDiff% $belowStr';
     } else {
       chipColor = AppTheme.textSecondary;
       final atStr = isSpanish ? 'en el mercado' : 'at market';
-      label = '📊 $stateCode ${isSpanish ? 'mediana' : 'median'}: \$${(median / 1000).round()}k — $atStr';
+      label =
+          '📊 $stateCode ${isSpanish ? 'mediana' : 'median'}: \$${(median / 1000).round()}k — $atStr';
     }
 
     return Padding(
@@ -1111,8 +1079,7 @@ class _BenefitsToggle extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding:
-            const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
         decoration: BoxDecoration(
           color: color.withValues(alpha: 0.08),
           borderRadius: BorderRadius.circular(AppRadius.lg),
@@ -1120,9 +1087,7 @@ class _BenefitsToggle extends StatelessWidget {
         ),
         child: Row(children: [
           Icon(
-            expanded
-                ? Icons.expand_less_rounded
-                : Icons.add_circle_outline,
+            expanded ? Icons.expand_less_rounded : Icons.add_circle_outline,
             color: color,
             size: 18,
           ),
@@ -1141,19 +1106,15 @@ class _BenefitsToggle extends StatelessWidget {
           const Spacer(),
           if (!expanded)
             Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 8, vertical: 3),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.14),
-                borderRadius:
-                    BorderRadius.circular(AppRadius.mdPlus),
+                borderRadius: BorderRadius.circular(AppRadius.mdPlus),
               ),
               child: Text(
                 isSp ? '401k · RSU · Salud' : '401k · RSU · Health',
                 style: TextStyle(
-                    fontSize: 10,
-                    color: color,
-                    fontWeight: FontWeight.w600),
+                    fontSize: 10, color: color, fontWeight: FontWeight.w600),
               ),
             ),
         ]),

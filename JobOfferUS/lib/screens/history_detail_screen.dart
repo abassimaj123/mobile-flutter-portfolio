@@ -20,7 +20,8 @@ class HistoryDetailScreen extends StatelessWidget {
     return ValueListenableBuilder<bool>(
       valueListenable: isSpanishNotifier,
       builder: (_, isEs, __) {
-        final fmt = NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 0);
+        final fmt = NumberFormat.currency(
+            locale: 'en_US', symbol: '\$', decimalDigits: 0);
         final pctFmt = NumberFormat('0.0#', 'en_US');
         final dateFmt = DateFormat('MMM d, yyyy – HH:mm');
 
@@ -81,10 +82,14 @@ class HistoryDetailScreen extends StatelessWidget {
                 _DetailCard(
                   title: isEs ? 'Compensación' : 'Compensation',
                   rows: [
-                    _RowData(isEs ? 'Salario bruto' : 'Gross Salary', fmt.format(salary)),
-                    _RowData(isEs ? 'Ingreso neto anual' : 'Net Annual', fmt.format(netSalary)),
-                    _RowData(isEs ? 'Ingreso neto mensual' : 'Net Monthly', fmt.format(monthlyNet)),
-                    _RowData(isEs ? 'Tasa efectiva' : 'Effective Tax Rate', '${pctFmt.format(taxRate)}%'),
+                    _RowData(isEs ? 'Salario bruto' : 'Gross Salary',
+                        fmt.format(salary)),
+                    _RowData(isEs ? 'Ingreso neto anual' : 'Net Annual',
+                        fmt.format(netSalary)),
+                    _RowData(isEs ? 'Ingreso neto mensual' : 'Net Monthly',
+                        fmt.format(monthlyNet)),
+                    _RowData(isEs ? 'Tasa efectiva' : 'Effective Tax Rate',
+                        '${pctFmt.format(taxRate)}%'),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
@@ -94,20 +99,25 @@ class HistoryDetailScreen extends StatelessWidget {
                   title: isEs ? 'Beneficios y Extras' : 'Benefits & Extras',
                   rows: [
                     if (bonus > 0)
-                      _RowData(isEs ? 'Bono anual' : 'Annual Bonus', fmt.format(bonus)),
+                      _RowData(isEs ? 'Bono anual' : 'Annual Bonus',
+                          fmt.format(bonus)),
                     if (benefits > 0)
-                      _RowData(isEs ? 'Beneficios salud' : 'Health Benefits', fmt.format(benefits)),
+                      _RowData(isEs ? 'Beneficios salud' : 'Health Benefits',
+                          fmt.format(benefits)),
                     if (stockOptions > 0)
-                      _RowData(isEs ? 'RSU / Stock' : 'RSU / Stock', fmt.format(stockOptions)),
+                      _RowData(isEs ? 'RSU / Stock' : 'RSU / Stock',
+                          fmt.format(stockOptions)),
                     if (pto > 0)
-                      _RowData(isEs ? 'Días PTO' : 'PTO Days', '$pto ${isEs ? "días" : "days"}'),
+                      _RowData(isEs ? 'Días PTO' : 'PTO Days',
+                          '$pto ${isEs ? "días" : "days"}'),
                   ],
                 ),
                 const SizedBox(height: AppSpacing.md),
 
                 // ── Metadata ─────────────────────────────────────────────────
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: AppSpacing.sm),
                   child: Text(
                     '${isEs ? "Guardado" : "Saved"}: ${dateFmt.format(createdAt)}',
                     style: TextStyle(
@@ -185,8 +195,8 @@ class _DetailCard extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(r.label,
-              style: TextStyle(
-                  fontSize: AppTextSize.sm, color: ct.textSecondary)),
+              style:
+                  TextStyle(fontSize: AppTextSize.sm, color: ct.textSecondary)),
           Text(r.value,
               style: const TextStyle(
                   fontSize: AppTextSize.sm, fontWeight: FontWeight.w600)),

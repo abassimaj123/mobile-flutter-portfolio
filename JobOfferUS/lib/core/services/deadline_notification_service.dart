@@ -21,8 +21,7 @@ class DeadlineNotificationService {
 
     tz_data.initializeTimeZones();
 
-    const androidInit =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidInit = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosInit = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -36,9 +35,8 @@ class DeadlineNotificationService {
     await _plugin.initialize(initSettings);
 
     // Request Android 13+ notification permission
-    final androidImpl = _plugin
-        .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    final androidImpl = _plugin.resolvePlatformSpecificImplementation<
+        AndroidFlutterLocalNotificationsPlugin>();
     if (androidImpl != null) {
       await androidImpl.requestNotificationsPermission();
     }
@@ -86,8 +84,7 @@ class DeadlineNotificationService {
     }
 
     // Day-of notification at 09:00 local time
-    final dayOf = DateTime(
-        deadline.year, deadline.month, deadline.day, 9, 0);
+    final dayOf = DateTime(deadline.year, deadline.month, deadline.day, 9, 0);
     final tzDayOf = tz.TZDateTime.from(dayOf, local);
     if (tzDayOf.isAfter(now)) {
       final titleToday = isSpanish
@@ -139,14 +136,33 @@ class DeadlineNotificationService {
 
   static String _monthNameEn(int m) => const [
         '',
-        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec',
       ][m];
 
   static String _monthNameEs(int m) => const [
         '',
-        'enero',    'febrero',  'marzo',    'abril',
-        'mayo',     'junio',    'julio',    'agosto',
-        'septiembre','octubre', 'noviembre','diciembre',
+        'enero',
+        'febrero',
+        'marzo',
+        'abril',
+        'mayo',
+        'junio',
+        'julio',
+        'agosto',
+        'septiembre',
+        'octubre',
+        'noviembre',
+        'diciembre',
       ][m];
 }

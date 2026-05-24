@@ -158,6 +158,13 @@ class CalcwiseThemeFactory {
         bodyMedium:    TextStyle(color: textSecDark, fontSize: AppTextSize.body, height: 1.5),
         labelLarge:    const TextStyle(color: Colors.white,  fontWeight: FontWeight.w600, fontSize: AppTextSize.bodyMd),
       ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.transparent,
+        modalBackgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        modalElevation: 0,
+      ),
       dividerTheme: DividerThemeData(color: borderDark, space: 1, thickness: 1),
       listTileTheme: ListTileThemeData(textColor: textPriDark),
       switchTheme: SwitchThemeData(
@@ -282,6 +289,13 @@ class CalcwiseThemeFactory {
         bodyLarge:     TextStyle(color: _textPriLight, fontSize: AppTextSize.bodyLg, height: 1.5),
         bodyMedium:    TextStyle(color: _textSecLight, fontSize: AppTextSize.body, height: 1.5),
         labelLarge:    TextStyle(color: Colors.white,  fontWeight: FontWeight.w600, fontSize: AppTextSize.bodyMd),
+      ),
+      bottomSheetTheme: const BottomSheetThemeData(
+        backgroundColor: Colors.transparent,
+        modalBackgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        modalElevation: 0,
       ),
       dividerTheme: const DividerThemeData(color: _borderLight, space: 1, thickness: 1),
       listTileTheme: const ListTileThemeData(textColor: _textPriLight),

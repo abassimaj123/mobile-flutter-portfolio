@@ -32,10 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
       stateCode: 'CA',
       city: 'San Francisco, CA');
   JobOffer _offerB = const JobOffer(
-      label: 'Offer B',
-      baseSalary: 90000,
-      stateCode: 'TX',
-      city: 'Austin, TX');
+      label: 'Offer B', baseSalary: 90000, stateCode: 'TX', city: 'Austin, TX');
   JobOffer _offerC = const JobOffer(
       label: 'Offer C', baseSalary: 0, stateCode: 'NY', city: 'New York, NY');
   bool _showOfferC = false;
@@ -323,7 +320,8 @@ class _ComparisonTab extends StatelessWidget {
 
   Widget _body(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xl),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xl),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
@@ -334,7 +332,9 @@ class _ComparisonTab extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 // ── Hero ──────────────────────────────────────────────────────
-                CalcwiseStaggerItem(index: 0, child: _HeroBanner(isSp: isSp, showOfferC: showOfferC)),
+                CalcwiseStaggerItem(
+                    index: 0,
+                    child: _HeroBanner(isSp: isSp, showOfferC: showOfferC)),
                 const SizedBox(height: AppSpacing.xxl),
                 ValueListenableBuilder<bool>(
                   valueListenable: freemiumService.isPremiumNotifier,
@@ -376,10 +376,11 @@ class _ComparisonTab extends StatelessWidget {
                             onChanged: onOfferCChanged,
                           )),
                       const SizedBox(height: AppSpacing.sm),
-                      _RemoveOfferCChip(
-                          isSp: isSp, onTap: onToggleOfferC),
+                      _RemoveOfferCChip(isSp: isSp, onTap: onToggleOfferC),
                     ] else
-                      Center(child: _AddOfferCChip(isSp: isSp, onTap: onToggleOfferC)),
+                      Center(
+                          child: _AddOfferCChip(
+                              isSp: isSp, onTap: onToggleOfferC)),
                   ]),
                 ),
               ],
@@ -394,7 +395,8 @@ class _ComparisonTab extends StatelessWidget {
     final bottom = MediaQuery.of(context).padding.bottom;
     final ct = CalcwiseTheme.of(context);
     return Container(
-      padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.md, AppSpacing.lg, bottom + AppSpacing.md),
+      padding: EdgeInsets.fromLTRB(
+          AppSpacing.lg, AppSpacing.md, AppSpacing.lg, bottom + AppSpacing.md),
       decoration: BoxDecoration(
         color: ct.surface,
         border: Border(top: BorderSide(color: ct.cardBorder)),
@@ -411,74 +413,75 @@ class _ComparisonTab extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-        AnimatedSwitcher(
-          duration: AppDuration.base,
-          switchInCurve: Curves.easeOut,
-          transitionBuilder: (child, animation) => FadeTransition(
-            opacity: animation,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, 0.04),
-                end: Offset.zero,
-              ).animate(animation),
-              child: child,
-            ),
-          ),
-          child: Container(
-            key: ValueKey<bool>(canCompare),
-            height: 56,
-            decoration: BoxDecoration(
-              gradient: canCompare
-                  ? AppTheme.ctaGradient
-                  : LinearGradient(
-                      colors: [
-                        AppTheme.primary.withValues(alpha: 0.3),
-                        AppTheme.offerBDeep.withValues(alpha: 0.3),
-                      ],
-                    ),
-              borderRadius: BorderRadius.circular(AppRadius.xl),
-              boxShadow: canCompare ? AppTheme.ctaShadow : [],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.compare_arrows_rounded,
-                    color: canCompare
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.35),
-                    size: 22),
-                const SizedBox(width: AppSpacing.sm),
-                Text(
-                  isSp ? 'Comparar ofertas' : 'Compare Offers',
-                  style: TextStyle(
-                    color: canCompare
-                        ? Colors.white
-                        : Colors.white.withValues(alpha: 0.35),
-                    fontSize: AppTextSize.bodyXl,
-                    fontWeight: FontWeight.w700,
-                  ),
+            AnimatedSwitcher(
+              duration: AppDuration.base,
+              switchInCurve: Curves.easeOut,
+              transitionBuilder: (child, animation) => FadeTransition(
+                opacity: animation,
+                child: SlideTransition(
+                  position: Tween<Offset>(
+                    begin: const Offset(0, 0.04),
+                    end: Offset.zero,
+                  ).animate(animation),
+                  child: child,
                 ),
-                if (!isPremium) ...[
-                  const SizedBox(width: AppSpacing.sm),
-                  Icon(Icons.star_rounded,
-                      color: Colors.white.withValues(alpha: 0.85), size: 16),
-                ],
-              ],
+              ),
+              child: Container(
+                key: ValueKey<bool>(canCompare),
+                height: 56,
+                decoration: BoxDecoration(
+                  gradient: canCompare
+                      ? AppTheme.ctaGradient
+                      : LinearGradient(
+                          colors: [
+                            AppTheme.primary.withValues(alpha: 0.3),
+                            AppTheme.offerBDeep.withValues(alpha: 0.3),
+                          ],
+                        ),
+                  borderRadius: BorderRadius.circular(AppRadius.xl),
+                  boxShadow: canCompare ? AppTheme.ctaShadow : [],
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.compare_arrows_rounded,
+                        color: canCompare
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.35),
+                        size: 22),
+                    const SizedBox(width: AppSpacing.sm),
+                    Text(
+                      isSp ? 'Comparar ofertas' : 'Compare Offers',
+                      style: TextStyle(
+                        color: canCompare
+                            ? Colors.white
+                            : Colors.white.withValues(alpha: 0.35),
+                        fontSize: AppTextSize.bodyXl,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    if (!isPremium) ...[
+                      const SizedBox(width: AppSpacing.sm),
+                      Icon(Icons.star_rounded,
+                          color: Colors.white.withValues(alpha: 0.85),
+                          size: 16),
+                    ],
+                  ],
+                ),
+              ),
             ),
-          ),
-        ),
-        if (!isPremium) ...[
-          const SizedBox(height: AppSpacing.xs),
-          Text(
-            isSp ? 'Función premium' : 'Premium feature',
-            style: TextStyle(
-              fontSize: AppTextSize.xs,
-              color: Colors.grey.shade500,
-              fontWeight: FontWeight.w500,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
+            if (!isPremium) ...[
+              const SizedBox(height: AppSpacing.xs),
+              Text(
+                isSp ? 'Función premium' : 'Premium feature',
+                style: TextStyle(
+                  fontSize: AppTextSize.xs,
+                  color: Colors.grey.shade500,
+                  fontWeight: FontWeight.w500,
+                ),
+                textAlign: TextAlign.center,
+              ),
+            ],
           ],
         ),
       ),
@@ -496,7 +499,8 @@ class _HeroBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, AppSpacing.lg),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, AppSpacing.lg),
       decoration: BoxDecoration(
         gradient: AppTheme.heroGradient,
         borderRadius: BorderRadius.circular(AppRadius.xxl),
@@ -520,7 +524,8 @@ class _HeroBanner extends StatelessWidget {
             ],
             const Spacer(),
             Container(
-              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.smPlus, vertical: 5),
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.smPlus, vertical: 5),
               decoration: BoxDecoration(
                 color: AppTheme.accent.withValues(alpha: 0.2),
                 borderRadius: BorderRadius.circular(AppRadius.xxl),
@@ -607,7 +612,8 @@ class _HChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.smPlus, vertical: 5),
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.smPlus, vertical: 5),
       decoration: BoxDecoration(
         color: color ?? Colors.white.withValues(alpha: 0.12),
         borderRadius: BorderRadius.circular(AppRadius.xxl),
@@ -682,8 +688,7 @@ class _RemoveOfferCChip extends StatelessWidget {
           border: Border.all(color: ct.cardBorder),
         ),
         child: Row(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.remove_circle_outline,
-              color: ct.textSecondary, size: 18),
+          Icon(Icons.remove_circle_outline, color: ct.textSecondary, size: 18),
           const SizedBox(width: AppSpacing.sm),
           Text(
             isSp ? 'Quitar 3ª oferta' : 'Remove 3rd offer',

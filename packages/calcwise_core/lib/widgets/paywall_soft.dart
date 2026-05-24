@@ -32,19 +32,22 @@ class PaywallSoft extends StatelessWidget {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       isDismissible: true,
-      builder: (ctx) => Padding(
-        padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.lg + MediaQuery.of(ctx).viewPadding.bottom),
-        child: PaywallSoft(
-          isSpanish: isSpanish,
-          featureTitle: featureTitle ??
-              (isSpanish ? 'Función Premium' : 'Premium Feature'),
-          featureSubtitle: featureSubtitle ??
-              (isSpanish ? 'Desbloquea para continuar' : 'Unlock to continue'),
-          priceLabel: effectivePrice,
-          onUnlock: () {
-            Navigator.of(ctx).pop();
-            onUnlock?.call();
-          },
+      builder: (ctx) => Align(
+        alignment: Alignment.bottomCenter,
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.lg + MediaQuery.of(ctx).viewPadding.bottom),
+          child: PaywallSoft(
+            isSpanish: isSpanish,
+            featureTitle: featureTitle ??
+                (isSpanish ? 'Función Premium' : 'Premium Feature'),
+            featureSubtitle: featureSubtitle ??
+                (isSpanish ? 'Desbloquea para continuar' : 'Unlock to continue'),
+            priceLabel: effectivePrice,
+            onUnlock: () {
+              Navigator.of(ctx).pop();
+              onUnlock?.call();
+            },
+          ),
         ),
       ),
     );

@@ -176,8 +176,7 @@ class ThreeWayBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final fmt = formatter ?? _money;
-    final maxVal =
-        [valueA, valueB, valueC].reduce((a, b) => a > b ? a : b);
+    final maxVal = [valueA, valueB, valueC].reduce((a, b) => a > b ? a : b);
     final rA = maxVal > 0 ? (valueA / maxVal).clamp(0.0, 1.0) : 0.0;
     final rB = maxVal > 0 ? (valueB / maxVal).clamp(0.0, 1.0) : 0.0;
     final rC = maxVal > 0 ? (valueC / maxVal).clamp(0.0, 1.0) : 0.0;
@@ -320,8 +319,7 @@ class _ThreeRow extends StatelessWidget {
                   fmt(value),
                   style: TextStyle(
                     fontSize: AppTextSize.sm,
-                    fontWeight:
-                        isWinner ? FontWeight.w700 : FontWeight.w500,
+                    fontWeight: isWinner ? FontWeight.w700 : FontWeight.w500,
                     color: isWinner ? color : AppTheme.textSecondary,
                   ),
                   textAlign: TextAlign.right,
@@ -477,13 +475,11 @@ class _WinBanner extends StatelessWidget {
                 )),
             const SizedBox(height: AppSpacing.smPlus),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.18),
                 borderRadius: BorderRadius.circular(AppRadius.xxl),
-                border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
               ),
               child: Text(
                 isSp
@@ -579,13 +575,11 @@ class _WinBannerC extends StatelessWidget {
                 )),
             const SizedBox(height: AppSpacing.smPlus),
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
                 color: Colors.white.withValues(alpha: 0.18),
                 borderRadius: BorderRadius.circular(AppRadius.xxl),
-                border: Border.all(
-                    color: Colors.white.withValues(alpha: 0.3)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
               ),
               child: Text(
                 isSp
@@ -613,8 +607,8 @@ class _TieBanner extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-            colors: [AppTheme.warningOrange, AppTheme.accent]),
+        gradient:
+            LinearGradient(colors: [AppTheme.warningOrange, AppTheme.accent]),
         borderRadius: BorderRadius.circular(AppRadius.xxl),
         boxShadow: [
           BoxShadow(

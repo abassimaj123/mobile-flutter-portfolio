@@ -118,8 +118,9 @@ class OfferEngine {
 
   /// After-tax value of a one-time signing bonus.
   /// Signing bonus is taxed at supplemental federal rate (22%) + state + local + FICA.
-  static double signingBonusAfterTax(double signingBonus, double annualSalary,
-      String stateCode, [String cityName = '']) {
+  static double signingBonusAfterTax(
+      double signingBonus, double annualSalary, String stateCode,
+      [String cityName = '']) {
     if (signingBonus <= 0) return 0;
     // Marginal approach on total income.
     final totalInc = annualSalary + signingBonus;
@@ -227,9 +228,7 @@ class OfferEngine {
       // 3-way comparison
       final maxTc = [tcA, tcB, tcC].reduce((x, y) => x > y ? x : y);
 
-      if (maxTc == tcC &&
-          (tcC - tcA).abs() > 1 &&
-          (tcC - tcB).abs() > 1) {
+      if (maxTc == tcC && (tcC - tcA).abs() > 1 && (tcC - tcB).abs() > 1) {
         winner = Winner.offerC;
         advantage = tcC - [tcA, tcB].reduce((x, y) => x > y ? x : y);
       } else if (maxTc == tcA &&
@@ -277,8 +276,10 @@ class OfferEngine {
     final effRate = o.baseSalary > 0 ? (totalTax / o.baseSalary) * 100 : 0.0;
 
     final bonus = o.baseSalary * (o.bonusPct / 100);
-    final bonusNet = bonusAfterTax(o.baseSalary, o.bonusPct, o.stateCode, o.city);
-    final signingNet = signingBonusAfterTax(o.signingBonus, o.baseSalary, o.stateCode, o.city);
+    final bonusNet =
+        bonusAfterTax(o.baseSalary, o.bonusPct, o.stateCode, o.city);
+    final signingNet =
+        signingBonusAfterTax(o.signingBonus, o.baseSalary, o.stateCode, o.city);
     final match = k401kMatchValue(o.baseSalary,
         matchPct: o.k401kMatchPct, upToPct: o.k401kUpToPct);
     final health = o.healthInsuranceSavings + o.dentalVisionSavings;
@@ -289,8 +290,14 @@ class OfferEngine {
         salary: takeHome, fromCity: o.city, toCity: 'National Average');
 
     // Total comp includes signing bonus in year-1 value
-    final totalComp =
-        takeHome + bonusNet + match + health + pto + o.annualRsuValue - commute + signingNet;
+    final totalComp = takeHome +
+        bonusNet +
+        match +
+        health +
+        pto +
+        o.annualRsuValue -
+        commute +
+        signingNet;
 
     final projection = fiveYearProjection(
       baseSalary: o.baseSalary,
@@ -329,8 +336,7 @@ class OfferEngine {
 
   static Map<String, Winner> _categoryWinnersThree(
       OfferResult a, OfferResult b, OfferResult? c) {
-    Winner w3(double va, double vb, double? vc,
-        {bool lowerIsBetter = false}) {
+    Winner w3(double va, double vb, double? vc, {bool lowerIsBetter = false}) {
       final vals = <Winner, double>{
         Winner.offerA: va,
         Winner.offerB: vb,
@@ -338,16 +344,14 @@ class OfferEngine {
       if (vc != null) vals[Winner.offerC] = vc;
 
       if (lowerIsBetter) {
-        final best =
-            vals.entries.reduce((x, y) => x.value < y.value ? x : y);
+        final best = vals.entries.reduce((x, y) => x.value < y.value ? x : y);
         final second = vals.entries
             .where((e) => e.key != best.key)
             .reduce((x, y) => x.value < y.value ? x : y);
         if ((best.value - second.value).abs() < 0.5) return Winner.tie;
         return best.key;
       } else {
-        final best =
-            vals.entries.reduce((x, y) => x.value > y.value ? x : y);
+        final best = vals.entries.reduce((x, y) => x.value > y.value ? x : y);
         final second = vals.entries
             .where((e) => e.key != best.key)
             .reduce((x, y) => x.value > y.value ? x : y);
@@ -359,17 +363,18 @@ class OfferEngine {
     return {
       'takeHome': w3(a.netTakeHome, b.netTakeHome, c?.netTakeHome),
       'bonus': w3(a.bonusAfterTax, b.bonusAfterTax, c?.bonusAfterTax),
-      'benefits': w3(a.k401kMatch + a.healthBenefits,
+      'benefits': w3(
+          a.k401kMatch + a.healthBenefits,
           b.k401kMatch + b.healthBenefits,
           c != null ? c.k401kMatch + c.healthBenefits : null),
       'pto': w3(a.ptoValue, b.ptoValue, c?.ptoValue),
       'rsu': w3(a.annualRsuValue, b.annualRsuValue, c?.annualRsuValue),
-      'commute': w3(a.commuteCost, b.commuteCost, c?.commuteCost,
-          lowerIsBetter: true),
-      'col': w3(a.colAdjustedTakeHome, b.colAdjustedTakeHome,
-          c?.colAdjustedTakeHome),
-      'total': w3(a.totalCompensation, b.totalCompensation,
-          c?.totalCompensation),
+      'commute':
+          w3(a.commuteCost, b.commuteCost, c?.commuteCost, lowerIsBetter: true),
+      'col': w3(
+          a.colAdjustedTakeHome, b.colAdjustedTakeHome, c?.colAdjustedTakeHome),
+      'total':
+          w3(a.totalCompensation, b.totalCompensation, c?.totalCompensation),
     };
   }
 

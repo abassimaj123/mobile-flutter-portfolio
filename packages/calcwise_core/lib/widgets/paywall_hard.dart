@@ -111,20 +111,19 @@ class PaywallHard extends StatelessWidget {
     final effectivePrice = priceLabel ?? globalPaywallPrice.value;
     await showModalBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       isDismissible: false,
       enableDrag: false,
       builder: (_) => PaywallHard(
-        isSpanish: isSpanish,
-        features: features,
-        priceLabel: effectivePrice,
-        onPurchase: () {
-          Navigator.of(context).pop();
-          onPurchase?.call();
-        },
-        onDismiss: () => Navigator.of(context).pop(),
-      ),
+          isSpanish: isSpanish,
+          features: features,
+          priceLabel: effectivePrice,
+          onPurchase: () {
+            Navigator.of(context).pop();
+            onPurchase?.call();
+          },
+          onDismiss: () => Navigator.of(context).pop(),
+        ),
     );
   }
 

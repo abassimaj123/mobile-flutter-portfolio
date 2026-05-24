@@ -141,7 +141,8 @@ class _AdFooterState extends State<AdFooter> {
       child: Column(mainAxisSize: MainAxisSize.min, children: [
         Container(
           color: AppTheme.surfaceHigh,
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
           child: Row(children: [
             // Watch ad button
             GestureDetector(
@@ -149,7 +150,8 @@ class _AdFooterState extends State<AdFooter> {
                   ? null
                   : _watch,
               child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.sm, vertical: AppSpacing.xxs),
                 child: Row(mainAxisSize: MainAxisSize.min, children: [
                   _watchLoading
                       ? const SizedBox(
@@ -174,7 +176,8 @@ class _AdFooterState extends State<AdFooter> {
             GestureDetector(
               onTap: () => IAPService.instance.buy(),
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: AppSpacing.smPlus, vertical: AppSpacing.xs),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.smPlus, vertical: AppSpacing.xs),
                 decoration: BoxDecoration(
                   color: AppTheme.primary,
                   borderRadius: BorderRadius.circular(AppRadius.md),
@@ -201,7 +204,8 @@ class _AdFooterState extends State<AdFooter> {
             child: AdWidget(ad: _banner!),
           )
         else
-          const SizedBox(height: 50), // AdSize.banner fixed height — intentional
+          const SizedBox(
+              height: 50), // AdSize.banner fixed height — intentional
       ]),
     );
   }

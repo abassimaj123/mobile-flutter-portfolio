@@ -230,9 +230,7 @@ class _CalcwiseAdFooterState extends State<CalcwiseAdFooter> {
             width: double.infinity,
             height: _banner!.size.height.toDouble(),
             child: AdWidget(ad: _banner!),
-          )
-        else
-          const SizedBox(height: 50),
+          ),
       ]),
     );
   }

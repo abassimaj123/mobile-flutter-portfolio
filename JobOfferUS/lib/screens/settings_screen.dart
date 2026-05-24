@@ -72,7 +72,8 @@ class SettingsScreen extends StatelessWidget {
                           const Divider(height: 1),
                           _Tile(
                             icon: Icons.restore_rounded,
-                            label: isSp ? 'Restaurar compra' : 'Restore Purchase',
+                            label:
+                                isSp ? 'Restaurar compra' : 'Restore Purchase',
                             onTap: () => IAPService.instance.restore(),
                           ),
                         ]),
@@ -186,7 +187,8 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xs, AppSpacing.lg, AppSpacing.xs, AppSpacing.sm),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.xs, AppSpacing.lg, AppSpacing.xs, AppSpacing.sm),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(

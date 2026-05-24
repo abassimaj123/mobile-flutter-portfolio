@@ -27,6 +27,7 @@ class CalcwiseAppBarActions extends StatelessWidget {
     required this.session,
     required this.onSettings,
     this.onRewardAd,
+    this.onPremium,
     this.accentColor = const Color(0xFFF59E0B), // amber — matches all app themes
   });
 
@@ -39,6 +40,11 @@ class CalcwiseAppBarActions extends StatelessWidget {
   /// Called when user taps the ad-free shield.
   /// Pass `null` (or omit) for apps without a RewardAdSheet.
   final VoidCallback? onRewardAd;
+
+  /// Called when user taps the "Premium" button.
+  /// Pass the app's own paywall (e.g. `() => PaywallHard.show(context)`).
+  /// If omitted, falls back to [PaywallSoft.show].
+  final VoidCallback? onPremium;
 
   /// Color for premium badge, shield-active state, and Premium button.
   /// Defaults to amber (`0xFFF59E0B`) which all portfolio apps share.
@@ -84,7 +90,9 @@ class CalcwiseAppBarActions extends StatelessWidget {
                   ),
                 )
               : TextButton.icon(
-                  onPressed: () => PaywallSoft.show(context),
+                  onPressed: () => onPremium != null
+                      ? onPremium!()
+                      : PaywallSoft.show(context),
                   icon: const Icon(Icons.workspace_premium, size: 16),
                   label: const Text(
                     'Premium',

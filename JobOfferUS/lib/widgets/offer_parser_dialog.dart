@@ -306,7 +306,8 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
     }
 
     return Container(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.xs),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.xs),
       decoration: BoxDecoration(
         color: ct.surfaceHigh,
         borderRadius: BorderRadius.circular(AppRadius.lg),

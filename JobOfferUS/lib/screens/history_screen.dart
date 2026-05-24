@@ -156,7 +156,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 builder: (context, isPremium, _) {
                   if (isPremium && _history.isNotEmpty) {
                     return IconButton(
-                      icon: const Icon(Icons.delete_sweep, color: CalcwiseSemanticColors.errorDark),
+                      icon: const Icon(Icons.delete_sweep,
+                          color: CalcwiseSemanticColors.errorDark),
                       tooltip: isEs ? 'Borrar todo' : 'Clear all',
                       onPressed: () {
                         HapticFeedback.mediumImpact();
@@ -181,8 +182,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                             // ── Header with count ─────────────────────────
                             SliverToBoxAdapter(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.sm),
+                                padding: const EdgeInsets.fromLTRB(
+                                    AppSpacing.lg,
+                                    AppSpacing.lg,
+                                    AppSpacing.lg,
+                                    AppSpacing.sm),
                                 child: ValueListenableBuilder<bool>(
                                   valueListenable:
                                       freemiumService.isPremiumNotifier,
@@ -205,8 +209,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                           const SizedBox(height: AppSpacing.xs),
                                           Row(children: [
                                             const Icon(Icons.lock_outline,
-                                                size: 14, color: CalcwiseSemanticColors.warnIcon),
-                                            const SizedBox(width: AppSpacing.xs),
+                                                size: 14,
+                                                color: CalcwiseSemanticColors
+                                                    .warnIcon),
+                                            const SizedBox(
+                                                width: AppSpacing.xs),
                                             Expanded(
                                               child: Text(
                                                 isEs
@@ -254,7 +261,9 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                       ? 'Guarda tu primera comparación para verla aquí'
                                       : 'Save your first comparison to see it here',
                                   actionLabel: widget.onSwitchToCompare != null
-                                      ? (isEs ? 'Comparar ahora' : 'Compare Now')
+                                      ? (isEs
+                                          ? 'Comparar ahora'
+                                          : 'Compare Now')
                                       : null,
                                   onAction: widget.onSwitchToCompare,
                                 ),
@@ -264,7 +273,10 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                 delegate: SliverChildBuilderDelegate(
                                   (context, i) => Padding(
                                     padding: const EdgeInsets.fromLTRB(
-                                        AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.smPlus),
+                                        AppSpacing.lg,
+                                        0,
+                                        AppSpacing.lg,
+                                        AppSpacing.smPlus),
                                     child:
                                         _buildCard(context, _history[i], isEs),
                                   ),
@@ -314,7 +326,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
           color: CalcwiseSemanticColors.errorDark.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(AppRadius.xl),
         ),
-        child: const Icon(Icons.delete_outline, color: CalcwiseSemanticColors.errorDark, size: 24),
+        child: const Icon(Icons.delete_outline,
+            color: CalcwiseSemanticColors.errorDark, size: 24),
       ),
       child: InkWell(
         onTap: () {
@@ -328,107 +341,110 @@ class _HistoryScreenState extends State<HistoryScreen> {
         },
         borderRadius: BorderRadius.circular(AppRadius.xl),
         child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).colorScheme.surface,
-          borderRadius: BorderRadius.circular(AppRadius.xl),
-          border: Border.all(color: ct.cardBorder),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.05),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.mdPlus, vertical: AppSpacing.md),
-          child: Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
-            // ── Left: colored dot ───────────────────────────────────────
-            Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppTheme.primary.withValues(alpha: 0.12),
-                shape: BoxShape.circle,
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(AppRadius.xl),
+            border: Border.all(color: ct.cardBorder),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 2),
               ),
-              child: const Icon(Icons.work_outline,
-                  color: AppTheme.primary, size: 20),
-            ),
-            const SizedBox(width: AppSpacing.md),
+            ],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.mdPlus, vertical: AppSpacing.md),
+            child:
+                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+              // ── Left: colored dot ───────────────────────────────────────
+              Container(
+                width: 40,
+                height: 40,
+                decoration: BoxDecoration(
+                  color: AppTheme.primary.withValues(alpha: 0.12),
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.work_outline,
+                    color: AppTheme.primary, size: 20),
+              ),
+              const SizedBox(width: AppSpacing.md),
 
-            // ── Center: job info ────────────────────────────────────────
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    jobTitle.isNotEmpty
-                        ? jobTitle
-                        : (isEs ? 'Oferta' : 'Offer'),
-                    style: const TextStyle(
-                        fontSize: AppTextSize.body,
-                        fontWeight: FontWeight.w700,
-                        color: AppTheme.primary),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  if (company.isNotEmpty) ...[
-                    const SizedBox(height: 1),
-                    Text(company,
+              // ── Center: job info ────────────────────────────────────────
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      jobTitle.isNotEmpty
+                          ? jobTitle
+                          : (isEs ? 'Oferta' : 'Offer'),
+                      style: const TextStyle(
+                          fontSize: AppTextSize.body,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.primary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    if (company.isNotEmpty) ...[
+                      const SizedBox(height: 1),
+                      Text(company,
+                          style: TextStyle(
+                              fontSize: AppTextSize.sm,
+                              color: ct.textSecondary),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis),
+                    ],
+                    const SizedBox(height: AppSpacing.xxs),
+                    Row(children: [
+                      Text(
+                        '${_fmtUSD.format(monthlyNet)}/mo',
                         style: TextStyle(
                             fontSize: AppTextSize.sm, color: ct.textSecondary),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis),
-                  ],
-                  const SizedBox(height: AppSpacing.xxs),
-                  Row(children: [
+                      ),
+                      const SizedBox(width: AppSpacing.sm),
+                      Text(
+                        '· ${isEs ? 'Imp.' : 'Tax'} ${taxRate.toStringAsFixed(1)}%',
+                        style: TextStyle(
+                            fontSize: AppTextSize.xs, color: ct.textSecondary),
+                      ),
+                    ]),
+                    const SizedBox(height: 1),
                     Text(
-                      '${_fmtUSD.format(monthlyNet)}/mo',
-                      style: TextStyle(
-                          fontSize: AppTextSize.sm, color: ct.textSecondary),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      '· ${isEs ? 'Imp.' : 'Tax'} ${taxRate.toStringAsFixed(1)}%',
+                      _fmtDate.format(createdAt),
                       style: TextStyle(
                           fontSize: AppTextSize.xs, color: ct.textSecondary),
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  ]),
-                  const SizedBox(height: 1),
+                  ],
+                ),
+              ),
+
+              // ── Right: hero net salary ─────────────────────────────────
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisSize: MainAxisSize.min,
+                children: [
                   Text(
-                    _fmtDate.format(createdAt),
+                    _fmtUSD.format(netSalary),
+                    style: TextStyle(
+                      fontSize: AppTextSize.display,
+                      fontWeight: FontWeight.w800,
+                      color: AppTheme.primary,
+                      letterSpacing: -0.5,
+                    ),
+                  ),
+                  Text(
+                    isEs ? 'neto/año' : 'net/yr',
                     style: TextStyle(
                         fontSize: AppTextSize.xs, color: ct.textSecondary),
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
-            ),
-
-            // ── Right: hero net salary ─────────────────────────────────
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  _fmtUSD.format(netSalary),
-                  style: TextStyle(
-                    fontSize: AppTextSize.display,
-                    fontWeight: FontWeight.w800,
-                    color: AppTheme.primary,
-                    letterSpacing: -0.5,
-                  ),
-                ),
-                Text(
-                  isEs ? 'neto/año' : 'net/yr',
-                  style: TextStyle(
-                      fontSize: AppTextSize.xs, color: ct.textSecondary),
-                ),
-              ],
-            ),
-          ]),
+            ]),
+          ),
         ),
-      ),
       ), // InkWell
     );
   }
@@ -441,13 +457,20 @@ class _HistorySkeleton extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
       padding: const EdgeInsets.all(16),
-      child: Column(children: List.generate(4, (i) => Padding(
-        padding: const EdgeInsets.only(bottom: 12),
-        child: Container(height: 80, decoration: BoxDecoration(
-          color: isDark ? Colors.white.withValues(alpha: 0.08) : Colors.black.withValues(alpha: 0.06),
-          borderRadius: BorderRadius.circular(16),
-        )),
-      ))),
+      child: Column(
+          children: List.generate(
+              4,
+              (i) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: Container(
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: isDark
+                              ? Colors.white.withValues(alpha: 0.08)
+                              : Colors.black.withValues(alpha: 0.06),
+                          borderRadius: BorderRadius.circular(16),
+                        )),
+                  ))),
     );
   }
 }
