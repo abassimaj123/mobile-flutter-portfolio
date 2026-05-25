@@ -531,7 +531,7 @@ class _OfferFormCardState extends State<OfferFormCard>
                 widget.isSpanish ? 'NUEVO' : 'NEW',
                 style: TextStyle(
                   color: _c1,
-                  fontSize: 9,
+                  fontSize: AppTextSize.xxs,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.6,
                 ),
@@ -1115,7 +1115,7 @@ class _BenefitsToggle extends StatelessWidget {
               child: Text(
                 isSp ? '401k · RSU · Salud' : '401k · RSU · Health',
                 style: TextStyle(
-                    fontSize: 10, color: color, fontWeight: FontWeight.w600),
+                    fontSize: AppTextSize.xs, color: color, fontWeight: FontWeight.w600),
               ),
             ),
         ]),

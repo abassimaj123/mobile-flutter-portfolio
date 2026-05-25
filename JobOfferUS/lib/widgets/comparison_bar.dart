@@ -275,7 +275,7 @@ class _ThreeRow extends StatelessWidget {
               letter,
               style: TextStyle(
                 color: isWinner ? Colors.white : color,
-                fontSize: 9,
+                fontSize: AppTextSize.xxs,
                 fontWeight: FontWeight.w800,
               ),
             ),
