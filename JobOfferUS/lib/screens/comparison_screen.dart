@@ -1381,34 +1381,41 @@ class _RsuVestingCardState extends State<_RsuVestingCard> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Header — tappable
-          GestureDetector(
-            onTap: () => setState(() => _expanded = !_expanded),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.lg,
-                  AppSpacing.mdPlus, AppSpacing.mdPlus, AppSpacing.mdPlus),
-              child: Row(children: [
-                Icon(Icons.trending_up_rounded,
-                    color: AppTheme.accent, size: 18),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Text(
-                    isSp
-                        ? 'Calendario de Adquisición RSU'
-                        : 'RSU Vesting Schedule',
-                    style: const TextStyle(
-                        fontSize: AppTextSize.md,
-                        fontWeight: FontWeight.w700,
-                        color: AppTheme.accent),
+          Material(
+            color: Colors.transparent,
+            borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(AppRadius.xl)),
+            child: InkWell(
+              onTap: () => setState(() => _expanded = !_expanded),
+              borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(AppRadius.xl)),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(AppSpacing.lg,
+                    AppSpacing.mdPlus, AppSpacing.mdPlus, AppSpacing.mdPlus),
+                child: Row(children: [
+                  Icon(Icons.trending_up_rounded,
+                      color: AppTheme.accent, size: 18),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      isSp
+                          ? 'Calendario de Adquisición RSU'
+                          : 'RSU Vesting Schedule',
+                      style: const TextStyle(
+                          fontSize: AppTextSize.md,
+                          fontWeight: FontWeight.w700,
+                          color: AppTheme.accent),
+                    ),
                   ),
-                ),
-                Icon(
-                  _expanded
-                      ? Icons.expand_less_rounded
-                      : Icons.expand_more_rounded,
-                  color: AppTheme.accent,
-                  size: 20,
-                ),
-              ]),
+                  Icon(
+                    _expanded
+                        ? Icons.expand_less_rounded
+                        : Icons.expand_more_rounded,
+                    color: AppTheme.accent,
+                    size: 20,
+                  ),
+                ]),
+              ),
             ),
           ),
           if (_expanded) ...[
@@ -1583,35 +1590,36 @@ class _VestHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ct = CalcwiseTheme.of(context);
     return Row(children: [
       SizedBox(
           width: 48,
           child: Text(isSp ? 'Año' : 'Year',
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: AppTextSize.xs,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF64748B)))),
+                  color: ct.textSecondary))),
       Expanded(
           child: Text(isSp ? 'Vest bruto' : 'Gross vest',
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: AppTextSize.xs,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF64748B)))),
+                  color: ct.textSecondary))),
       Expanded(
           child: Text(isSp ? 'Neto (est.)' : 'Net (est.)',
               textAlign: TextAlign.right,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: AppTextSize.xs,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF64748B)))),
+                  color: ct.textSecondary))),
       SizedBox(
           width: 52,
           child: Text(isSp ? 'Progreso' : 'Progress',
               textAlign: TextAlign.right,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: AppTextSize.xs,
                   fontWeight: FontWeight.w700,
-                  color: Color(0xFF64748B)))),
+                  color: ct.textSecondary))),
     ]);
   }
 }
@@ -1659,7 +1667,7 @@ class _VestRow extends StatelessWidget {
                 style: const TextStyle(
                     fontSize: AppTextSize.sm, fontWeight: FontWeight.w600)),
             Text('${(taxRate * 100).toStringAsFixed(1)}% tax est.',
-                style: const TextStyle(fontSize: 9, color: Color(0xFF94A3B8))),
+                style: TextStyle(fontSize: AppTextSize.xs, color: CalcwiseTheme.of(context).textSecondary)),
           ]),
         ),
         Expanded(
@@ -1674,10 +1682,10 @@ class _VestRow extends StatelessWidget {
           width: 52,
           child: Text('${pct.toStringAsFixed(0)}%',
               textAlign: TextAlign.right,
-              style: const TextStyle(
+              style: TextStyle(
                   fontSize: AppTextSize.sm,
                   fontWeight: FontWeight.w600,
-                  color: Color(0xFF64748B))),
+                  color: CalcwiseTheme.of(context).textSecondary)),
         ),
       ]),
     );
