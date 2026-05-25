@@ -31,7 +31,8 @@ class OfferFormCard extends StatefulWidget {
   State<OfferFormCard> createState() => _OfferFormCardState();
 }
 
-class _OfferFormCardState extends State<OfferFormCard> {
+class _OfferFormCardState extends State<OfferFormCard>
+    with CalcwiseAutoCalcMixin {
   bool _expanded = true;
   bool _showBenefits = false;
   late final TextEditingController _salary,
@@ -333,7 +334,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                       hint: '40',
                       num: true,
                       icon: Icons.schedule_rounded,
-                      onCh: (_) => _emit(),
+                      onCh: (_) => scheduleCalc(_emit),
                     ),
                   ],
                   // Salary benchmark chip (Feature 3)
@@ -355,7 +356,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                             suffix: '%',
                             num: true,
                             icon: Icons.card_giftcard_rounded,
-                            onCh: (_) => _emit())),
+                            onCh: (_) => scheduleCalc(_emit))),
                     const SizedBox(width: AppSpacing.smPlus),
                     Expanded(
                         child: _tf(
@@ -364,7 +365,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                             hint: '15',
                             num: true,
                             icon: Icons.beach_access_rounded,
-                            onCh: (_) => _emit())),
+                            onCh: (_) => scheduleCalc(_emit))),
                   ]),
                   const SizedBox(height: AppSpacing.md),
                   // Signing bonus
@@ -377,7 +378,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                     prefix: '\$',
                     num: true,
                     icon: Icons.monetization_on_rounded,
-                    onCh: (_) => _emit(),
+                    onCh: (_) => scheduleCalc(_emit),
                   ),
                   const SizedBox(height: AppSpacing.mdPlus),
                   // Benefits toggle
@@ -398,7 +399,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               suffix: '%',
                               num: true,
                               icon: Icons.savings_rounded,
-                              onCh: (_) => _emit())),
+                              onCh: (_) => scheduleCalc(_emit))),
                       const SizedBox(width: AppSpacing.smPlus),
                       Expanded(
                           child: _tf(
@@ -408,7 +409,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               hint: '4',
                               suffix: '%',
                               num: true,
-                              onCh: (_) => _emit())),
+                              onCh: (_) => scheduleCalc(_emit))),
                     ]),
                     const SizedBox(height: AppSpacing.md),
                     Row(children: [
@@ -423,7 +424,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               num: true,
                               isCurrency: true,
                               icon: Icons.health_and_safety_rounded,
-                              onCh: (_) => _emit())),
+                              onCh: (_) => scheduleCalc(_emit))),
                       const SizedBox(width: AppSpacing.smPlus),
                       Expanded(
                           child: _tf(
@@ -435,7 +436,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               prefix: '\$',
                               num: true,
                               isCurrency: true,
-                              onCh: (_) => _emit())),
+                              onCh: (_) => scheduleCalc(_emit))),
                     ]),
                     const SizedBox(height: AppSpacing.md),
                     _tf(
@@ -448,7 +449,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                         num: true,
                         isCurrency: true,
                         icon: Icons.trending_up_rounded,
-                        onCh: (_) => _emit()),
+                        onCh: (_) => scheduleCalc(_emit)),
                     const SizedBox(height: AppSpacing.md),
                     _remoteToggle(),
                     if (!widget.value.isRemote) ...[
@@ -462,7 +463,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                           suffix: ' mi',
                           num: true,
                           icon: Icons.directions_car_rounded,
-                          onCh: (_) => _emit()),
+                          onCh: (_) => scheduleCalc(_emit)),
                     ],
                     const SizedBox(height: AppSpacing.md),
                     _cityDropdown(),
@@ -476,7 +477,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                         suffix: '%',
                         num: true,
                         icon: Icons.show_chart_rounded,
-                        onCh: (_) => _emit()),
+                        onCh: (_) => scheduleCalc(_emit)),
                   ],
                 ],
               ),
@@ -594,7 +595,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
             : [CurrencyInputFormatter(locale: 'en_US')],
         validator: _numValidator,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        onChanged: (_) => _emit(),
+        onChanged: (_) => scheduleCalc(_emit),
         style: TextStyle(
           fontSize: AppTextSize.titleMd,
           fontWeight: FontWeight.w700,
@@ -663,7 +664,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                 : null),
         validator: num ? _numValidator : null,
         autovalidateMode: num ? AutovalidateMode.onUserInteraction : null,
-        onChanged: onCh ?? (_) => _emit(),
+        onChanged: onCh ?? (_) => scheduleCalc(_emit),
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
