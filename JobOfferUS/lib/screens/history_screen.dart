@@ -284,12 +284,11 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
 
                             const SliverToBoxAdapter(
-                                child: SizedBox(height: 120)),
+                                child: SizedBox(height: 80)),
                           ],
                         ),
                       ),
               ),
-              const CalcwiseAdFooter(),
             ],
           ),
         );

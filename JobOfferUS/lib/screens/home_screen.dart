@@ -392,11 +392,10 @@ class _ComparisonTab extends StatelessWidget {
   }
 
   Widget _cta(BuildContext context) {
-    final bottom = MediaQuery.of(context).padding.bottom;
     final ct = CalcwiseTheme.of(context);
     return Container(
-      padding: EdgeInsets.fromLTRB(
-          AppSpacing.lg, AppSpacing.md, AppSpacing.lg, bottom + AppSpacing.md),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.md),
       decoration: BoxDecoration(
         color: ct.surface,
         border: Border(top: BorderSide(color: ct.cardBorder)),

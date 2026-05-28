@@ -197,15 +197,24 @@ class OfferParser {
   // ── 401k match ────────────────────────────────────────────────────────────
 
   static double? _parseMatch(String t) {
+    // Pattern 1: "401(k) ... matches/matching ... up to X%"
     final p = RegExp(
       r'401\(?k\)?[^%]{0,40}?(?:match(?:es|ing)?)\s*(?:up\s+to\s+)?(\d{1,2}(?:\.\d+)?)\s*%',
     );
     final m = p.firstMatch(t);
     if (m != null) return double.tryParse(m.group(1)!);
 
-    final alt = RegExp(r'(\d{1,2}(?:\.\d+)?)\s*%\s+401\(?k\)?\s*match');
-    final m2 = alt.firstMatch(t);
+    // Pattern 2: "matches/matching 401(k) contributions up to X%"
+    final p2 = RegExp(
+      r'(?:match(?:es|ing)?)\s+401\(?k\)?[^%]{0,50}?(?:up\s+to\s+)?(\d{1,2}(?:\.\d+)?)\s*%',
+    );
+    final m2 = p2.firstMatch(t);
     if (m2 != null) return double.tryParse(m2.group(1)!);
+
+    // Pattern 3: "X% 401(k) match"
+    final alt = RegExp(r'(\d{1,2}(?:\.\d+)?)\s*%\s+401\(?k\)?\s*match');
+    final m3 = alt.firstMatch(t);
+    if (m3 != null) return double.tryParse(m3.group(1)!);
     return null;
   }
 
@@ -232,16 +241,35 @@ class OfferParser {
   // ── Title (line-based, original case) ─────────────────────────────────────
 
   static String? _parseTitle(String text) {
+    // "Title: Senior Software Engineer" / "job title: X" (case-insensitive label)
     final p = RegExp(
       r'(?:position|title|role|job\s+title)\s*[:\-]\s*([A-Z][A-Za-z0-9 ,/\-&]{2,60})',
+      caseSensitive: false,
     );
     final m = p.firstMatch(text);
-    return m?.group(1)?.trim();
+    if (m != null) return m.group(1)?.trim();
+
+    // "position of Senior Software Engineer at …"
+    final p2 = RegExp(
+      r'position\s+of\s+([A-Z][A-Za-z0-9 ,/\-&]{2,60?})(?:\s+at\s+|\s+with\s+|\s+in\s+)',
+      caseSensitive: false,
+    );
+    final m2 = p2.firstMatch(text);
+    return m2?.group(1)?.trim();
   }
 
   // ── Company ───────────────────────────────────────────────────────────────
 
   static String? _parseCompany(String text) {
+    // "Company: Acme Corp"
+    final label = RegExp(
+      r'company\s*[:\-]\s*([A-Z][A-Za-z0-9&\.\- ]{1,40})',
+      caseSensitive: false,
+    );
+    final ml = label.firstMatch(text);
+    if (ml != null) return ml.group(1)?.trim();
+
+    // "…at Acme Corp…" near offer keywords
     final p = RegExp(
       r'(?:from|at|with|join(?:ing)?)\s+([A-Z][A-Za-z0-9&\.\- ]{2,40}?)\s+(?:as|is\s+pleased|team|inc\.?|llc|corporation)',
     );

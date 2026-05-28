@@ -45,7 +45,7 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
   }
 
   Future<bool> _canParse() async {
-    if (freemiumService.isPremium) return true;
+    if (freemiumService.hasFullAccess) return true;
     final prefs = await SharedPreferences.getInstance();
     final last = prefs.getString(_quotaKey);
     final today = DateTime.now().toIso8601String().substring(0, 10);

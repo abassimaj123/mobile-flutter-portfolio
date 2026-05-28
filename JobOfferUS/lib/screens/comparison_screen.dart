@@ -4,7 +4,8 @@ import 'package:calcwise_core/calcwise_core.dart' hide PaywallHard;
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:printing/printing.dart';
+import 'dart:io';
+import 'package:path_provider/path_provider.dart';
 import '../core/db/database_helper.dart';
 import '../core/engines/insight_engine.dart';
 import '../core/freemium/iap_service.dart';
@@ -370,11 +371,13 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
       ),
     ));
 
-    await Printing.sharePdf(
-      bytes: await pdf.save(),
-      filename:
-          'job_offer_comparison_${DateFormat('yyyyMMdd').format(DateTime.now())}.pdf',
-    );
+    final pdfBytes = await pdf.save();
+    final tmpDir = await getTemporaryDirectory();
+    final pdfFile = File(
+        '${tmpDir.path}/job_offer_comparison_${DateFormat('yyyyMMdd').format(DateTime.now())}.pdf');
+    await pdfFile.writeAsBytes(pdfBytes);
+    await Share.shareXFiles(
+        [XFile(pdfFile.path, mimeType: 'application/pdf')]);
     AnalyticsService.instance.logPdfExportedEvent();
     AnalyticsService.instance.logResultShared();
   }
@@ -605,7 +608,10 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               ),
             ],
           ),
-          body: _buildBody(context, isSpanish, isPremium),
+          body: Column(children: [
+            Expanded(child: _buildBody(context, isSpanish, isPremium)),
+            const CalcwiseAdFooter(),
+          ]),
         ),
       ),
     );
@@ -951,9 +957,6 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                   isSpanish ? 'Exportar reporte PDF' : 'Export PDF Report'),
             ),
           const SizedBox(height: AppSpacing.xl),
-
-          // ── Ad footer ──────────────────────────────────────────────────
-          const CalcwiseAdFooter(),
         ],
       ),
     );
