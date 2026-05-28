@@ -396,10 +396,14 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     ],
                     const SizedBox(height: AppSpacing.xxs),
                     Row(children: [
-                      Text(
-                        '${AmountFormatter.ui(monthlyNet, 'USD')}/mo',
-                        style: TextStyle(
-                            fontSize: AppTextSize.sm, color: ct.textSecondary),
+                      Flexible(
+                        child: Text(
+                          '${AmountFormatter.ui(monthlyNet, 'USD')}/mo',
+                          style: TextStyle(
+                              fontSize: AppTextSize.sm,
+                              color: ct.textSecondary),
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                       const SizedBox(width: AppSpacing.sm),
                       Text(

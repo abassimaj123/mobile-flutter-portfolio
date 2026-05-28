@@ -95,9 +95,9 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _compare() async {
     if (!_canCompare) return;
-    await freemiumService.incrementCalcCount();
-    if (!mounted) return;
-    if (freemiumService.showSoftGate) {
+    // 3-offer comparison is a premium-only feature (hard gate).
+    // 2-offer comparison is always free — no session gating.
+    if (_showOfferC && !freemiumService.hasFullAccess) {
       _showPaywall();
       return;
     }
