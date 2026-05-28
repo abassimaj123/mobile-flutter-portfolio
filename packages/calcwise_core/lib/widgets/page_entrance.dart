@@ -37,7 +37,8 @@ class CalcwisePageEntrance extends StatefulWidget {
 class _CalcwisePageEntranceState extends State<CalcwisePageEntrance>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
-  bool   _visible = false;
+  late final Animation<double>   _opacity;
+  late final Animation<Offset>   _slide;
   bool   _started = false;
   Timer? _delayTimer;
 
@@ -45,6 +46,12 @@ class _CalcwisePageEntranceState extends State<CalcwisePageEntrance>
   void initState() {
     super.initState();
     _ctrl = AnimationController(vsync: this, duration: widget.duration);
+
+    _opacity = CurvedAnimation(parent: _ctrl, curve: Curves.easeOut);
+    _slide   = Tween<Offset>(
+      begin: Offset(0, widget.slideOffset / 200),
+      end:   Offset.zero,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic));
 
     WidgetsBinding.instance.addPostFrameCallback((_) => _maybeStart());
   }
@@ -60,8 +67,7 @@ class _CalcwisePageEntranceState extends State<CalcwisePageEntrance>
     _started = true;
     _delayTimer = Timer(widget.delay, () {
       if (!mounted) return;
-      setState(() => _visible = true); // triggers AnimatedOpacity → guaranteed visible
-      _ctrl.forward();                 // optional slide animation
+      _ctrl.forward();
     });
   }
 
@@ -73,10 +79,9 @@ class _CalcwisePageEntranceState extends State<CalcwisePageEntrance>
   }
 
   @override
-  Widget build(BuildContext context) => AnimatedOpacity(
-    opacity: _visible ? 1.0 : 0.0,
-    duration: const Duration(milliseconds: 200),
-    child: widget.child,
+  Widget build(BuildContext context) => FadeTransition(
+    opacity: _opacity,
+    child: SlideTransition(position: _slide, child: widget.child),
   );
 }
 
@@ -104,8 +109,6 @@ class _CalcwiseStaggerItemState extends State<CalcwiseStaggerItem>
     with SingleTickerProviderStateMixin {
   late final AnimationController _ctrl;
   late final Animation<Offset>   _slide;
-  // ignore: unused_field — kept for future opacity toggle without breaking API
-  bool   _visible    = true; // START VISIBLE — no initial blank flash
   Timer? _delayTimer;
 
   @override

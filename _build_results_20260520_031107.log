@@ -1,0 +1,26 @@
+
+══════════════════════════════════════════
+  Builds 2x2 — 03:11
+══════════════════════════════════════════
+[0;32m✅[0m  HELOCApp
+[0;32m✅[0m  CreditCardAPR
+[0;32m✅[0m  JobOfferUS
+[0;32m✅[0m  LoanPayoffUS
+[0;32m✅[0m  MortgageCA
+[0;32m✅[0m  MortgageUK
+[0;32m✅[0m  PropertyROISuite
+[0;32m✅[0m  MortgageUS
+[0;31m❌[0m  RentalExpenses — Error: Unable to determine engine version... 
+[0;32m✅[0m  RentBuyUS
+[0;31m❌[0m  AutoLoan-CA — lib/features/early_payoff/early_payoff_screen.dart:107:39: Error: The getter 'earlyPayoff' isn't defined for the type 'AppLocalizations'.
+[0;32m✅[0m  StudentLoan
+[0;31m❌[0m  AutoLoan-UK — lib/features/early_payoff/early_payoff_screen.dart:107:39: Error: The getter 'earlyPayoff' isn't defined for the type 'AppLocalizations'.
+[0;31m❌[0m  AutoLoan-US — lib/features/early_payoff/early_payoff_screen.dart:107:39: Error: The getter 'earlyPayoff' isn't defined for the type 'AppLocalizations'.
+[0;32m✅[0m  SalaryApp-CA
+[0;32m✅[0m  SalaryApp-UK
+[0;32m✅[0m  SalaryApp-US
+
+══════════════════════════════════════════
+  13/15 OK   4 FAILED
+══════════════════════════════════════════
+

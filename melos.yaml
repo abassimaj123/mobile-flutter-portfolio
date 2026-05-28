@@ -20,12 +20,14 @@ packages:
   - PropertyROISuite
   - RentBuyUS
   - RentalExpenses
-  - ParkSmart
 
   # Utility
   - JobOfferUS
-  - rideprofit
   - icon_gen
+
+  # ARCHIVÉS 2026-05-19 (dossiers déplacés vers _ARCHIVE/)
+  # - ParkSmart   → _ARCHIVE/ParkSmart
+  # - rideprofit  → _ARCHIVE/RideProfit (GitHub archivé)
 
 command:
   clean:

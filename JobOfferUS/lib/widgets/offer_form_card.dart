@@ -3,12 +3,17 @@ import 'package:flutter/services.dart';
 import 'package:calcwise_core/calcwise_core.dart';
 import '../core/data/state_tax_data.dart';
 import '../core/data/city_col_data.dart';
+import '../core/data/salary_benchmark_data.dart';
 import '../core/models/job_offer.dart';
+import '../core/services/deadline_notification_service.dart';
 import '../core/theme/app_theme.dart';
 import 'offer_parser_dialog.dart';
 
 class OfferFormCard extends StatefulWidget {
   final bool isOfferA;
+
+  /// When true, this card represents Offer C (emerald color scheme).
+  final bool isOfferC;
   final JobOffer value;
   final bool isPremium;
   final bool isSpanish;
@@ -16,6 +21,7 @@ class OfferFormCard extends StatefulWidget {
   const OfferFormCard({
     super.key,
     required this.isOfferA,
+    this.isOfferC = false,
     required this.value,
     required this.isPremium,
     required this.isSpanish,
@@ -25,7 +31,8 @@ class OfferFormCard extends StatefulWidget {
   State<OfferFormCard> createState() => _OfferFormCardState();
 }
 
-class _OfferFormCardState extends State<OfferFormCard> {
+class _OfferFormCardState extends State<OfferFormCard>
+    with CalcwiseAutoCalcMixin {
   bool _expanded = true;
   bool _showBenefits = false;
   late final TextEditingController _salary,
@@ -40,13 +47,14 @@ class _OfferFormCardState extends State<OfferFormCard> {
       _pto,
       _rsu,
       _commute,
-      _raise;
+      _raise,
+      _hoursPerWeek;
 
   @override
   void initState() {
     super.initState();
     final o = widget.value;
-    _salary = _c(o.baseSalary > 0 ? o.baseSalary.toStringAsFixed(0) : '');
+    _salary = _c(_salaryDisplayValue(o));
     _label = _c(o.label);
     _company = _c(o.company);
     _bonus = _c(o.bonusPct > 0 ? o.bonusPct.toStringAsFixed(0) : '');
@@ -65,6 +73,15 @@ class _OfferFormCardState extends State<OfferFormCard> {
         ? o.commuteMilesPerDay.toStringAsFixed(0)
         : '');
     _raise = _c(o.annualRaisePct.toStringAsFixed(1));
+    _hoursPerWeek = _c(o.hoursPerWeek.toStringAsFixed(0));
+  }
+
+  String _salaryDisplayValue(JobOffer o) {
+    if (o.isHourly && o.hoursPerWeek > 0) {
+      final hourly = o.baseSalary / o.hoursPerWeek / 52;
+      return hourly > 0 ? hourly.toStringAsFixed(2) : '';
+    }
+    return o.baseSalary > 0 ? o.baseSalary.toStringAsFixed(0) : '';
   }
 
   TextEditingController _c(String v) => TextEditingController(text: v);
@@ -84,36 +101,68 @@ class _OfferFormCardState extends State<OfferFormCard> {
       _pto,
       _rsu,
       _commute,
-      _raise
+      _raise,
+      _hoursPerWeek,
     ]) c.dispose();
     super.dispose();
   }
 
-  Color get _c1 => AppTheme.offerColor(widget.isOfferA);
-  LinearGradient get _grad => AppTheme.offerGradient(widget.isOfferA);
-  String get _offerLabel => widget.isOfferA
-      ? (widget.isSpanish ? 'Oferta A' : 'Offer A')
-      : (widget.isSpanish ? 'Oferta B' : 'Offer B');
+  Color get _c1 {
+    if (widget.isOfferC) return AppTheme.offerC;
+    return AppTheme.offerColor(widget.isOfferA);
+  }
 
-  void _emit() => widget.onChanged(widget.value.copyWith(
-        label: _label.text.isEmpty ? _offerLabel : _label.text,
-        company: _company.text,
-        baseSalary: double.tryParse(_salary.text) ?? 0,
-        bonusPct: double.tryParse(_bonus.text) ?? 0,
-        signingBonus: double.tryParse(_signing.text) ?? 0,
-        k401kMatchPct: double.tryParse(_match.text) ?? 0,
-        k401kUpToPct: double.tryParse(_upTo.text) ?? 0,
-        healthInsuranceSavings: double.tryParse(_health.text) ?? 0,
-        dentalVisionSavings: double.tryParse(_dental.text) ?? 0,
-        ptoDays: int.tryParse(_pto.text) ?? 0,
-        annualRsuValue: double.tryParse(_rsu.text) ?? 0,
-        commuteMilesPerDay: double.tryParse(_commute.text) ?? 0,
-        annualRaisePct: double.tryParse(_raise.text) ?? 3,
-      ));
+  LinearGradient get _grad {
+    if (widget.isOfferC) return AppTheme.offerCGradient;
+    return AppTheme.offerGradient(widget.isOfferA);
+  }
+
+  String get _offerLabel {
+    if (widget.isOfferC) {
+      return widget.isSpanish ? 'Oferta C' : 'Offer C';
+    }
+    return widget.isOfferA
+        ? (widget.isSpanish ? 'Oferta A' : 'Offer A')
+        : (widget.isSpanish ? 'Oferta B' : 'Offer B');
+  }
+
+  String get _letterBadge {
+    if (widget.isOfferC) return 'C';
+    return widget.isOfferA ? 'A' : 'B';
+  }
+
+  void _emit() {
+    final isHourly = widget.value.isHourly;
+    final hpw = double.tryParse(_hoursPerWeek.text) ?? 40.0;
+    final rawSalary = double.tryParse(_salary.text.replaceAll(',', '')) ?? 0;
+    final annual = isHourly ? rawSalary * hpw * 52 : rawSalary;
+
+    widget.onChanged(widget.value.copyWith(
+      label: _label.text.isEmpty ? _offerLabel : _label.text,
+      company: _company.text,
+      baseSalary: annual,
+      hoursPerWeek: hpw,
+      bonusPct: double.tryParse(_bonus.text) ?? 0,
+      signingBonus: double.tryParse(_signing.text) ?? 0,
+      k401kMatchPct: double.tryParse(_match.text) ?? 0,
+      k401kUpToPct: double.tryParse(_upTo.text) ?? 0,
+      healthInsuranceSavings: double.tryParse(_health.text) ?? 0,
+      dentalVisionSavings: double.tryParse(_dental.text) ?? 0,
+      ptoDays: int.tryParse(_pto.text) ?? 0,
+      annualRsuValue: double.tryParse(_rsu.text) ?? 0,
+      commuteMilesPerDay: double.tryParse(_commute.text) ?? 0,
+      annualRaisePct: double.tryParse(_raise.text) ?? 3,
+    ));
+  }
 
   @override
   Widget build(BuildContext context) {
     final ct = CalcwiseTheme.of(context);
+    final shadow = widget.isOfferC
+        ? AppTheme.offerCCardShadow
+        : (widget.isOfferA
+            ? AppTheme.offerACardShadow
+            : AppTheme.offerBCardShadow);
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
@@ -122,18 +171,17 @@ class _OfferFormCardState extends State<OfferFormCard> {
           color: _expanded ? _c1.withValues(alpha: 0.35) : ct.cardBorder,
           width: _expanded ? 1.5 : 1,
         ),
-        boxShadow: widget.isOfferA
-            ? AppTheme.offerACardShadow
-            : AppTheme.offerBCardShadow,
+        boxShadow: shadow,
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(AppRadius.xl),
         child: Column(children: [
-          // ── gradient header ──────────────────────────────────────
+          // ── gradient header ──────────────────────────────────
           GestureDetector(
             onTap: () => setState(() => _expanded = !_expanded),
             child: Container(
-              padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.mdPlus, AppSpacing.mdPlus, AppSpacing.mdPlus),
+              padding: const EdgeInsets.fromLTRB(AppSpacing.lg,
+                  AppSpacing.mdPlus, AppSpacing.mdPlus, AppSpacing.mdPlus),
               decoration: BoxDecoration(gradient: _grad),
               child: Row(children: [
                 Container(
@@ -148,7 +196,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                   ),
                   child: Center(
                       child: Text(
-                    widget.isOfferA ? 'A' : 'B',
+                    _letterBadge,
                     style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.w900,
@@ -227,8 +275,74 @@ class _OfferFormCardState extends State<OfferFormCard> {
                             icon: Icons.business_rounded)),
                   ]),
                   const SizedBox(height: AppSpacing.md),
-                  // Salary (accent)
+                  // Offer deadline (Feature 2)
+                  _DeadlineRow(
+                    deadline: widget.value.deadline,
+                    isSpanish: widget.isSpanish,
+                    color: _c1,
+                    onDeadlineChanged: (d) {
+                      final updated = d == null
+                          ? widget.value.copyWith(clearDeadline: true)
+                          : widget.value.copyWith(deadline: d);
+                      widget.onChanged(updated);
+                      if (d != null) {
+                        DeadlineNotificationService.instance
+                            .scheduleDeadlineAlert(
+                          widget.value.label.isEmpty
+                              ? _offerLabel
+                              : widget.value.label,
+                          d,
+                        );
+                      }
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.md),
+                  // Hourly toggle (Feature 1)
+                  _HourlyToggle(
+                    isHourly: widget.value.isHourly,
+                    isSpanish: widget.isSpanish,
+                    color: _c1,
+                    onToggle: (isHourly) {
+                      // When switching modes, convert the salary display value
+                      final current = widget.value;
+                      if (isHourly && !current.isHourly) {
+                        // Switching to hourly — show hourly equivalent
+                        final hpw = current.hoursPerWeek > 0
+                            ? current.hoursPerWeek
+                            : 40.0;
+                        final hourly = current.baseSalary / hpw / 52;
+                        _salary.text =
+                            hourly > 0 ? hourly.toStringAsFixed(2) : '';
+                      } else if (!isHourly && current.isHourly) {
+                        // Switching to annual — show annual equivalent
+                        _salary.text = current.baseSalary > 0
+                            ? current.baseSalary.toStringAsFixed(0)
+                            : '';
+                      }
+                      widget.onChanged(current.copyWith(isHourly: isHourly));
+                    },
+                  ),
+                  const SizedBox(height: AppSpacing.sm),
+                  // Salary field (Feature 1: changes label/formatter based on isHourly)
                   _salaryField(),
+                  // Hrs/week field when hourly mode (Feature 1)
+                  if (widget.value.isHourly) ...[
+                    const SizedBox(height: AppSpacing.sm),
+                    _tf(
+                      ctrl: _hoursPerWeek,
+                      label: widget.isSpanish ? 'hrs/sem' : 'hrs/week',
+                      hint: '40',
+                      num: true,
+                      icon: Icons.schedule_rounded,
+                      onCh: (_) => scheduleCalc(_emit),
+                    ),
+                  ],
+                  // Salary benchmark chip (Feature 3)
+                  _BenchmarkChip(
+                    baseSalary: widget.value.baseSalary,
+                    stateCode: widget.value.stateCode,
+                    isSpanish: widget.isSpanish,
+                  ),
                   const SizedBox(height: AppSpacing.md),
                   _stateDropdown(),
                   const SizedBox(height: AppSpacing.md),
@@ -242,7 +356,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                             suffix: '%',
                             num: true,
                             icon: Icons.card_giftcard_rounded,
-                            onCh: (_) => _emit())),
+                            onCh: (_) => scheduleCalc(_emit))),
                     const SizedBox(width: AppSpacing.smPlus),
                     Expanded(
                         child: _tf(
@@ -251,18 +365,20 @@ class _OfferFormCardState extends State<OfferFormCard> {
                             hint: '15',
                             num: true,
                             icon: Icons.beach_access_rounded,
-                            onCh: (_) => _emit())),
+                            onCh: (_) => scheduleCalc(_emit))),
                   ]),
                   const SizedBox(height: AppSpacing.md),
                   // Signing bonus
                   _tf(
                     ctrl: _signing,
-                    label: widget.isSpanish ? 'Bono de contratación (\$)' : 'Signing Bonus (\$)',
+                    label: widget.isSpanish
+                        ? 'Bono de contratación (\$)'
+                        : 'Signing Bonus (\$)',
                     hint: '10000',
                     prefix: '\$',
                     num: true,
                     icon: Icons.monetization_on_rounded,
-                    onCh: (_) => _emit(),
+                    onCh: (_) => scheduleCalc(_emit),
                   ),
                   const SizedBox(height: AppSpacing.mdPlus),
                   // Benefits toggle
@@ -283,7 +399,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               suffix: '%',
                               num: true,
                               icon: Icons.savings_rounded,
-                              onCh: (_) => _emit())),
+                              onCh: (_) => scheduleCalc(_emit))),
                       const SizedBox(width: AppSpacing.smPlus),
                       Expanded(
                           child: _tf(
@@ -293,7 +409,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               hint: '4',
                               suffix: '%',
                               num: true,
-                              onCh: (_) => _emit())),
+                              onCh: (_) => scheduleCalc(_emit))),
                     ]),
                     const SizedBox(height: AppSpacing.md),
                     Row(children: [
@@ -308,7 +424,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               num: true,
                               isCurrency: true,
                               icon: Icons.health_and_safety_rounded,
-                              onCh: (_) => _emit())),
+                              onCh: (_) => scheduleCalc(_emit))),
                       const SizedBox(width: AppSpacing.smPlus),
                       Expanded(
                           child: _tf(
@@ -320,7 +436,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                               prefix: '\$',
                               num: true,
                               isCurrency: true,
-                              onCh: (_) => _emit())),
+                              onCh: (_) => scheduleCalc(_emit))),
                     ]),
                     const SizedBox(height: AppSpacing.md),
                     _tf(
@@ -333,7 +449,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                         num: true,
                         isCurrency: true,
                         icon: Icons.trending_up_rounded,
-                        onCh: (_) => _emit()),
+                        onCh: (_) => scheduleCalc(_emit)),
                     const SizedBox(height: AppSpacing.md),
                     _remoteToggle(),
                     if (!widget.value.isRemote) ...[
@@ -347,7 +463,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                           suffix: ' mi',
                           num: true,
                           icon: Icons.directions_car_rounded,
-                          onCh: (_) => _emit()),
+                          onCh: (_) => scheduleCalc(_emit)),
                     ],
                     const SizedBox(height: AppSpacing.md),
                     _cityDropdown(),
@@ -361,7 +477,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                         suffix: '%',
                         num: true,
                         icon: Icons.show_chart_rounded,
-                        onCh: (_) => _emit()),
+                        onCh: (_) => scheduleCalc(_emit)),
                   ],
                 ],
               ),
@@ -415,7 +531,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                 widget.isSpanish ? 'NUEVO' : 'NEW',
                 style: TextStyle(
                   color: _c1,
-                  fontSize: 9,
+                  fontSize: AppTextSize.xxs,
                   fontWeight: FontWeight.w800,
                   letterSpacing: 0.6,
                 ),
@@ -437,14 +553,14 @@ class _OfferFormCardState extends State<OfferFormCard> {
         onApply: (filled) {
           widget.onChanged(filled);
           // Refresh local controllers so the UI reflects parsed values.
-          _salary.text =
-              filled.baseSalary > 0 ? filled.baseSalary.toStringAsFixed(0) : '';
+          _salary.text = _salaryDisplayValue(filled);
           _label.text = filled.label;
           _company.text = filled.company;
           _bonus.text =
               filled.bonusPct > 0 ? filled.bonusPct.toStringAsFixed(0) : '';
-          _signing.text =
-              filled.signingBonus > 0 ? filled.signingBonus.toStringAsFixed(0) : '';
+          _signing.text = filled.signingBonus > 0
+              ? filled.signingBonus.toStringAsFixed(0)
+              : '';
           _match.text = filled.k401kMatchPct > 0
               ? filled.k401kMatchPct.toStringAsFixed(0)
               : '';
@@ -469,15 +585,17 @@ class _OfferFormCardState extends State<OfferFormCard> {
     return null;
   }
 
-  // ── Salary field (accent, larger) ─────────────────────────────────────────
+  // ── Salary field (Feature 1: label changes based on isHourly) ────────────
 
   Widget _salaryField() => TextFormField(
         controller: _salary,
-        keyboardType: TextInputType.number,
-        inputFormatters: [CurrencyInputFormatter(locale: 'en_US')],
+        keyboardType: const TextInputType.numberWithOptions(decimal: true),
+        inputFormatters: widget.value.isHourly
+            ? [FilteringTextInputFormatter.allow(RegExp(r'[\d.]'))]
+            : [CurrencyInputFormatter(locale: 'en_US')],
         validator: _numValidator,
         autovalidateMode: AutovalidateMode.onUserInteraction,
-        onChanged: (_) => _emit(),
+        onChanged: (_) => scheduleCalc(_emit),
         style: TextStyle(
           fontSize: AppTextSize.titleMd,
           fontWeight: FontWeight.w700,
@@ -485,10 +603,16 @@ class _OfferFormCardState extends State<OfferFormCard> {
           letterSpacing: -0.5,
         ),
         decoration: InputDecoration(
-          labelText:
-              widget.isSpanish ? 'Salario anual (\$)' : 'Annual salary (\$)',
-          hintText: '85,000',
+          labelText: widget.value.isHourly
+              ? (widget.isSpanish
+                  ? 'Salario por hora (\$)'
+                  : 'Hourly rate (\$)')
+              : (widget.isSpanish
+                  ? 'Salario anual (\$)'
+                  : 'Annual salary (\$)'),
+          hintText: widget.value.isHourly ? '25.00' : '85,000',
           prefixText: '\$  ',
+          suffixText: widget.value.isHourly ? '/hr' : '/yr',
           prefixStyle: TextStyle(
             fontSize: AppTextSize.subtitle,
             fontWeight: FontWeight.w700,
@@ -540,7 +664,7 @@ class _OfferFormCardState extends State<OfferFormCard> {
                 : null),
         validator: num ? _numValidator : null,
         autovalidateMode: num ? AutovalidateMode.onUserInteraction : null,
-        onChanged: onCh ?? (_) => _emit(),
+        onChanged: onCh ?? (_) => scheduleCalc(_emit),
         decoration: InputDecoration(
           labelText: label,
           hintText: hint,
@@ -651,6 +775,293 @@ class _OfferFormCardState extends State<OfferFormCard> {
   }
 }
 
+// ── Feature 1: Hourly toggle ──────────────────────────────────────────────────
+
+class _HourlyToggle extends StatelessWidget {
+  final bool isHourly, isSpanish;
+  final Color color;
+  final ValueChanged<bool> onToggle;
+  const _HourlyToggle({
+    required this.isHourly,
+    required this.isSpanish,
+    required this.color,
+    required this.onToggle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(children: [
+      _Chip(
+        label: isSpanish ? 'Por año' : 'Annual',
+        selected: !isHourly,
+        color: color,
+        onTap: () => onToggle(false),
+      ),
+      const SizedBox(width: AppSpacing.sm),
+      _Chip(
+        label: isSpanish ? 'Por hora' : 'Hourly',
+        selected: isHourly,
+        color: color,
+        onTap: () => onToggle(true),
+      ),
+    ]);
+  }
+}
+
+class _Chip extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final Color color;
+  final VoidCallback onTap;
+  const _Chip({
+    required this.label,
+    required this.selected,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ct = CalcwiseTheme.of(context);
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.xs + 2),
+        decoration: BoxDecoration(
+          color: selected ? color.withValues(alpha: 0.18) : ct.surfaceHigh,
+          borderRadius: BorderRadius.circular(AppRadius.xxl),
+          border: Border.all(
+            color: selected ? color.withValues(alpha: 0.55) : ct.cardBorder,
+            width: selected ? 1.5 : 1,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: AppTextSize.sm,
+            fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+            color: selected ? color : ct.textSecondary,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// ── Feature 2: Deadline row ───────────────────────────────────────────────────
+
+class _DeadlineRow extends StatelessWidget {
+  final DateTime? deadline;
+  final bool isSpanish;
+  final Color color;
+  final ValueChanged<DateTime?> onDeadlineChanged;
+  const _DeadlineRow({
+    required this.deadline,
+    required this.isSpanish,
+    required this.color,
+    required this.onDeadlineChanged,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ct = CalcwiseTheme.of(context);
+    return Row(children: [
+      Icon(Icons.event_rounded, size: 16, color: ct.textSecondary),
+      const SizedBox(width: AppSpacing.smPlus),
+      Text(
+        isSpanish ? 'Fecha límite:' : 'Offer deadline:',
+        style: TextStyle(fontSize: AppTextSize.sm, color: ct.textSecondary),
+      ),
+      const SizedBox(width: AppSpacing.sm),
+      Expanded(
+        child: GestureDetector(
+          onTap: () async {
+            final picked = await showDatePicker(
+              context: context,
+              initialDate:
+                  deadline ?? DateTime.now().add(const Duration(days: 7)),
+              firstDate: DateTime.now(),
+              lastDate: DateTime.now().add(const Duration(days: 365)),
+            );
+            if (picked != null) onDeadlineChanged(picked);
+          },
+          child: _DeadlineChip(
+            deadline: deadline,
+            isSpanish: isSpanish,
+            color: color,
+          ),
+        ),
+      ),
+      if (deadline != null)
+        GestureDetector(
+          onTap: () => onDeadlineChanged(null),
+          child: Padding(
+            padding: const EdgeInsets.only(left: AppSpacing.xs),
+            child: Icon(Icons.close_rounded, size: 16, color: ct.textSecondary),
+          ),
+        ),
+    ]);
+  }
+}
+
+class _DeadlineChip extends StatelessWidget {
+  final DateTime? deadline;
+  final bool isSpanish;
+  final Color color;
+  const _DeadlineChip({
+    required this.deadline,
+    required this.isSpanish,
+    required this.color,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ct = CalcwiseTheme.of(context);
+    if (deadline == null) {
+      return Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.xs + 2),
+        decoration: BoxDecoration(
+          color: ct.surfaceHigh,
+          borderRadius: BorderRadius.circular(AppRadius.xxl),
+          border: Border.all(color: ct.cardBorder),
+        ),
+        child: Text(
+          isSpanish ? 'Sin fecha límite' : 'No deadline',
+          style: TextStyle(fontSize: AppTextSize.sm, color: ct.textSecondary),
+        ),
+      );
+    }
+
+    final now = DateTime.now();
+    final daysLeft = deadline!.difference(now).inDays;
+    final expired = daysLeft < 0;
+    final urgent = !expired && daysLeft <= 2;
+
+    Color chipColor;
+    String label;
+    String? suffix;
+
+    if (expired) {
+      chipColor = AppTheme.errorRed;
+      label = isSpanish ? 'Vencida' : 'Expired';
+    } else if (urgent) {
+      chipColor = AppTheme.warningOrange;
+      final dayStr = isSpanish ? 'días restantes' : 'days left';
+      label = _fmtDate(deadline!);
+      suffix = '$daysLeft $dayStr ⚠️';
+    } else {
+      chipColor = AppTheme.successGreen;
+      final dayStr = isSpanish ? 'días restantes' : 'days left';
+      label = _fmtDate(deadline!);
+      suffix = '$daysLeft $dayStr';
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md, vertical: AppSpacing.xs + 2),
+      decoration: BoxDecoration(
+        color: chipColor.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(AppRadius.xxl),
+        border: Border.all(color: chipColor.withValues(alpha: 0.4)),
+      ),
+      child: Text(
+        suffix != null ? '$label · $suffix' : label,
+        style: TextStyle(
+          fontSize: AppTextSize.sm,
+          fontWeight: FontWeight.w600,
+          color: chipColor,
+        ),
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
+
+  static String _fmtDate(DateTime d) {
+    const months = [
+      '',
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec'
+    ];
+    return '${months[d.month]} ${d.day}';
+  }
+}
+
+// ── Feature 3: Salary benchmark chip ─────────────────────────────────────────
+
+class _BenchmarkChip extends StatelessWidget {
+  final double baseSalary;
+  final String stateCode;
+  final bool isSpanish;
+  const _BenchmarkChip({
+    required this.baseSalary,
+    required this.stateCode,
+    required this.isSpanish,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (baseSalary <= 0) return const SizedBox.shrink();
+
+    final median = SalaryBenchmarkData.median(stateCode);
+    final pctDiff = ((baseSalary - median) / median) * 100;
+    final absDiff = pctDiff.abs().round();
+
+    Color chipColor;
+    String label;
+
+    if (pctDiff > 10) {
+      chipColor = AppTheme.successGreen;
+      final aboveStr = isSpanish ? 'sobre el mercado' : 'above market';
+      label =
+          '📊 $stateCode ${isSpanish ? 'mediana' : 'median'}: \$${(median / 1000).round()}k — $absDiff% $aboveStr';
+    } else if (pctDiff < -10) {
+      chipColor = AppTheme.warningOrange;
+      final belowStr = isSpanish ? 'bajo el mercado' : 'below market';
+      label =
+          '📊 $stateCode ${isSpanish ? 'mediana' : 'median'}: \$${(median / 1000).round()}k — $absDiff% $belowStr';
+    } else {
+      chipColor = AppTheme.textSecondary;
+      final atStr = isSpanish ? 'en el mercado' : 'at market';
+      label =
+          '📊 $stateCode ${isSpanish ? 'mediana' : 'median'}: \$${(median / 1000).round()}k — $atStr';
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: AppSpacing.sm),
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.md, vertical: AppSpacing.xs + 1),
+        decoration: BoxDecoration(
+          color: chipColor.withValues(alpha: 0.08),
+          borderRadius: BorderRadius.circular(AppRadius.xxl),
+          border: Border.all(color: chipColor.withValues(alpha: 0.25)),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: AppTextSize.xs,
+            color: chipColor,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 // ── Benefits toggle ───────────────────────────────────────────────────────────
 
 class _BenefitsToggle extends StatelessWidget {
@@ -704,7 +1115,7 @@ class _BenefitsToggle extends StatelessWidget {
               child: Text(
                 isSp ? '401k · RSU · Salud' : '401k · RSU · Health',
                 style: TextStyle(
-                    fontSize: 10, color: color, fontWeight: FontWeight.w600),
+                    fontSize: AppTextSize.xs, color: color, fontWeight: FontWeight.w600),
               ),
             ),
         ]),

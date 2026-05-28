@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import '../services/rate_watch_service.dart';
 import '../theme/calcwise_theme.dart';
+import '../theme/tokens/tokens.dart';
 
 /// Shared Rate Watch card widget.
 /// [isSpanish] — true for ES locale (US apps)
@@ -144,7 +145,7 @@ class _RateWatchCardState extends State<RateWatchCard> {
               child: Text(
                 _enabled ? _enabledSub : _disabledSub,
                 style: TextStyle(
-                    fontSize: 11,
+                    fontSize: AppTextSize.xs,
                     color: _enabled ? primary : theme.textSecondary),
               ),
             ),
@@ -153,7 +154,7 @@ class _RateWatchCardState extends State<RateWatchCard> {
         Switch.adaptive(
           value:  _enabled,
           onChanged: _toggle,
-          activeColor: primary,
+          activeTrackColor: primary,
         ),
       ]),
     );

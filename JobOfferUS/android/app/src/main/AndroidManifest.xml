@@ -5,7 +5,7 @@
     <application
         android:label="Job Offer US"
         android:name="${applicationName}"
-        android:icon="@mipmap/launcher_icon"
+        android:icon="@mipmap/ic_launcher"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:theme="@style/LaunchTheme"
         android:hardwareAccelerated="true"

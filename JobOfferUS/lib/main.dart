@@ -5,7 +5,10 @@ import 'package:calcwise_core/calcwise_core.dart'
         CalcwiseAdService,
         CalcwiseAdConfig,
         PaywallSessionService,
-        CalcwiseAdFooter;
+        CalcwiseAdFooter,
+        CalcwiseRewardAdSheet,
+        CalcwiseRemoteConfig,
+        requestCalcwiseConsent;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -18,6 +21,7 @@ import 'core/freemium/iap_service.dart';
 import 'core/ads/ad_config.dart';
 import 'core/services/analytics_service.dart';
 import 'core/language/language_notifier.dart';
+import 'core/services/deadline_notification_service.dart';
 import 'core/theme/app_theme.dart';
 import 'screens/splash_screen.dart';
 
@@ -33,16 +37,21 @@ final adService = CalcwiseAdService(
   analytics: AnalyticsService.instance,
 );
 
-final paywallSession = PaywallSessionService(appKey: 'joboffer');
+final paywallSession = PaywallSessionService(
+  appKey: 'joboffer',
+  hasFullAccess: () => freemiumService.hasFullAccess,
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await CalcwiseRemoteConfig.initialize();
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
     return true;
   };
+  await requestCalcwiseConsent();
   await MobileAds.instance.initialize();
   if (AdConfig.adsEnabled) await adService.initialize();
   await freemiumService.initialize();
@@ -66,13 +75,19 @@ void main() async {
     onGetPremium: () => IAPService.instance.buy(),
   );
 
+  CalcwiseRewardAdSheet.configure(
+    adService: adService,
+    freemium: freemiumService,
+    isSpanishNotifier: isSpanishNotifier,
+  );
+
+  await DeadlineNotificationService.instance.initialize();
+
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
+  // Initial style — brightness-aware override applied per-screen in build()
   SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
     statusBarColor: Colors.transparent,
-    statusBarIconBrightness: Brightness.light,
-    systemNavigationBarColor: Color(0xFF0D0B1E),
-    systemNavigationBarIconBrightness: Brightness.light,
   ));
 
   runApp(const JobOfferApp());
@@ -90,6 +105,20 @@ class JobOfferApp extends StatelessWidget {
         builder: (_, themeMode, __) => MaterialApp(
           title: isSpanish ? 'Comparar Ofertas' : 'Job Offer US',
           debugShowCheckedModeBanner: false,
+          builder: (context, child) {
+            if (!MediaQuery.of(context).disableAnimations) return child!;
+            return Theme(
+              data: Theme.of(context).copyWith(
+                pageTransitionsTheme: const PageTransitionsTheme(
+                  builders: {
+                    TargetPlatform.android: _NoAnimPageTransitionsBuilder(),
+                    TargetPlatform.iOS: _NoAnimPageTransitionsBuilder(),
+                  },
+                ),
+              ),
+              child: child!,
+            );
+          },
           theme: AppTheme.theme,
           darkTheme: AppTheme.dark,
           themeMode: themeMode,
@@ -98,4 +127,17 @@ class JobOfferApp extends StatelessWidget {
       ),
     );
   }
+}
+
+class _NoAnimPageTransitionsBuilder extends PageTransitionsBuilder {
+  const _NoAnimPageTransitionsBuilder();
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) =>
+      child;
 }

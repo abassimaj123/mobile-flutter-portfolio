@@ -1,12 +1,16 @@
 #!/usr/bin/env bash
 # =============================================================================
 # _validate_core.sh
-# Purpose: Validate that all 15 Flutter portfolio apps still build AND pass
+# Purpose: Validate that all 13 Flutter portfolio apps still build AND pass
 #          tests after a change to packages/calcwise_core (the shared library).
 #
 # Usage:   bash _validate_core.sh
-# Output:  Per-app build + test result (green ✅ or red ❌) + final X/15 summary.
-# Exit:    0 if all 15 passed, 1 if any app failed.
+# Output:  Per-app build + test result (green ✅ or red ❌) + final X/13 summary.
+# Exit:    0 if all 13 passed, 1 if any app failed.
+#
+# ARCHIVÉS (2026-05-19) — retirés du validate :
+#   ParkSmart  → D:\mob\_ARCHIVE\ParkSmart
+#   RideProfit → D:\mob\_ARCHIVE\RideProfit  (GitHub repo archivé)
 # =============================================================================
 
 ROOT="D:/mob"
@@ -20,12 +24,10 @@ APPS_NO_FLAVOR=(
   MortgageCA
   MortgageUK
   MortgageUS
-  ParkSmart
   PropertyROISuite
   RentBuyUS
   RentalExpenses
   StudentLoan
-  rideprofit
 )
 
 # Apps with --flavor us
@@ -34,7 +36,7 @@ APPS_WITH_FLAVOR=(
   SalaryApp
 )
 
-TOTAL=15
+TOTAL=13
 PASSED=0
 FAILED=0
 

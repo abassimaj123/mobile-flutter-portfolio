@@ -47,39 +47,46 @@ class ResultTile extends StatelessWidget {
   final String value;
   final bool isHighlight;
 
+  /// Optional semantic label override. Defaults to '$label: $value'.
+  final String? semanticLabel;
+
   const ResultTile({
     super.key,
     required this.label,
     required this.value,
     this.isHighlight = false,
+    this.semanticLabel,
   });
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Flexible(
-            child: Text(
-              label,
+    return Semantics(
+      label: semanticLabel ?? '$label: $value',
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Flexible(
+              child: Text(
+                label,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: isHighlight ? cs.primary : null,
+                      fontWeight: isHighlight ? FontWeight.w700 : null,
+                    ),
+              ),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Text(
+              value,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
                     color: isHighlight ? cs.primary : null,
-                    fontWeight: isHighlight ? FontWeight.w700 : null,
                   ),
             ),
-          ),
-          const SizedBox(width: AppSpacing.sm),
-          Text(
-            value,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w700,
-                  color: isHighlight ? cs.primary : null,
-                ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

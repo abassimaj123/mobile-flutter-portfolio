@@ -5,11 +5,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 ///
 /// Tracks user sessions and actions to decide when to show soft vs hard paywall.
 /// Sessions 1–3 : free, no interruption
-/// Sessions 4–6 : soft paywall after [softActionThreshold] actions
-/// Sessions 7+  : hard paywall after [hardActionThreshold] actions
+/// Sessions 4–6 : soft paywall after `softActionThreshold` actions
+/// Sessions 7+  : hard paywall after `hardActionThreshold` actions
 ///
-/// Usage — instantiate once as singleton, call [recordSession] on app launch
-/// and [recordAction] on every tab switch or calculation:
+/// Usage — instantiate once as singleton, call `recordSession` on app launch
+/// and `recordAction` on every tab switch or calculation:
 /// ```dart
 /// final paywallSession = PaywallSessionService(appKey: 'mortgageus');
 /// await paywallSession.initialize();
@@ -31,7 +31,13 @@ class PaywallSessionService {
     this.hardActionThreshold = 4,
     this.softSessionStart    = 4,
     this.hardSessionStart    = 7,
+    this.hasFullAccess,
   });
+
+  /// Optional getter — when provided, all paywall triggers are suppressed
+  /// for premium/rewarded users without any change at the call site.
+  /// Pass: `hasFullAccess: () => freemiumService.hasFullAccess`
+  final bool Function()? hasFullAccess;
 
   final String appKey;
 
@@ -86,6 +92,9 @@ class PaywallSessionService {
   /// Returns [PaywallTrigger.none] otherwise.
   /// Only triggers once per session (no repeated interruptions in same session).
   Future<PaywallTrigger> recordAction() async {
+    // Premium / rewarded users never see the paywall
+    if (hasFullAccess?.call() ?? false) return PaywallTrigger.none;
+
     // Already shown this session — don't repeat
     if (_shownInSession > 0) return PaywallTrigger.none;
 

@@ -24,6 +24,10 @@ class AppTheme {
   // Light circle colors for the icon / badge (high contrast on dark bg)
   static const Color offerALight = Color(0xFFC8C3FF); // periwinkle
   static const Color offerBLight = Color(0xFFDEB8FF); // lavender
+  // Offer C — emerald green
+  static const Color offerC = Color(0xFF34D399); // emerald-400
+  static const Color offerCDeep = Color(0xFF059669); // emerald-600
+  static const Color offerCLight = Color(0xFF6EE7B7); // emerald-300
 
   static const Color accent = Color(0xFFF59E0B);
   static const Color accentLight = Color(0xFFFDE68A);
@@ -54,6 +58,12 @@ class AppTheme {
 
   static const LinearGradient offerBGradient = LinearGradient(
     colors: [Color(0xFF6D28D9), Color(0xFFA76BF3)],
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+  );
+
+  static const LinearGradient offerCGradient = LinearGradient(
+    colors: [Color(0xFF059669), Color(0xFF34D399)],
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
   );
@@ -103,17 +113,22 @@ class AppTheme {
         ),
       ];
 
+  static List<BoxShadow> get offerCCardShadow => [
+        BoxShadow(
+          color: const Color(0xFF059669).withValues(alpha: 0.25),
+          blurRadius: 24,
+          offset: const Offset(0, 6),
+        ),
+      ];
+
   // ── ThemeData ─────────────────────────────────────────────────────────────
-  /// Light theme (system default)
+  /// Light theme
   static ThemeData get theme =>
-      CalcwiseThemeFactory.buildDark(primary: primary, accent: accent);
+      CalcwiseThemeFactory.buildLight(primary: primary, accent: accent);
 
   /// Dark theme
   static ThemeData get dark =>
       CalcwiseThemeFactory.buildDark(primary: primary, accent: accent);
-
-  /// Light theme alias
-  static ThemeData get lightTheme => theme;
 
   // ── Helpers ────────────────────────────────────────────────────────────────
   static Color offerColor(bool isA) => isA ? offerA : offerB;

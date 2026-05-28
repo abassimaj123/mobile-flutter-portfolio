@@ -17,6 +17,10 @@ class AppDuration {
   /// Min time before tap-to-skip becomes active on the splash —
   /// avoids accidental dismissal of the brand frame.
   static const Duration splashSkipThreshold = Duration(milliseconds: 800);
+
+  /// Zero duration — use when MediaQuery.disableAnimations is true
+  /// to respect the user's reduced-motion accessibility setting.
+  static const Duration reduced = Duration.zero;
 }
 
 /// Calcwise motion curve tokens.

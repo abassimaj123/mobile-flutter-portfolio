@@ -1,11 +1,13 @@
 /// Calcwise Core — shared services, theme, and UI components.
 /// Services: Firebase/Crashlytics, AdMob, IAP, Freemium
 /// UI: CalcwiseTheme (per-app brand colors), PaywallSoft, PaywallHard, InsightCard
-library calcwise_core;
+library;
 
 // Services
 export 'services/crashlytics_service.dart';
 export 'services/analytics_service.dart';
+export 'services/revenuecat_service.dart';
+export 'services/remote_config_service.dart';
 export 'services/freemium_service.dart';
 export 'services/iap_service.dart';
 export 'services/ad_service.dart';
@@ -17,8 +19,13 @@ export 'services/rate_watch_service.dart';
 // Config
 export 'config/monetization_config.dart';
 
+// Mixins
+export 'mixins/auto_calc_mixin.dart';
+
 // Utils
+export 'utils/amount_formatter.dart';
 export 'utils/currency_input_formatter.dart';
+export 'utils/percent_input_formatter.dart';
 export 'utils/consent_helper.dart';
 export 'utils/snackbar_helpers.dart';
 
@@ -46,6 +53,8 @@ export 'widgets/calcwise_ad_footer.dart';
 export 'widgets/calcwise_reward_ad_sheet.dart';
 export 'widgets/rate_watch_card.dart';
 export 'widgets/calcwise_empty_state.dart';
+export 'widgets/calcwise_loading_state.dart';
+export 'widgets/calcwise_error_state.dart';
 export 'widgets/calcwise_rate_app_tile.dart';
 export 'widgets/calcwise_info_tooltip.dart';
 export 'widgets/comparison_view.dart';

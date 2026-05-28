@@ -15,7 +15,6 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    // Analytics logged via _initBackground in main.dart
   }
 
   @override

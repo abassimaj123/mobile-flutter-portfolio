@@ -2,7 +2,7 @@
 class JobOffer {
   final String label; // Display name e.g. "Offer A"
   final String company; // Company name (optional)
-  final double baseSalary; // Annual gross salary USD
+  final double baseSalary; // Annual gross salary USD (always stored annual)
   final String stateCode; // 2-letter US state e.g. 'CA'
   final String city; // City name for CoL adjustment (premium)
   final double bonusPct; // Annual bonus as % of base (e.g. 10 = 10%)
@@ -16,6 +16,11 @@ class JobOffer {
   final double annualRaisePct; // Expected annual raise % for projection
   final bool isRemote; // Eliminates commute cost
   final double signingBonus; // One-time signing/sign-on bonus USD
+  // Feature 1: hourly toggle
+  final bool isHourly; // Show salary as hourly rate in UI (stored annual)
+  final double hoursPerWeek; // Hours per week when isHourly = true
+  // Feature 2: deadline
+  final DateTime? deadline; // Offer deadline (optional)
 
   const JobOffer({
     this.label = 'Offer',
@@ -34,6 +39,9 @@ class JobOffer {
     this.annualRaisePct = 3,
     this.isRemote = false,
     this.signingBonus = 0,
+    this.isHourly = false,
+    this.hoursPerWeek = 40.0,
+    this.deadline,
   });
 
   JobOffer copyWith({
@@ -53,6 +61,10 @@ class JobOffer {
     double? annualRaisePct,
     bool? isRemote,
     double? signingBonus,
+    bool? isHourly,
+    double? hoursPerWeek,
+    DateTime? deadline,
+    bool clearDeadline = false,
   }) =>
       JobOffer(
         label: label ?? this.label,
@@ -72,5 +84,8 @@ class JobOffer {
         annualRaisePct: annualRaisePct ?? this.annualRaisePct,
         isRemote: isRemote ?? this.isRemote,
         signingBonus: signingBonus ?? this.signingBonus,
+        isHourly: isHourly ?? this.isHourly,
+        hoursPerWeek: hoursPerWeek ?? this.hoursPerWeek,
+        deadline: clearDeadline ? null : (deadline ?? this.deadline),
       );
 }

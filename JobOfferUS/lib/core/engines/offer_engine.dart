@@ -2,6 +2,7 @@ import '../models/job_offer.dart';
 import '../models/comparison_result.dart';
 import '../data/state_tax_data.dart';
 import '../data/city_col_data.dart';
+import '../data/local_taxes.dart';
 
 /// Pure Dart calculation engine — no Flutter dependencies.
 /// All monetary values are annual USD unless noted.
@@ -57,19 +58,27 @@ class OfferEngine {
   static double stateTax(double grossIncome, String stateCode) =>
       StateTaxData.calculate(grossIncome, stateCode);
 
-  /// Annual net take-home = gross − federal − state − FICA.
-  static double netTakeHome(double grossIncome, String stateCode) {
+  /// Local/city income tax for [cityName].
+  static double localTax(double grossIncome, String cityName) =>
+      LocalTaxData.calculate(grossIncome, cityName);
+
+  /// Annual net take-home = gross − federal − state − local − FICA.
+  static double netTakeHome(double grossIncome, String stateCode,
+      [String cityName = '']) {
     return grossIncome -
         federalTax(grossIncome) -
         stateTax(grossIncome, stateCode) -
+        localTax(grossIncome, cityName) -
         ficaTax(grossIncome);
   }
 
-  /// Annual effective tax rate as percentage.
-  static double effectiveTaxRate(double grossIncome, String stateCode) {
+  /// Annual effective tax rate as percentage (includes local tax).
+  static double effectiveTaxRate(double grossIncome, String stateCode,
+      [String cityName = '']) {
     if (grossIncome <= 0) return 0;
     final total = federalTax(grossIncome) +
         stateTax(grossIncome, stateCode) +
+        localTax(grossIncome, cityName) +
         ficaTax(grossIncome);
     return (total / grossIncome) * 100;
   }
@@ -108,29 +117,37 @@ class OfferEngine {
   }
 
   /// After-tax value of a one-time signing bonus.
-  /// Signing bonus is taxed at supplemental federal rate (22%) + state + FICA.
-  static double signingBonusAfterTax(double signingBonus, double annualSalary, String stateCode) {
+  /// Signing bonus is taxed at supplemental federal rate (22%) + state + local + FICA.
+  static double signingBonusAfterTax(
+      double signingBonus, double annualSalary, String stateCode,
+      [String cityName = '']) {
     if (signingBonus <= 0) return 0;
-    // Supplemental federal rate 22% (flat withholding for bonuses ≤ $1M).
-    // For high earners, use marginal approach on total income.
+    // Marginal approach on total income.
     final totalInc = annualSalary + signingBonus;
-    final taxOnTotal = federalTax(totalInc) + stateTax(totalInc, stateCode);
-    final taxOnSalary = federalTax(annualSalary) + stateTax(annualSalary, stateCode);
+    final taxOnTotal = federalTax(totalInc) +
+        stateTax(totalInc, stateCode) +
+        localTax(totalInc, cityName);
+    final taxOnSalary = federalTax(annualSalary) +
+        stateTax(annualSalary, stateCode) +
+        localTax(annualSalary, cityName);
     return signingBonus - (taxOnTotal - taxOnSalary);
   }
 
   /// After-tax value of annual bonus.
   static double bonusAfterTax(
-      double annualSalary, double bonusPct, String stateCode) {
+      double annualSalary, double bonusPct, String stateCode,
+      [String cityName = '']) {
     if (bonusPct <= 0) return 0;
     final bonus = annualSalary * (bonusPct / 100);
     // Marginal tax on bonus ≈ same as top bracket of combined salary
     final totalInc = annualSalary + bonus;
     final taxOnTotal = federalTax(totalInc) +
         stateTax(totalInc, stateCode) +
+        localTax(totalInc, cityName) +
         ficaTax(totalInc);
     final taxOnSalary = federalTax(annualSalary) +
         stateTax(annualSalary, stateCode) +
+        localTax(annualSalary, cityName) +
         ficaTax(annualSalary);
     return bonus - (taxOnTotal - taxOnSalary);
   }
@@ -145,6 +162,7 @@ class OfferEngine {
     required String stateCode,
     required double benefits,
     required double commuteCostAnnual,
+    String cityName = '',
   }) {
     final result = <double>[];
     double salary = baseSalary;
@@ -155,6 +173,7 @@ class OfferEngine {
         k401kMatchPct: k401kMatchPct,
         k401kUpToPct: k401kUpToPct,
         stateCode: stateCode,
+        cityName: cityName,
         benefits: benefits,
         ptoValue: ptoValue(salary, 15), // assume 15 PTO for projection
         rsuValue: 0,
@@ -176,9 +195,10 @@ class OfferEngine {
     required double ptoValue,
     required double rsuValue,
     required double commuteCost,
+    String cityName = '',
   }) {
-    return netTakeHome(salary, stateCode) +
-        bonusAfterTax(salary, bonusPct, stateCode) +
+    return netTakeHome(salary, stateCode, cityName) +
+        bonusAfterTax(salary, bonusPct, stateCode, cityName) +
         k401kMatchValue(salary,
             matchPct: k401kMatchPct, upToPct: k401kUpToPct) +
         benefits +
@@ -189,38 +209,77 @@ class OfferEngine {
 
   // ── Main comparison ───────────────────────────────────────────────────────
 
-  /// Full comparison of two job offers. Returns [ComparisonResult].
-  static ComparisonResult compare(JobOffer offerA, JobOffer offerB) {
+  /// Full comparison of two or three job offers. Returns [ComparisonResult].
+  /// [offerC] is optional. When null, behaves exactly as before (2-way).
+  static ComparisonResult compare(JobOffer offerA, JobOffer offerB,
+      [JobOffer? offerC]) {
     final a = _evaluate(offerA);
     final b = _evaluate(offerB);
+    final c = offerC != null ? _evaluate(offerC) : null;
 
-    final diff = a.totalCompensation - b.totalCompensation;
-    final winner = diff > 1
-        ? Winner.offerA
-        : diff < -1
-            ? Winner.offerB
-            : Winner.tie;
+    final tcA = a.totalCompensation;
+    final tcB = b.totalCompensation;
+    final tcC = c?.totalCompensation ?? double.negativeInfinity;
+
+    Winner winner;
+    double advantage;
+
+    if (c != null) {
+      // 3-way comparison
+      final maxTc = [tcA, tcB, tcC].reduce((x, y) => x > y ? x : y);
+
+      if (maxTc == tcC && (tcC - tcA).abs() > 1 && (tcC - tcB).abs() > 1) {
+        winner = Winner.offerC;
+        advantage = tcC - [tcA, tcB].reduce((x, y) => x > y ? x : y);
+      } else if (maxTc == tcA &&
+          (tcA - tcB).abs() > 1 &&
+          (tcA - tcC).abs() > 1) {
+        winner = Winner.offerA;
+        advantage = tcA - [tcB, tcC].reduce((x, y) => x > y ? x : y);
+      } else if (maxTc == tcB &&
+          (tcB - tcA).abs() > 1 &&
+          (tcB - tcC).abs() > 1) {
+        winner = Winner.offerB;
+        advantage = tcB - [tcA, tcC].reduce((x, y) => x > y ? x : y);
+      } else {
+        winner = Winner.tie;
+        advantage = 0;
+      }
+    } else {
+      // Original 2-way
+      final diff = tcA - tcB;
+      winner = diff > 1
+          ? Winner.offerA
+          : diff < -1
+              ? Winner.offerB
+              : Winner.tie;
+      advantage = diff.abs();
+    }
 
     return ComparisonResult(
       resultA: a,
       resultB: b,
+      resultC: c,
       winner: winner,
-      annualAdvantage: diff.abs(),
-      categoryWinners: _categoryWinners(a, b),
+      annualAdvantage: advantage,
+      categoryWinners: _categoryWinnersThree(a, b, c),
     );
   }
 
   static OfferResult _evaluate(JobOffer o) {
     final fed = federalTax(o.baseSalary);
     final state = stateTax(o.baseSalary, o.stateCode);
+    final local = localTax(o.baseSalary, o.city);
     final fica = ficaTax(o.baseSalary);
-    final totalTax = fed + state + fica;
+    final totalTax = fed + state + local + fica;
     final takeHome = (o.baseSalary - totalTax).clamp(0.0, double.infinity);
     final effRate = o.baseSalary > 0 ? (totalTax / o.baseSalary) * 100 : 0.0;
 
     final bonus = o.baseSalary * (o.bonusPct / 100);
-    final bonusNet = bonusAfterTax(o.baseSalary, o.bonusPct, o.stateCode);
-    final signingNet = signingBonusAfterTax(o.signingBonus, o.baseSalary, o.stateCode);
+    final bonusNet =
+        bonusAfterTax(o.baseSalary, o.bonusPct, o.stateCode, o.city);
+    final signingNet =
+        signingBonusAfterTax(o.signingBonus, o.baseSalary, o.stateCode, o.city);
     final match = k401kMatchValue(o.baseSalary,
         matchPct: o.k401kMatchPct, upToPct: o.k401kUpToPct);
     final health = o.healthInsuranceSavings + o.dentalVisionSavings;
@@ -231,8 +290,14 @@ class OfferEngine {
         salary: takeHome, fromCity: o.city, toCity: 'National Average');
 
     // Total comp includes signing bonus in year-1 value
-    final totalComp =
-        takeHome + bonusNet + match + health + pto + o.annualRsuValue - commute + signingNet;
+    final totalComp = takeHome +
+        bonusNet +
+        match +
+        health +
+        pto +
+        o.annualRsuValue -
+        commute +
+        signingNet;
 
     final projection = fiveYearProjection(
       baseSalary: o.baseSalary,
@@ -241,6 +306,7 @@ class OfferEngine {
       k401kMatchPct: o.k401kMatchPct,
       k401kUpToPct: o.k401kUpToPct,
       stateCode: o.stateCode,
+      cityName: o.city,
       benefits: health,
       commuteCostAnnual: commute,
     );
@@ -249,6 +315,7 @@ class OfferEngine {
       grossSalary: o.baseSalary,
       federalTax: fed,
       stateTax: state,
+      localTax: local,
       ficaTax: fica,
       totalTax: totalTax,
       effectiveTaxRate: effRate,
@@ -267,23 +334,51 @@ class OfferEngine {
     );
   }
 
-  static Map<String, Winner> _categoryWinners(OfferResult a, OfferResult b) {
-    Winner w(double va, double vb, {bool lowerIsBetter = false}) {
-      if ((va - vb).abs() < 0.5) return Winner.tie;
-      if (lowerIsBetter) return va < vb ? Winner.offerA : Winner.offerB;
-      return va > vb ? Winner.offerA : Winner.offerB;
+  static Map<String, Winner> _categoryWinnersThree(
+      OfferResult a, OfferResult b, OfferResult? c) {
+    Winner w3(double va, double vb, double? vc, {bool lowerIsBetter = false}) {
+      final vals = <Winner, double>{
+        Winner.offerA: va,
+        Winner.offerB: vb,
+      };
+      if (vc != null) vals[Winner.offerC] = vc;
+
+      if (lowerIsBetter) {
+        final best = vals.entries.reduce((x, y) => x.value < y.value ? x : y);
+        final second = vals.entries
+            .where((e) => e.key != best.key)
+            .reduce((x, y) => x.value < y.value ? x : y);
+        if ((best.value - second.value).abs() < 0.5) return Winner.tie;
+        return best.key;
+      } else {
+        final best = vals.entries.reduce((x, y) => x.value > y.value ? x : y);
+        final second = vals.entries
+            .where((e) => e.key != best.key)
+            .reduce((x, y) => x.value > y.value ? x : y);
+        if ((best.value - second.value).abs() < 0.5) return Winner.tie;
+        return best.key;
+      }
     }
 
     return {
-      'takeHome': w(a.netTakeHome, b.netTakeHome),
-      'bonus': w(a.bonusAfterTax, b.bonusAfterTax),
-      'benefits':
-          w(a.k401kMatch + a.healthBenefits, b.k401kMatch + b.healthBenefits),
-      'pto': w(a.ptoValue, b.ptoValue),
-      'rsu': w(a.annualRsuValue, b.annualRsuValue),
-      'commute': w(a.commuteCost, b.commuteCost, lowerIsBetter: true),
-      'col': w(a.colAdjustedTakeHome, b.colAdjustedTakeHome),
-      'total': w(a.totalCompensation, b.totalCompensation),
+      'takeHome': w3(a.netTakeHome, b.netTakeHome, c?.netTakeHome),
+      'bonus': w3(a.bonusAfterTax, b.bonusAfterTax, c?.bonusAfterTax),
+      'benefits': w3(
+          a.k401kMatch + a.healthBenefits,
+          b.k401kMatch + b.healthBenefits,
+          c != null ? c.k401kMatch + c.healthBenefits : null),
+      'pto': w3(a.ptoValue, b.ptoValue, c?.ptoValue),
+      'rsu': w3(a.annualRsuValue, b.annualRsuValue, c?.annualRsuValue),
+      'commute':
+          w3(a.commuteCost, b.commuteCost, c?.commuteCost, lowerIsBetter: true),
+      'col': w3(
+          a.colAdjustedTakeHome, b.colAdjustedTakeHome, c?.colAdjustedTakeHome),
+      'total':
+          w3(a.totalCompensation, b.totalCompensation, c?.totalCompensation),
     };
   }
+
+  // Keep old 2-arg method delegating to the new one.
+  static Map<String, Winner> _categoryWinners(OfferResult a, OfferResult b) =>
+      _categoryWinnersThree(a, b, null);
 }

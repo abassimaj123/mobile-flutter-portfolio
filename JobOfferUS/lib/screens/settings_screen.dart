@@ -1,5 +1,4 @@
 import 'package:calcwise_core/calcwise_core.dart';
-import '../core/ads/ad_footer.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -33,10 +32,56 @@ class SettingsScreen extends StatelessWidget {
           appBar: AppBar(
             title: Text(isSp ? 'Ajustes' : 'Settings'),
           ),
-          bottomNavigationBar: const AdFooter(),
-          body: ListView(
+          bottomNavigationBar: const CalcwiseAdFooter(),
+          body: SafeArea(
+            top: false,
+            child: ListView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
+              // ── Premium ───────────────────────────────────────
+              _SectionHeader(isSp ? 'Premium' : 'Premium'),
+              _Card(
+                child: ValueListenableBuilder<bool>(
+                  valueListenable: freemiumService.hasFullAccessNotifier,
+                  builder: (ctx, isPremium, _) => isPremium
+                      ? ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          leading: const Icon(Icons.verified_rounded,
+                              color: CalcwiseSemanticColors.warnIcon),
+                          title: Text(
+                            isSp ? '¡Eres Premium!' : 'You\'re Premium!',
+                            style: const TextStyle(fontWeight: FontWeight.w600),
+                          ),
+                        )
+                      : Column(mainAxisSize: MainAxisSize.min, children: [
+                          _Tile(
+                            icon: Icons.workspace_premium_rounded,
+                            label: isSp ? 'Obtener Premium' : 'Get Premium',
+                            onTap: () => showModalBottomSheet(
+                              context: ctx,
+                              isScrollControlled: true,
+                              backgroundColor: Colors.transparent,
+                              builder: (_) => PaywallHard(
+                                isSpanish: isSp,
+                                onPurchase: () async {
+                                  Navigator.pop(ctx);
+                                  IAPService.instance.buy();
+                                },
+                                onDismiss: () => Navigator.pop(ctx),
+                              ),
+                            ),
+                          ),
+                          const Divider(height: 1),
+                          _Tile(
+                            icon: Icons.restore_rounded,
+                            label:
+                                isSp ? 'Restaurar compra' : 'Restore Purchase',
+                            onTap: () => IAPService.instance.restore(),
+                          ),
+                        ]),
+                ),
+              ),
+
               // ── Language ──────────────────────────────────────
               _SectionHeader(isSp ? 'Idioma' : 'Language'),
               _Card(
@@ -86,31 +131,6 @@ class SettingsScreen extends StatelessWidget {
               _SectionHeader(isSp ? 'Más' : 'More'),
               _Card(
                 child: Column(children: [
-                  ValueListenableBuilder<bool>(
-                    valueListenable: freemiumService.isPremiumNotifier,
-                    builder: (ctx, isPremium, _) => isPremium
-                        ? const SizedBox.shrink()
-                        : Column(mainAxisSize: MainAxisSize.min, children: [
-                            _Tile(
-                              icon: Icons.workspace_premium_rounded,
-                              label: isSp ? 'Obtener Premium' : 'Get Premium',
-                              onTap: () => showModalBottomSheet(
-                                context: ctx,
-                                isScrollControlled: true,
-                                backgroundColor: Colors.transparent,
-                                builder: (_) => PaywallHard(
-                                  isSpanish: isSp,
-                                  onPurchase: () async {
-                                    Navigator.pop(ctx);
-                                    IAPService.instance.buy();
-                                  },
-                                  onDismiss: () => Navigator.pop(ctx),
-                                ),
-                              ),
-                            ),
-                            const Divider(height: 1),
-                          ]),
-                  ),
                   _Tile(
                     icon: Icons.privacy_tip_rounded,
                     label: isSp ? 'Política de privacidad' : 'Privacy Policy',
@@ -119,13 +139,6 @@ class SettingsScreen extends StatelessWidget {
                   const Divider(height: 1),
                   CalcwiseRateAppTile(
                       label: isSp ? 'Calificar la app' : 'Rate the App'),
-                  const Divider(height: 1),
-                  const Divider(height: 1),
-                  _Tile(
-                    icon: Icons.restore_rounded,
-                    label: isSp ? 'Restaurar compra' : 'Restore Purchase',
-                    onTap: () => IAPService.instance.restore(),
-                  ),
                   const Divider(height: 1),
                   _Tile(
                     icon: Icons.email_rounded,
@@ -142,7 +155,27 @@ class SettingsScreen extends StatelessWidget {
                   ),
                 ]),
               ),
+
+              // ── Legal Disclaimer ──────────────────────────────
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm,
+                  vertical: AppSpacing.lg,
+                ),
+                child: Text(
+                  isSp
+                      ? 'Esta aplicación es solo para fines informativos. Consulte a un profesional antes de tomar decisiones financieras.'
+                      : 'This app is for informational purposes only. Consult a financial professional before making any career or compensation decisions.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: AppTextSize.xs,
+                    color: CalcwiseTheme.of(context).textSecondary,
+                    height: 1.5,
+                  ),
+                ),
+              ),
             ],
+            ),
           ),
         );
       },
@@ -157,7 +190,8 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.xs, AppSpacing.lg, AppSpacing.xs, AppSpacing.sm),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.xs, AppSpacing.lg, AppSpacing.xs, AppSpacing.sm),
       child: Text(
         title.toUpperCase(),
         style: TextStyle(

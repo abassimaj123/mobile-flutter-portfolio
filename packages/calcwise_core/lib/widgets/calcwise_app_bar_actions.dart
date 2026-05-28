@@ -27,6 +27,7 @@ class CalcwiseAppBarActions extends StatelessWidget {
     required this.session,
     required this.onSettings,
     this.onRewardAd,
+    this.onPremium,
     this.accentColor = const Color(0xFFF59E0B), // amber — matches all app themes
   });
 
@@ -40,6 +41,11 @@ class CalcwiseAppBarActions extends StatelessWidget {
   /// Pass `null` (or omit) for apps without a RewardAdSheet.
   final VoidCallback? onRewardAd;
 
+  /// Called when user taps the "Premium" button.
+  /// Pass the app's own paywall (e.g. `() => PaywallHard.show(context)`).
+  /// If omitted, falls back to [PaywallSoft.show].
+  final VoidCallback? onPremium;
+
   /// Color for premium badge, shield-active state, and Premium button.
   /// Defaults to amber (`0xFFF59E0B`) which all portfolio apps share.
   final Color accentColor;
@@ -49,7 +55,7 @@ class CalcwiseAppBarActions extends StatelessWidget {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // Ad-free rewarded shield — session 2+, free users, apps with RewardAd
+        // Ad-free rewarded shield — session 2+, non-IAP users, apps with RewardAd
         if (onRewardAd != null)
           ValueListenableBuilder<bool>(
             valueListenable: freemium.isPremiumNotifier,
@@ -72,29 +78,56 @@ class CalcwiseAppBarActions extends StatelessWidget {
             },
           ),
 
-        // Premium badge (when subscribed) or "Premium" upgrade button (when free)
+        // Premium badge (IAP) / nothing (rewarded) / upgrade button (free)
         ValueListenableBuilder<bool>(
-          valueListenable: freemium.isPremiumNotifier,
-          builder: (_, isPrem, __) => isPrem
-              ? Padding(
-                  padding: const EdgeInsets.only(right: 6),
-                  child: Tooltip(
-                    message: 'Premium active',
-                    child: Icon(Icons.verified_rounded, color: accentColor, size: 22),
-                  ),
-                )
-              : TextButton.icon(
-                  onPressed: () => PaywallSoft.show(context),
-                  icon: const Icon(Icons.workspace_premium, size: 16),
-                  label: const Text(
-                    'Premium',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
-                  ),
-                  style: TextButton.styleFrom(
-                    foregroundColor: accentColor,
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                  ),
+          valueListenable: freemium.hasFullAccessNotifier,
+          builder: (_, hasAccess, __) {
+            if (!hasAccess) {
+              // Free user — show upgrade button
+              return TextButton.icon(
+                onPressed: () => onPremium != null
+                    ? onPremium!()
+                    : PaywallSoft.show(context),
+                icon: const Icon(Icons.workspace_premium, size: 16),
+                label: const Text(
+                  'Premium',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
                 ),
+                style: TextButton.styleFrom(
+                  foregroundColor: accentColor,
+                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                ),
+              );
+            }
+            // Has access via IAP → show verified badge
+            if (freemium.isPremium) {
+              return Padding(
+                padding: const EdgeInsets.only(right: 6),
+                child: Tooltip(
+                  message: 'Premium active',
+                  child: Icon(Icons.verified_rounded, color: accentColor, size: 22),
+                ),
+              );
+            }
+            // Rewarded 60-min session → show compact "Ad-Free" chip
+            return Container(
+              margin: const EdgeInsets.only(right: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+              decoration: BoxDecoration(
+                color: accentColor.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: accentColor.withValues(alpha: 0.4)),
+              ),
+              child: Text(
+                'Ad-Free',
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w700,
+                  color: accentColor,
+                ),
+              ),
+            );
+          },
         ),
 
         // Settings

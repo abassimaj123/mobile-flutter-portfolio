@@ -4,6 +4,9 @@ import 'package:google_mobile_ads/google_mobile_ads.dart';
 import '../services/freemium_service.dart';
 import '../services/ad_service.dart';
 import '../theme/calcwise_theme.dart';
+import '../theme/tokens/tokens.dart';
+import 'calcwise_reward_ad_sheet.dart';
+import 'paywall_hard.dart';
 
 /// Universal monetization footer — drop-in for every Calcwise app screen.
 ///
@@ -32,17 +35,20 @@ class CalcwiseAdFooter extends StatefulWidget {
   static CalcwiseAdService?      _adService;
   static CalcwiseFreemium?       _freemium;
   static ValueNotifier<bool>?    _isSpanish;
+  static ValueNotifier<bool>?    _isFrench;
   static VoidCallback?           _onGetPremium;
 
   static void configure({
     required CalcwiseAdService   adService,
     required CalcwiseFreemium    freemium,
     ValueNotifier<bool>?         isSpanishNotifier,
+    ValueNotifier<bool>?         isFrenchNotifier,
     VoidCallback?                onGetPremium,
   }) {
     _adService    = adService;
     _freemium     = freemium;
     _isSpanish    = isSpanishNotifier;
+    _isFrench     = isFrenchNotifier;
     _onGetPremium = onGetPremium;
   }
 
@@ -63,7 +69,8 @@ class _CalcwiseAdFooterState extends State<CalcwiseAdFooter> {
 
   CalcwiseAdService  get _ad  => CalcwiseAdFooter._adService!;
   CalcwiseFreemium   get _fr  => CalcwiseAdFooter._freemium!;
-  bool get _isEs => CalcwiseAdFooter._isSpanish?.value ?? false;
+  bool get _isFr => CalcwiseAdFooter._isFrench?.value ?? false;
+  bool get _isEs => !_isFr && (CalcwiseAdFooter._isSpanish?.value ?? false);
 
   @override
   void initState() {
@@ -78,7 +85,8 @@ class _CalcwiseAdFooterState extends State<CalcwiseAdFooter> {
     _fr.isPremiumNotifier.addListener(_rebuild);
     _fr.isRewardedNotifier.addListener(_rebuild);
     CalcwiseAdFooter._isSpanish?.addListener(_rebuild);
-    _tick = Timer.periodic(const Duration(minutes: 1), (_) {
+    CalcwiseAdFooter._isFrench?.addListener(_rebuild);
+    _tick = Timer.periodic(const Duration(seconds: 1), (_) {
       if (mounted) setState(() {});
     });
     if (_fr.showAds) {
@@ -94,6 +102,7 @@ class _CalcwiseAdFooterState extends State<CalcwiseAdFooter> {
       _fr.isPremiumNotifier.removeListener(_rebuild);
       _fr.isRewardedNotifier.removeListener(_rebuild);
       CalcwiseAdFooter._isSpanish?.removeListener(_rebuild);
+      CalcwiseAdFooter._isFrench?.removeListener(_rebuild);
     }
     _tick?.cancel();
     _banner?.dispose();
@@ -142,27 +151,42 @@ class _CalcwiseAdFooterState extends State<CalcwiseAdFooter> {
       return const SizedBox.shrink(); // not configured yet
     }
 
-    // Premium — no ads
-    if (_fr.isPremium) return const SizedBox.shrink();
+    // Premium — no ads, but still consume bottom inset to avoid nav-bar overflow
+    if (_fr.isPremium) {
+      return SizedBox(height: MediaQuery.of(context).padding.bottom);
+    }
 
     final ct = CalcwiseTheme.of(context);
 
-    // Rewarded active — countdown timer
+    // Rewarded active — tappable countdown timer (opens sheet to show details)
     if (_fr.isRewarded) {
-      final mins = _fr.rewardedRemaining?.inMinutes ?? 0;
-      final label = _isEs
-          ? 'Sin anuncios — $mins min restantes'
-          : 'Ad-free — $mins min remaining';
-      return Container(
-        width: double.infinity,
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        color: ct.successGreen.withValues(alpha: 0.08),
-        child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-          Icon(Icons.timer_rounded, size: 15, color: ct.successGreen),
-          const SizedBox(width: 6),
-          Text(label, style: TextStyle(
-              color: ct.successGreen, fontSize: 12, fontWeight: FontWeight.w600)),
-        ]),
+      final remaining = _fr.rewardedRemaining;
+      final mins = remaining?.inMinutes ?? 0;
+      final secs = (remaining?.inSeconds.remainder(60)) ?? 0;
+      final timeStr = '${mins.toString().padLeft(2, '0')}:${secs.toString().padLeft(2, '0')}';
+      final label = _isFr
+          ? 'Sans pub — $timeStr restantes'
+          : (_isEs
+              ? 'Sin anuncios — $timeStr restantes'
+              : 'Ad-free — $timeStr remaining');
+      return SafeArea(
+        top: false, left: false, right: false,
+        child: GestureDetector(
+          onTap: () => CalcwiseRewardAdSheet.show(context),
+          child: Container(
+            width: double.infinity,
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            color: ct.successGreen.withValues(alpha: 0.08),
+            child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Icon(Icons.shield_rounded, size: 15, color: ct.successGreen),
+              const SizedBox(width: 6),
+              Text(label, style: TextStyle(
+                  color: ct.successGreen, fontSize: 12, fontWeight: FontWeight.w600)),
+              const SizedBox(width: 4),
+              Icon(Icons.chevron_right_rounded, size: 14, color: ct.successGreen),
+            ]),
+          ),
+        ),
       );
     }
 
@@ -189,17 +213,19 @@ class _CalcwiseAdFooterState extends State<CalcwiseAdFooter> {
                   const SizedBox(width: 4),
                   Text(
                     _watchLoading
-                        ? (_isEs ? 'Cargando...' : 'Loading...')
-                        : (_isEs ? 'Sin anuncios 60 min' : 'Ad-free for 60 min'),
-                    style: TextStyle(fontSize: 11, color: ct.primary),
+                        ? (_isFr ? 'Chargement...' : (_isEs ? 'Cargando...' : 'Loading...'))
+                        : (_isFr ? 'Sans pub 60 min' : (_isEs ? 'Sin anuncios 60 min' : 'Ad-free for 60 min')),
+                    style: TextStyle(fontSize: AppTextSize.xs, color: ct.primary),
                   ),
                 ]),
               ),
             ),
             const Spacer(),
-            // Get Premium button
+            // Get Premium button — falls back to PaywallHard if no custom callback
             GestureDetector(
-              onTap: () => CalcwiseAdFooter._onGetPremium?.call(),
+              onTap: () => CalcwiseAdFooter._onGetPremium != null
+                  ? CalcwiseAdFooter._onGetPremium!()
+                  : PaywallHard.show(context),
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
@@ -210,9 +236,9 @@ class _CalcwiseAdFooterState extends State<CalcwiseAdFooter> {
                   const Icon(Icons.workspace_premium, size: 14, color: Colors.white),
                   const SizedBox(width: 4),
                   Text(
-                    _isEs ? 'Obtener Premium' : 'Get Premium',
+                    _isFr ? 'Passer Premium' : (_isEs ? 'Obtener Premium' : 'Get Premium'),
                     style: const TextStyle(
-                        fontSize: 11, fontWeight: FontWeight.bold, color: Colors.white),
+                        fontSize: AppTextSize.xs, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
                 ]),
               ),
@@ -225,9 +251,7 @@ class _CalcwiseAdFooterState extends State<CalcwiseAdFooter> {
             width: double.infinity,
             height: _banner!.size.height.toDouble(),
             child: AdWidget(ad: _banner!),
-          )
-        else
-          const SizedBox(height: 50),
+          ),
       ]),
     );
   }
