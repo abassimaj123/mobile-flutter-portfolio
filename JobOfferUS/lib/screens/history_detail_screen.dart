@@ -1102,7 +1102,7 @@ class _OfferSummaryCard extends StatelessWidget {
                   letterSpacing: -0.5)),
         ),
         Text(
-            '${isEs ? "neto/año" : "net/yr"} · ${pctFmt.format(taxRate)}% tax',
+            '${isEs ? "neto/año" : "net/yr"} · ${pctFmt.format(taxRate)}% ${isEs ? "imp." : "tax"}',
             style: TextStyle(
                 fontSize: AppTextSize.xs, color: ct.textSecondary)),
       ]),

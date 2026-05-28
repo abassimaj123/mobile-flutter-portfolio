@@ -224,7 +224,7 @@ class _OfferFormCardState extends State<OfferFormCard>
                               fontSize: AppTextSize.sm)),
                     if (widget.value.baseSalary > 0)
                       Text(
-                        '\$${widget.value.baseSalary.toStringAsFixed(0)}/yr',
+                        '\$${widget.value.baseSalary.toStringAsFixed(0)}${widget.isSpanish ? '/año' : '/yr'}',
                         style: TextStyle(
                             color: Colors.white.withValues(alpha: 0.9),
                             fontSize: AppTextSize.md,
@@ -457,7 +457,7 @@ class _OfferFormCardState extends State<OfferFormCard>
                       _tf(
                           ctrl: _commute,
                           label: widget.isSpanish
-                              ? 'Km ida al trabajo'
+                              ? 'Millas ida al trabajo'
                               : 'Miles one-way commute',
                           hint: '15',
                           suffix: ' mi',
@@ -577,7 +577,7 @@ class _OfferFormCardState extends State<OfferFormCard>
   // ── Validator for numeric fields ──────────────────────────────────────────
 
   String? _numValidator(String? v, {bool allowEmpty = true}) {
-    if (v == null || v.trim().isEmpty) return allowEmpty ? null : 'Required';
+    if (v == null || v.trim().isEmpty) return allowEmpty ? null : (widget.isSpanish ? 'Requerido' : 'Required');
     final n = double.tryParse(v.replaceAll(',', ''));
     if (n == null)
       return widget.isSpanish ? 'Número inválido' : 'Invalid number';

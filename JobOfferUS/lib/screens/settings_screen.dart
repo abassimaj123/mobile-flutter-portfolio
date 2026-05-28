@@ -39,7 +39,7 @@ class SettingsScreen extends StatelessWidget {
             padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
               // ── Premium ───────────────────────────────────────
-              _SectionHeader(isSp ? 'Premium' : 'Premium'),
+              const _SectionHeader('Premium'),
               _Card(
                 child: ValueListenableBuilder<bool>(
                   valueListenable: freemiumService.hasFullAccessNotifier,
@@ -142,7 +142,7 @@ class SettingsScreen extends StatelessWidget {
                   const Divider(height: 1),
                   _Tile(
                     icon: Icons.email_rounded,
-                    label: isSp ? 'Soporte' : 'Contact Support',
+                    label: isSp ? 'Contactar soporte' : 'Contact Support',
                     onTap: () => _launch('mailto:support@calqwise.com'),
                   ),
                   const Divider(height: 1),
@@ -164,7 +164,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
                 child: Text(
                   isSp
-                      ? 'Esta aplicación es solo para fines informativos. Consulte a un profesional antes de tomar decisiones financieras.'
+                      ? 'Esta aplicación es solo para fines informativos. Consulte a un profesional financiero antes de tomar decisiones laborales o de compensación.'
                       : 'This app is for informational purposes only. Consult a financial professional before making any career or compensation decisions.',
                   textAlign: TextAlign.center,
                   style: TextStyle(

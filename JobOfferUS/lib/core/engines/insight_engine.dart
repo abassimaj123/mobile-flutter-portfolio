@@ -176,7 +176,7 @@ class InsightEngine {
         title:
             isSpanish ? 'Ofertas muy similares' : 'These offers are very close',
         body: isSpanish
-            ? 'Los números son similares. Considera factores no financieros: cultura, crecimiento, estabilidad.'
+            ? 'Los números son similares. Considera factores no financieros: cultura, potencial de crecimiento, estabilidad.'
             : 'The numbers are close. Consider non-financial factors: culture, growth potential, stability.',
         severity: InsightSeverity.good,
       ));

@@ -63,7 +63,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           widget.offerB.label.isNotEmpty ? widget.offerB.label : 'Offer B';
 
       final rows = [
-        ['Field', labelA, labelB],
+        [isSpanish ? 'Campo' : 'Field', labelA, labelB],
         [
           isSpanish ? 'Empresa' : 'Company',
           widget.offerA.company,
@@ -1731,7 +1731,7 @@ class _VestRow extends StatelessWidget {
             Text(AmountFormatter.ui(vested, 'USD'),
                 style: const TextStyle(
                     fontSize: AppTextSize.sm, fontWeight: FontWeight.w600)),
-            Text('${(taxRate * 100).toStringAsFixed(1)}% tax est.',
+            Text('${(taxRate * 100).toStringAsFixed(1)}% ${isSp ? 'imp. est.' : 'tax est.'}',
                 style: TextStyle(fontSize: AppTextSize.xs, color: CalcwiseTheme.of(context).textSecondary)),
           ]),
         ),

@@ -398,7 +398,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     Row(children: [
                       Flexible(
                         child: Text(
-                          '${AmountFormatter.ui(monthlyNet, 'USD')}/mo',
+                          '${AmountFormatter.ui(monthlyNet, 'USD')}${isEs ? '/mes' : '/mo'}',
                           style: TextStyle(
                               fontSize: AppTextSize.sm,
                               color: ct.textSecondary),

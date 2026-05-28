@@ -643,7 +643,7 @@ class _TieBanner extends StatelessWidget {
             const SizedBox(height: AppSpacing.xs),
             Text(
               isSp
-                  ? 'Ambas ofertas son prácticamente iguales'
+                  ? 'Ambas ofertas son prácticamente iguales en compensación total'
                   : 'Both offers are nearly equal in total comp',
               style: TextStyle(
                   color: Colors.white.withValues(alpha: 0.85),
