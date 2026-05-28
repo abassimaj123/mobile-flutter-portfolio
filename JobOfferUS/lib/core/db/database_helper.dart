@@ -15,12 +15,16 @@ class DatabaseHelper {
     final p = join(await getDatabasesPath(), 'job_offer_us.db');
     return openDatabase(
       p,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: (db, oldVersion, newVersion) async {
         if (oldVersion < 2) {
           await db.execute(
               'ALTER TABLE history ADD COLUMN signing_bonus REAL NOT NULL DEFAULT 0');
+        }
+        if (oldVersion < 3) {
+          await db.execute(
+              'ALTER TABLE history ADD COLUMN comparison_json TEXT');
         }
       },
     );
@@ -43,7 +47,8 @@ class DatabaseHelper {
         net_salary REAL NOT NULL,
         monthly_net REAL NOT NULL,
         tax_rate REAL NOT NULL,
-        created_at TEXT NOT NULL
+        created_at TEXT NOT NULL,
+        comparison_json TEXT
       )
     ''');
   }

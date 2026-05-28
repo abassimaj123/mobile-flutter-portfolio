@@ -506,44 +506,92 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
     final now = DateTime.now().toUtc().toIso8601String();
     final a = widget.result.resultA;
     final b = widget.result.resultB;
+    final c = widget.result.resultC;
+    final winner = widget.result.winner;
+    final winnerResult = widget.result.winnerResult;
+    final winnerOffer = winner == Winner.offerA
+        ? widget.offerA
+        : winner == Winner.offerC
+            ? (widget.offerC ?? widget.offerA)
+            : widget.offerB;
+
+    // Build full comparison JSON
+    Map<String, dynamic> offerJson(JobOffer o, OfferResult r) => {
+          'label': o.label,
+          'company': o.company,
+          'city': o.city,
+          'state': o.stateCode,
+          'remote': o.isRemote,
+          'base': o.baseSalary,
+          'bonus_pct': o.bonusPct,
+          'signing': o.signingBonus,
+          'rsu': o.annualRsuValue,
+          'pto': o.ptoDays,
+          'k401k_match_pct': o.k401kMatchPct,
+          'commute_miles': o.commuteMilesPerDay,
+          'health_savings': o.healthInsuranceSavings + o.dentalVisionSavings,
+          // computed
+          'gross': r.grossSalary,
+          'federal': r.federalTax,
+          'state_tax': r.stateTax,
+          'local_tax': r.localTax,
+          'fica': r.ficaTax,
+          'total_tax': r.totalTax,
+          'tax_rate': r.effectiveTaxRate,
+          'net': r.netTakeHome,
+          'monthly': r.monthlyTakeHome,
+          'bonus_net': r.bonusAfterTax,
+          'annual_bonus': r.annualBonus,
+          'signing_net': r.signingBonusAfterTax,
+          'k401k_match_usd': r.k401kMatch,
+          'health': r.healthBenefits,
+          'pto_value': r.ptoValue,
+          'rsu_value': r.annualRsuValue,
+          'commute_cost': r.commuteCost,
+          'total_comp': r.totalCompensation,
+          'col_adj': r.colAdjustedTakeHome,
+          '5yr': r.fiveYearProjection,
+        };
+
+    final compJson = jsonEncode({
+      'v': 2,
+      'winner': winner == Winner.offerA
+          ? 'A'
+          : winner == Winner.offerB
+              ? 'B'
+              : winner == Winner.offerC
+                  ? 'C'
+                  : 'tie',
+      'advantage': widget.result.annualAdvantage,
+      'offers': [
+        offerJson(widget.offerA, a),
+        offerJson(widget.offerB, b),
+        if (widget.offerC != null && c != null)
+          offerJson(widget.offerC!, c),
+      ],
+      'categories': widget.result.categoryWinners
+          .map((k, v) => MapEntry(k, v.name)),
+    });
 
     try {
-      // Save offer A
+      // Save ONE row per comparison (not two separate rows)
       await DatabaseHelper.instance.insertHistory({
-        'job_title': widget.offerA.label,
-        'company': widget.offerA.company,
-        'location': widget.offerA.city,
-        'salary': widget.offerA.baseSalary,
-        'bonus': widget.offerA.baseSalary * widget.offerA.bonusPct / 100,
-        'benefits': widget.offerA.healthInsuranceSavings +
-            widget.offerA.dentalVisionSavings,
-        'stock_options': widget.offerA.annualRsuValue,
+        'job_title': '${widget.offerA.label} vs ${widget.offerB.label}'
+            '${widget.offerC != null ? ' vs ${widget.offerC!.label}' : ''}',
+        'company': winnerOffer.company,
+        'location': winnerOffer.city,
+        'salary': winnerOffer.baseSalary,
+        'bonus': winnerResult.annualBonus,
+        'benefits': winnerResult.healthBenefits,
+        'stock_options': winnerResult.annualRsuValue,
         'relocation': 0.0,
-        'pto': widget.offerA.ptoDays,
-        'signing_bonus': widget.offerA.signingBonus,
-        'net_salary': a.netTakeHome,
-        'monthly_net': a.monthlyTakeHome,
-        'tax_rate': a.effectiveTaxRate,
+        'pto': winnerOffer.ptoDays,
+        'signing_bonus': winnerOffer.signingBonus,
+        'net_salary': winnerResult.netTakeHome,
+        'monthly_net': winnerResult.monthlyTakeHome,
+        'tax_rate': winnerResult.effectiveTaxRate,
         'created_at': now,
-      });
-
-      // Save offer B
-      await DatabaseHelper.instance.insertHistory({
-        'job_title': widget.offerB.label,
-        'company': widget.offerB.company,
-        'location': widget.offerB.city,
-        'salary': widget.offerB.baseSalary,
-        'bonus': widget.offerB.baseSalary * widget.offerB.bonusPct / 100,
-        'benefits': widget.offerB.healthInsuranceSavings +
-            widget.offerB.dentalVisionSavings,
-        'stock_options': widget.offerB.annualRsuValue,
-        'relocation': 0.0,
-        'pto': widget.offerB.ptoDays,
-        'signing_bonus': widget.offerB.signingBonus,
-        'net_salary': b.netTakeHome,
-        'monthly_net': b.monthlyTakeHome,
-        'tax_rate': b.effectiveTaxRate,
-        'created_at': now,
+        'comparison_json': compJson,
       });
 
       adService.onSave();
