@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:calcwise_core/calcwise_core.dart';
+import 'package:calcwise_core/calcwise_core.dart' hide PaywallHard;
 import '../core/engines/offer_engine.dart';
 import '../core/freemium/freemium_service.dart';
 import '../core/language/language_notifier.dart';

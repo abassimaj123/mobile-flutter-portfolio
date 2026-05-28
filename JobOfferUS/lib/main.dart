@@ -37,7 +37,10 @@ final adService = CalcwiseAdService(
   analytics: AnalyticsService.instance,
 );
 
-final paywallSession = PaywallSessionService(appKey: 'joboffer');
+final paywallSession = PaywallSessionService(
+  appKey: 'joboffer',
+  hasFullAccess: () => freemiumService.hasFullAccess,
+);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

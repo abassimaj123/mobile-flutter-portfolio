@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:calcwise_core/calcwise_core.dart';
 import '../core/db/database_helper.dart';
 import '../core/freemium/freemium_service.dart';
@@ -23,8 +23,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
   List<Map<String, dynamic>> _history = [];
   bool _firstLoad = true;
 
-  final _fmtUSD =
-      NumberFormat.currency(locale: 'en_US', symbol: '\$', decimalDigits: 0);
+  // AmountFormatter replaces _fmtUSD
   final _fmtDate = DateFormat('MMM d, yyyy');
 
   @override
@@ -399,7 +398,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     const SizedBox(height: AppSpacing.xxs),
                     Row(children: [
                       Text(
-                        '${_fmtUSD.format(monthlyNet)}/mo',
+                        '${AmountFormatter.format(monthlyNet, 'USD')}/mo',
                         style: TextStyle(
                             fontSize: AppTextSize.sm, color: ct.textSecondary),
                       ),
@@ -427,7 +426,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    _fmtUSD.format(netSalary),
+                    AmountFormatter.format(netSalary, 'USD'),
                     style: TextStyle(
                       fontSize: AppTextSize.display,
                       fontWeight: FontWeight.w800,
