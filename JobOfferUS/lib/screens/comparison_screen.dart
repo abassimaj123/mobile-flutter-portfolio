@@ -272,7 +272,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             child: pw.Row(
                 mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
                 children: [
-                  pw.Text('🏆 $winnerLabel',
+                  pw.Text('★ $winnerLabel',
                       style: pw.TextStyle(
                           fontSize: AppTextSize.md,
                           fontWeight: pw.FontWeight.bold,

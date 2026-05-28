@@ -198,7 +198,7 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
           child: pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
-                pw.Text('🏆 ${winLabel()}',
+                pw.Text('★ ${winLabel()}',
                     style: pw.TextStyle(
                         fontSize: 13,
                         fontWeight: pw.FontWeight.bold,
