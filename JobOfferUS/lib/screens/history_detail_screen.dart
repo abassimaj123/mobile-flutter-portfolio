@@ -215,20 +215,6 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                   : (isEs ? 'Detalle de Oferta' : 'Offer Detail'),
             ),
             leading: const BackButton(),
-            actions: [
-              _exporting
-                  ? const Padding(
-                      padding: EdgeInsets.all(14),
-                      child: SizedBox(
-                          width: 20,
-                          height: 20,
-                          child: CircularProgressIndicator(strokeWidth: 2)))
-                  : IconButton(
-                      icon: const Icon(Icons.picture_as_pdf_rounded),
-                      tooltip: isEs ? 'Exportar PDF' : 'Export PDF',
-                      onPressed: () => _exportPdf(isEs),
-                    ),
-            ],
           ),
           body: SingleChildScrollView(
             padding: const EdgeInsets.fromLTRB(
@@ -305,6 +291,42 @@ class _HistoryDetailScreenState extends State<HistoryDetailScreen> {
                 ),
 
                 const SizedBox(height: AppSpacing.xl),
+
+                // ── Export PDF button ────────────────────────────────────────
+                SizedBox(
+                  width: double.infinity,
+                  height: 52,
+                  child: ElevatedButton.icon(
+                    onPressed: _exporting ? null : () => _exportPdf(isEs),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppTheme.primary,
+                      foregroundColor: Colors.white,
+                      disabledBackgroundColor:
+                          AppTheme.primary.withValues(alpha: 0.4),
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.xl),
+                      ),
+                    ),
+                    icon: _exporting
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(
+                                strokeWidth: 2, color: Colors.white))
+                        : const Icon(Icons.picture_as_pdf_rounded, size: 20),
+                    label: Text(
+                      _exporting
+                          ? (isEs ? 'Generando...' : 'Generating...')
+                          : (isEs ? 'Exportar PDF' : 'Export PDF'),
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w700,
+                          fontSize: AppTextSize.md),
+                    ),
+                  ),
+                ),
+
+                const SizedBox(height: AppSpacing.lg),
 
                 // ── Ad footer ────────────────────────────────────────────────
                 const CalcwiseAdFooter(),

@@ -164,14 +164,11 @@ class _HomeScreenState extends State<HomeScreen> {
             offerB: _offerB,
             offerC: _offerC,
             showOfferC: _showOfferC,
-            canCompare: _canCompare,
             isSp: isSp,
-            isPremium: freemiumService.hasFullAccess,
             onOfferAChanged: (o) => setState(() => _offerA = o),
             onOfferBChanged: (o) => setState(() => _offerB = o),
             onOfferCChanged: (o) => setState(() => _offerC = o),
             onToggleOfferC: () => setState(() => _showOfferC = !_showOfferC),
-            onCompare: _debouncedCompare,
             appBar: _appBar(isSp),
           ),
           HistoryScreen(onSwitchToCompare: () => setState(() => _tabIndex = 0)),
@@ -182,6 +179,10 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () => FocusScope.of(context).unfocus(),
             child: IndexedStack(index: _tabIndex, children: screens),
           ),
+          floatingActionButton:
+              _tabIndex == 0 ? _compareFab(isSp) : null,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
           bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -210,6 +211,27 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _compareFab(bool isSp) {
+    final active = _canCompare;
+    return FloatingActionButton.extended(
+      onPressed: active ? _debouncedCompare : null,
+      backgroundColor:
+          active ? AppTheme.primary : AppTheme.primary.withValues(alpha: 0.45),
+      elevation: active ? 6 : 1,
+      icon: Icon(Icons.compare_arrows_rounded,
+          color: active ? Colors.white : Colors.white.withValues(alpha: 0.5),
+          size: 22),
+      label: Text(
+        isSp ? 'Comparar ofertas' : 'Compare Offers',
+        style: TextStyle(
+          color: active ? Colors.white : Colors.white.withValues(alpha: 0.5),
+          fontWeight: FontWeight.w700,
+          fontSize: AppTextSize.md,
+        ),
+      ),
     );
   }
 
@@ -286,14 +308,11 @@ class _ComparisonTab extends StatelessWidget {
   final JobOffer offerB;
   final JobOffer offerC;
   final bool showOfferC;
-  final bool canCompare;
   final bool isSp;
-  final bool isPremium;
   final ValueChanged<JobOffer> onOfferAChanged;
   final ValueChanged<JobOffer> onOfferBChanged;
   final ValueChanged<JobOffer> onOfferCChanged;
   final VoidCallback onToggleOfferC;
-  final VoidCallback onCompare;
   final PreferredSizeWidget appBar;
 
   const _ComparisonTab({
@@ -302,14 +321,11 @@ class _ComparisonTab extends StatelessWidget {
     required this.offerB,
     required this.offerC,
     required this.showOfferC,
-    required this.canCompare,
     required this.isSp,
-    required this.isPremium,
     required this.onOfferAChanged,
     required this.onOfferBChanged,
     required this.onOfferCChanged,
     required this.onToggleOfferC,
-    required this.onCompare,
     required this.appBar,
   });
 
@@ -318,14 +334,13 @@ class _ComparisonTab extends StatelessWidget {
     return Scaffold(
       appBar: appBar,
       body: _body(context),
-      bottomNavigationBar: _cta(context),
     );
   }
 
   Widget _body(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.xl),
+          AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, 180),
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 600),
@@ -339,7 +354,7 @@ class _ComparisonTab extends StatelessWidget {
                 CalcwiseStaggerItem(
                     index: 0,
                     child: _HeroBanner(isSp: isSp, showOfferC: showOfferC)),
-                const SizedBox(height: AppSpacing.xxl),
+                const SizedBox(height: AppSpacing.lg),
                 ValueListenableBuilder<bool>(
                   valueListenable: freemiumService.hasFullAccessNotifier,
                   builder: (_, isPremium, __) => Column(children: [
@@ -395,101 +410,6 @@ class _ComparisonTab extends StatelessWidget {
     );
   }
 
-  Widget _cta(BuildContext context) {
-    final ct = CalcwiseTheme.of(context);
-    return Container(
-      padding: const EdgeInsets.fromLTRB(
-          AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.md),
-      decoration: BoxDecoration(
-        color: ct.surface,
-        border: Border(top: BorderSide(color: ct.cardBorder)),
-        boxShadow: [
-          BoxShadow(
-              color: Colors.black.withValues(alpha: 0.3),
-              blurRadius: 20,
-              offset: const Offset(0, -4)),
-        ],
-      ),
-      child: InkWell(
-        onTap: canCompare ? onCompare : null,
-        borderRadius: BorderRadius.circular(AppRadius.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedSwitcher(
-              duration: AppDuration.base,
-              switchInCurve: Curves.easeOut,
-              transitionBuilder: (child, animation) => FadeTransition(
-                opacity: animation,
-                child: SlideTransition(
-                  position: Tween<Offset>(
-                    begin: const Offset(0, 0.04),
-                    end: Offset.zero,
-                  ).animate(animation),
-                  child: child,
-                ),
-              ),
-              child: Container(
-                key: ValueKey<bool>(canCompare),
-                height: 56,
-                decoration: BoxDecoration(
-                  gradient: canCompare
-                      ? AppTheme.ctaGradient
-                      : LinearGradient(
-                          colors: [
-                            AppTheme.primary.withValues(alpha: 0.3),
-                            AppTheme.offerBDeep.withValues(alpha: 0.3),
-                          ],
-                        ),
-                  borderRadius: BorderRadius.circular(AppRadius.xl),
-                  boxShadow: canCompare ? AppTheme.ctaShadow : [],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.compare_arrows_rounded,
-                        color: canCompare
-                            ? Colors.white
-                            : Colors.white.withValues(alpha: 0.35),
-                        size: 22),
-                    const SizedBox(width: AppSpacing.sm),
-                    Text(
-                      isSp ? 'Comparar ofertas' : 'Compare Offers',
-                      style: TextStyle(
-                        color: canCompare
-                            ? Colors.white
-                            : Colors.white.withValues(alpha: 0.35),
-                        fontSize: AppTextSize.bodyXl,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                    if (!isPremium) ...[
-                      const SizedBox(width: AppSpacing.sm),
-                      Icon(Icons.star_rounded,
-                          color: Colors.white.withValues(alpha: 0.85),
-                          size: 16),
-                    ],
-                  ],
-                ),
-              ),
-            ),
-            if (!isPremium) ...[
-              const SizedBox(height: AppSpacing.xs),
-              Text(
-                isSp ? 'Función premium' : 'Premium feature',
-                style: TextStyle(
-                  fontSize: AppTextSize.xs,
-                  color: Colors.grey.shade500,
-                  fontWeight: FontWeight.w500,
-                ),
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
@@ -503,7 +423,7 @@ class _HeroBanner extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.fromLTRB(
-          AppSpacing.xl, AppSpacing.xl, AppSpacing.xl, AppSpacing.lg),
+          AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.md),
       decoration: BoxDecoration(
         gradient: AppTheme.heroGradient,
         borderRadius: BorderRadius.circular(AppRadius.xxl),
@@ -566,14 +486,14 @@ class _HeroBanner extends StatelessWidget {
                 fontSize: AppTextSize.body,
                 height: 1.4),
           ),
-          const SizedBox(height: AppSpacing.lg),
-          Wrap(spacing: AppSpacing.sm, runSpacing: 6, children: [
+          const SizedBox(height: AppSpacing.sm),
+          Row(children: [
             _HChip(isSp ? '51 estados' : '51 States'),
+            const SizedBox(width: AppSpacing.sm),
             _HChip('FICA · IRS 2026'),
+            const SizedBox(width: AppSpacing.sm),
             _HChip(isSp ? '3 Ofertas' : '3 Offers',
                 color: AppTheme.offerC.withValues(alpha: 0.22)),
-            _HChip(isSp ? '⏰ Vencimiento' : '⏰ Deadlines',
-                color: AppTheme.accent.withValues(alpha: 0.25)),
           ]),
         ],
       ),
