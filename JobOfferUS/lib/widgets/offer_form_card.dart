@@ -1093,19 +1093,22 @@ class _BenefitsToggle extends StatelessWidget {
             size: 18,
           ),
           const SizedBox(width: AppSpacing.sm),
-          Text(
-            isSp
-                ? (expanded
-                    ? 'Ocultar beneficios'
-                    : '+ Beneficios y transporte')
-                : (expanded ? 'Hide benefits' : '+ Benefits & commute'),
-            style: TextStyle(
-                color: color,
-                fontSize: AppTextSize.md,
-                fontWeight: FontWeight.w600),
+          Expanded(
+            child: Text(
+              isSp
+                  ? (expanded
+                      ? 'Ocultar beneficios'
+                      : '+ Beneficios y transporte')
+                  : (expanded ? 'Hide benefits' : '+ Benefits & commute'),
+              style: TextStyle(
+                  color: color,
+                  fontSize: AppTextSize.md,
+                  fontWeight: FontWeight.w600),
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
-          const Spacer(),
-          if (!expanded)
+          if (!expanded) ...[
+            const SizedBox(width: AppSpacing.sm),
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
               decoration: BoxDecoration(
@@ -1118,6 +1121,7 @@ class _BenefitsToggle extends StatelessWidget {
                     fontSize: AppTextSize.xs, color: color, fontWeight: FontWeight.w600),
               ),
             ),
+          ],
         ]),
       ),
     );

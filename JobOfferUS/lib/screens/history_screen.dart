@@ -420,25 +420,32 @@ class _HistoryScreenState extends State<HistoryScreen> {
               ),
 
               // ── Right: hero net salary ─────────────────────────────────
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    AmountFormatter.ui(netSalary, 'USD'),
-                    style: TextStyle(
-                      fontSize: AppTextSize.display,
-                      fontWeight: FontWeight.w800,
-                      color: AppTheme.primary,
-                      letterSpacing: -0.5,
+              SizedBox(
+                width: 110,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerRight,
+                      child: Text(
+                        AmountFormatter.ui(netSalary, 'USD'),
+                        style: const TextStyle(
+                          fontSize: AppTextSize.display,
+                          fontWeight: FontWeight.w800,
+                          color: AppTheme.primary,
+                          letterSpacing: -0.5,
+                        ),
+                      ),
                     ),
-                  ),
-                  Text(
-                    isEs ? 'neto/año' : 'net/yr',
-                    style: TextStyle(
-                        fontSize: AppTextSize.xs, color: ct.textSecondary),
-                  ),
-                ],
+                    Text(
+                      isEs ? 'neto/año' : 'net/yr',
+                      style: TextStyle(
+                          fontSize: AppTextSize.xs, color: ct.textSecondary),
+                    ),
+                  ],
+                ),
               ),
             ]),
           ),
