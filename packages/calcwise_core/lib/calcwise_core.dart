@@ -19,7 +19,11 @@ export 'services/rate_watch_service.dart';
 // Config
 export 'config/monetization_config.dart';
 
+// Mixins
+export 'mixins/auto_calc_mixin.dart';
+
 // Utils
+export 'utils/amount_formatter.dart';
 export 'utils/currency_input_formatter.dart';
 export 'utils/percent_input_formatter.dart';
 export 'utils/consent_helper.dart';

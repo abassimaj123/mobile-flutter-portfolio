@@ -151,7 +151,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
             title: Text(isEs ? 'Ofertas Guardadas' : 'Saved Offers'),
             actions: [
               ValueListenableBuilder<bool>(
-                valueListenable: freemiumService.isPremiumNotifier,
+                valueListenable: freemiumService.hasFullAccessNotifier,
                 builder: (context, isPremium, _) {
                   if (isPremium && _history.isNotEmpty) {
                     return IconButton(
@@ -188,7 +188,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                                     AppSpacing.sm),
                                 child: ValueListenableBuilder<bool>(
                                   valueListenable:
-                                      freemiumService.isPremiumNotifier,
+                                      freemiumService.hasFullAccessNotifier,
                                   builder: (context, isPremium, _) {
                                     return Column(
                                       crossAxisAlignment:
@@ -284,7 +284,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               ),
 
                             const SliverToBoxAdapter(
-                                child: SizedBox(height: AppSpacing.lg)),
+                                child: SizedBox(height: 120)),
                           ],
                         ),
                       ),
@@ -398,7 +398,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                     const SizedBox(height: AppSpacing.xxs),
                     Row(children: [
                       Text(
-                        '${AmountFormatter.format(monthlyNet, 'USD')}/mo',
+                        '${AmountFormatter.ui(monthlyNet, 'USD')}/mo',
                         style: TextStyle(
                             fontSize: AppTextSize.sm, color: ct.textSecondary),
                       ),
@@ -426,7 +426,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    AmountFormatter.format(netSalary, 'USD'),
+                    AmountFormatter.ui(netSalary, 'USD'),
                     style: TextStyle(
                       fontSize: AppTextSize.display,
                       fontWeight: FontWeight.w800,

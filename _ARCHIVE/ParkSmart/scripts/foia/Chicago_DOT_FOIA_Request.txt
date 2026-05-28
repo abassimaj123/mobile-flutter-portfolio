@@ -1,0 +1,143 @@
+FREEDOM OF INFORMATION ACT (FOIA) REQUEST
+City of Chicago Department of Transportation
+
+TO: City of Chicago Department of Transportation
+FOIA / Public Records Office
+121 North LaSalle Street, Room 209
+Chicago, IL 60602
+Email: doft.foia@cityofchicago.org
+
+SUBJECT: FOIA Request – Parking Meter Locations, Smart Meters, and Street Parking Rules
+
+This is a request under the Illinois Freedom of Information Act (FOIA) for the following records:
+
+1. SMART METER INVENTORY & RATES
+   Complete dataset of all City of Chicago Smart Meter parking meters:
+   - Meter ID / asset tag
+   - Street location (address, block number)
+   - Latitude and longitude coordinates
+   - Hourly rate(s) (base rate, time-of-day variations if any)
+   - Operating hours (e.g., 8 AM - 10 PM, which days/holidays)
+   - Maximum stay duration (in minutes or hours)
+   - Zone / district designation
+   - Payment methods (credit card, mobile app, etc.)
+   - Installation / activation date
+   - Current effective date of rates/rules
+
+   Requested format: CSV, Excel (.xlsx), JSON, or GIS shapefile
+
+2. STREET PARKING REGULATIONS (Non-Meter Curb Rules)
+   Complete street-by-street parking regulation database:
+   - Street name
+   - From intersection / from address
+   - To intersection / to address
+   - Side of street (north, south, east, west)
+   - Regulation type (NO PARKING, PARKING 2-4PM, RESIDENT ONLY, etc.)
+   - Full regulation text with days and hours
+   - Max stay limit (if applicable)
+   - Permit zone code (if applicable)
+   - Special rules or holidays
+   - Effective date of regulation
+
+   Requested format: CSV, Excel, JSON, or GIS-compatible format
+
+3. RESIDENTIAL PERMIT PARKING (RPP) ZONES
+   Complete inventory of all Residential Preferential Parking zones:
+   - Zone name and code (e.g., Zone A, Zone B, etc.)
+   - Street boundaries (from/to streets)
+   - Streets included in zone
+   - Permit requirements and application process
+   - Time restrictions on non-resident parking
+   - Current effective boundaries
+
+   Requested format: CSV, Excel, JSON, or GIS shapefile
+
+4. STREET CLEANING / STREET SWEEPING SCHEDULE
+   Complete Chicago street cleaning schedule:
+   - Street name (or street segment)
+   - Cleaning / sweeping day(s) of week (e.g., Monday, Wednesday)
+   - Cleaning hours (e.g., 9 AM - 1 PM)
+   - Zone / district / ward
+   - Current effective schedule
+
+   Requested format: CSV, Excel, JSON, or text table
+
+5. PARKING VIOLATION DATA (OPTIONAL but valuable)
+   If available (without personal information):
+   - Violation type distribution by street/zone
+   - Time-of-day patterns (when violations most frequent)
+   - This helps us understand which rules are most critical
+
+   Requested format: Aggregate summary only (no individual ticket data)
+
+JUSTIFICATION:
+This data will be used to develop a mobile application ("ParkSmart") that provides Chicago residents and visitors with clear, understandable parking rule information. The app will:
+- Help drivers understand complex parking regulations
+- Reduce unintentional parking violations
+- Be provided free to all users
+- Serve as a public information resource benefiting Chicago's parking compliance
+
+PUBLIC BENEFIT / FEE WAIVER REQUEST:
+I request a waiver of copying and search fees, as this request is in the public interest. The resulting app will be provided at no cost to users and will reduce parking violations.
+
+REQUESTOR INFORMATION:
+Name: [YOUR NAME]
+Email: [YOUR EMAIL]
+Phone: [YOUR PHONE]
+Organization: ParkSmart Mobile App
+Address: [YOUR ADDRESS]
+City/State/ZIP: [YOUR LOCATION]
+Purpose: Free public parking information mobile app
+
+PREFERRED DELIVERY METHOD:
+Email to: [YOUR EMAIL] (preferred)
+Or phone: [YOUR PHONE NUMBER]
+
+TIMELINE:
+Requested response date: [20 DAYS FROM SUBMISSION]
+
+Under Illinois FOIA, I understand you have 5 business days to acknowledge receipt, and 21 days total to provide or deny the requested records. I request a prompt response to this public records request.
+
+If you cannot provide all requested records, please provide what you can and explain the reasons any records cannot be produced. If an extension of time is needed, please notify me promptly.
+
+Sincerely,
+
+[YOUR SIGNATURE]
+[YOUR NAME]
+[DATE]
+
+---
+
+FILING INSTRUCTIONS:
+1. Email this request to: doft.foia@cityofchicago.org
+2. Include [FOIA Request - Parking Data] in subject line
+3. Keep confirmation email for your records (shows submission date)
+4. Monitor for Chicago's 5-business-day acknowledgment
+5. Follow up if no response within 21 days
+6. If denied or partially denied, you have right to appeal to:
+   City of Chicago Public Information Officer
+   City Hall, Room 604
+   Chicago, IL 60602
+
+APPENDIX A: Preferred File Formats
+Machine-readable (strongly preferred):
+- CSV (comma-separated values)
+- JSON (JavaScript Object Notation)
+- Excel (.xlsx)
+- GIS shapefile (for geospatial data)
+
+Acceptable but less preferred:
+- Text files with structured data
+- PDF tables (if no other format available)
+
+Not acceptable (please convert to above):
+- Scanned images of documents
+- Word documents (.docx)
+- Handwritten lists
+
+APPENDIX B: Chicago-Specific Considerations
+- Smart Meter program is administered by City of Chicago and ParkChicago LLC
+- Request copied to both if necessary
+- RPP is administered by Department of Finance
+- Street cleaning is coordinated with Aldermanic offices
+- FOIA request may be routed to multiple departments; reference number will be provided

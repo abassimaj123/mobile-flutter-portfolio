@@ -1,0 +1,144 @@
+import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import '../models/parking_session.dart';
+import 'package:calcwise_core/calcwise_core.dart';
+
+// ParkSmart brand color
+const _navy = PdfColor(0.102, 0.137, 0.494); // #1A237E
+
+class PdfExportService {
+  static final _dtFmt = DateFormat('MMM d, yyyy  HH:mm');
+
+  /// Export a parking session summary as a shareable PDF.
+  static Future<void> exportSession(ParkingSession session) async {
+    final pdf = pw.Document();
+
+    pdf.addPage(pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      margin: const pw.EdgeInsets.all(36),
+      build: (_) => _buildPage(session),
+    ));
+
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: 'ParkSmart_${session.startTime.millisecondsSinceEpoch}.pdf',
+    );
+  }
+
+  static pw.Widget _buildPage(ParkingSession session) {
+    final start = session.startTime;
+    final end = DateTime.now();
+    final duration = end.difference(start);
+    final minutes = duration.inMinutes;
+    final street = session.segment.streetName;
+    final maxMins = session.maxMinutes;
+
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        // Header
+        pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: pw.CrossAxisAlignment.end,
+          children: [
+            pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  pw.Text('ParkSmart',
+                      style: pw.TextStyle(
+                          fontSize: AppTextSize.titleMd,
+                          fontWeight: pw.FontWeight.bold,
+                          color: _navy)),
+                  pw.Text('Parking Session Report',
+                      style: const pw.TextStyle(
+                          fontSize: AppTextSize.xs, color: PdfColors.grey700)),
+                ]),
+            pw.Text(_dtFmt.format(DateTime.now()),
+                style:
+                    const pw.TextStyle(fontSize: 9, color: PdfColors.grey500)),
+          ],
+        ),
+        pw.Container(
+            height: 2,
+            color: _navy,
+            margin: const pw.EdgeInsets.only(top: 6, bottom: 18)),
+
+        // Session details
+        _sectionBox('SESSION DETAILS', [
+          _row('Street', street),
+          _row('Started', _dtFmt.format(start)),
+          _row('Ended', _dtFmt.format(end)),
+          _row('Duration',
+              '$minutes min (${(minutes / 60).toStringAsFixed(1)} h)'),
+          if (maxMins != null)
+            _row('Max Allowed', '$maxMins min', highlight: minutes > maxMins),
+          _row(
+              'Status',
+              maxMins == null
+                  ? 'OK'
+                  : (minutes > maxMins ? 'EXCEEDED LIMIT' : 'Within limit'),
+              highlight: maxMins != null && minutes > maxMins),
+        ]),
+        pw.SizedBox(height: 16),
+
+        // Map context
+        _sectionBox('ZONE INFO', [
+          _row('City', session.segment.city),
+          _row('Side', session.segment.side),
+          _row('Zone ID', session.segment.id),
+        ]),
+
+        pw.Spacer(),
+        _footerNote(),
+      ],
+    );
+  }
+
+  static pw.Widget _sectionBox(String title, List<pw.Widget> rows) =>
+      pw.Column(crossAxisAlignment: pw.CrossAxisAlignment.start, children: [
+        pw.Container(
+          width: double.infinity,
+          padding: const pw.EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          color: _navy,
+          child: pw.Text(title,
+              style: pw.TextStyle(
+                  fontSize: 8,
+                  fontWeight: pw.FontWeight.bold,
+                  color: PdfColors.white)),
+        ),
+        pw.Container(
+          padding: const pw.EdgeInsets.all(AppSpacing.sm),
+          decoration: pw.BoxDecoration(
+              border: pw.Border.all(color: PdfColors.grey300, width: 0.5)),
+          child: pw.Column(children: rows),
+        ),
+      ]);
+
+  static pw.Widget _row(String label, String value, {bool highlight = false}) =>
+      pw.Padding(
+        padding: const pw.EdgeInsets.symmetric(vertical: 2.5),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          children: [
+            pw.Text(label,
+                style:
+                    const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
+            pw.Text(value,
+                style: pw.TextStyle(
+                    fontSize: 9,
+                    fontWeight: pw.FontWeight.bold,
+                    color: highlight ? PdfColors.red : PdfColors.black)),
+          ],
+        ),
+      );
+
+  static pw.Widget _footerNote() => pw.Column(children: [
+        pw.Divider(color: PdfColors.grey300, height: 12),
+        pw.Text(
+          'Generated by ParkSmart · For information only. Always verify posted signs.',
+          style: const pw.TextStyle(fontSize: 7, color: PdfColors.grey500),
+        ),
+      ]);
+}

@@ -33,14 +33,16 @@ class SettingsScreen extends StatelessWidget {
             title: Text(isSp ? 'Ajustes' : 'Settings'),
           ),
           bottomNavigationBar: const CalcwiseAdFooter(),
-          body: ListView(
+          body: SafeArea(
+            top: false,
+            child: ListView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
               // ── Premium ───────────────────────────────────────
               _SectionHeader(isSp ? 'Premium' : 'Premium'),
               _Card(
                 child: ValueListenableBuilder<bool>(
-                  valueListenable: freemiumService.isPremiumNotifier,
+                  valueListenable: freemiumService.hasFullAccessNotifier,
                   builder: (ctx, isPremium, _) => isPremium
                       ? ListTile(
                           contentPadding: EdgeInsets.zero,
@@ -173,6 +175,7 @@ class SettingsScreen extends StatelessWidget {
                 ),
               ),
             ],
+            ),
           ),
         );
       },

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/tokens/tokens.dart';
 
 /// Unified hero result card for calculator screens.
 /// Pattern: full-bleed bottom-rounded, white-on-primary, 52px hero number.
@@ -44,7 +45,7 @@ class CalcwiseHeroCard extends StatelessWidget {
             label.toUpperCase(),
             style: const TextStyle(
               color: Colors.white70,
-              fontSize: 11,
+              fontSize: AppTextSize.xs,
               fontWeight: FontWeight.w600,
               letterSpacing: 1.2,
             ),
@@ -94,7 +95,7 @@ class CalcwiseHeroCard extends StatelessWidget {
                   children: [
                     Text(
                       s.label.toUpperCase(),
-                      style: const TextStyle(color: Colors.white70, fontSize: 10, fontWeight: FontWeight.w600, letterSpacing: 0.8),
+                      style: const TextStyle(color: Colors.white70, fontSize: AppTextSize.xs, fontWeight: FontWeight.w600, letterSpacing: 0.8),
                     ),
                     const SizedBox(height: 2),
                     Text(
@@ -133,7 +134,7 @@ class CalcwiseHeroBadge extends StatelessWidget {
             Icon(icon, color: Colors.white, size: 12),
             const SizedBox(width: 4),
           ],
-          Text(label, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+          Text(label, style: const TextStyle(color: Colors.white, fontSize: AppTextSize.xs, fontWeight: FontWeight.w600)),
         ],
       ),
     );

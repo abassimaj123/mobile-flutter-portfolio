@@ -37,13 +37,20 @@ class CalcwiseFreemium {
   SharedPreferences? _prefs;
   bool _initialized = false;
 
-  final isPremiumNotifier  = ValueNotifier<bool>(false);
-  final isRewardedNotifier = ValueNotifier<bool>(false);
+  final isPremiumNotifier     = ValueNotifier<bool>(false);
+  final isRewardedNotifier    = ValueNotifier<bool>(false);
+  /// Combines isPremium + isRewarded. Use this for feature gates so rewarded
+  /// users (60 min window) get the same access as permanent premium users.
+  final hasFullAccessNotifier = ValueNotifier<bool>(false);
 
   bool get isPremium     => isPremiumNotifier.value;
   bool get isRewarded    { if (_initialized) _refreshRewarded(); return isRewardedNotifier.value; }
   bool get hasFullAccess => isPremium || isRewarded;
   bool get showAds       => !hasFullAccess;
+
+  void _syncHasFullAccess() {
+    hasFullAccessNotifier.value = isPremiumNotifier.value || isRewardedNotifier.value;
+  }
 
   // ── Init ──────────────────────────────────────────────────────────────────
 
@@ -52,6 +59,10 @@ class CalcwiseFreemium {
     _initialized = true;
     isPremiumNotifier.value = _prefs!.getBool(_kPremium) ?? false;
     _refreshRewarded();
+    _syncHasFullAccess();
+    // Keep hasFullAccessNotifier in sync with both sources
+    isPremiumNotifier.addListener(_syncHasFullAccess);
+    isRewardedNotifier.addListener(_syncHasFullAccess);
     // Background timer — revert isRewarded when window closes
     Timer.periodic(const Duration(seconds: 30), (_) => _refreshRewarded());
   }

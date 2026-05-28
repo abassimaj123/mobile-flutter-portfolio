@@ -337,7 +337,7 @@ class _ComparisonTab extends StatelessWidget {
                     child: _HeroBanner(isSp: isSp, showOfferC: showOfferC)),
                 const SizedBox(height: AppSpacing.xxl),
                 ValueListenableBuilder<bool>(
-                  valueListenable: freemiumService.isPremiumNotifier,
+                  valueListenable: freemiumService.hasFullAccessNotifier,
                   builder: (_, isPremium, __) => Column(children: [
                     CalcwiseStaggerItem(
                         index: 1,

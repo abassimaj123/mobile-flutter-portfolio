@@ -1,0 +1,115 @@
+FREEDOM OF INFORMATION ACT (FOIA) / PUBLIC RECORDS REQUEST
+Los Angeles Department of Transportation
+
+TO: Los Angeles Department of Transportation
+FOIA / Public Records Section
+100 South Main Street, Suite 600
+Los Angeles, CA 90012
+Email: ladot.foia@lacity.org
+
+SUBJECT: Public Records Request – Parking Meter Locations and Street Parking Rules
+
+This is a request under California Public Records Act (CPRA) for the following public records:
+
+1. PARKING METER INVENTORY & RATES
+   Complete dataset of all Los Angeles parking meters maintained by LADOT:
+   - Meter ID / asset ID
+   - Street address (address number, street name)
+   - Council district or zone
+   - Latitude and longitude coordinates
+   - Hourly rate(s) (e.g., $0.50 - $2.50/hr, time-of-day variation)
+   - Operating hours (e.g., 8 AM - 10 PM, days of week)
+   - Maximum stay duration
+   - Payment methods accepted
+   - Effective date of current rates/rules
+
+   Requested format: CSV, Excel (.xlsx), JSON, or GIS shapefile
+
+2. STREET PARKING REGULATIONS (Curb Space Rules)
+   Complete street-by-street parking regulation database:
+   - Street name
+   - From cross street / to cross street
+   - Side of street (east, west, north, south)
+   - Regulation type (NO PARKING, METER, STREET CLEANING, etc.)
+   - Full rule text with times/days (e.g., "No Parking 7 AM - 10 AM, Mon-Fri")
+   - Max stay limit (if applicable)
+   - Permit zone (if applicable, e.g., "Resident Preferential Parking Zone A")
+   - Effective date
+
+   Requested format: CSV, Excel, JSON, or GIS format
+
+3. STREET SWEEPING / STREET CLEANING SCHEDULE
+   Complete street cleaning schedule:
+   - Street name (or street segment)
+   - Cleaning day(s) of week (e.g., Tuesday, Thursday)
+   - Cleaning time windows (e.g., 7 AM - 12 PM)
+   - Council district
+   - Effective schedule date
+
+   Requested format: CSV, Excel, JSON, or text table
+
+4. PARKING LOT DATA (Public Lots)
+   If available, LADOT-maintained public parking lot information:
+   - Lot address
+   - Total spaces / capacity
+   - Rate structure (hourly, daily, flat)
+   - Hours of operation
+   - Permit zone (if any)
+
+5. OPTIONAL: Parking Meter Replacement Program
+   If available, locations of newly installed / upgraded meters:
+   - Address(es)
+   - Installation date
+   - New meter type/model
+   - Updated rate structure
+
+JUSTIFICATION:
+This data will be used to develop a mobile application ("ParkSmart") that provides Los Angeles residents and visitors with clear, accessible parking rule information. The app will:
+- Reduce unintentional parking violations
+- Improve driver compliance with regulations
+- Be provided at no cost to users
+- Serve as a public information resource
+
+CALIFORNIA PUBLIC RECORDS ACT COMPLIANCE:
+This request complies with CPRA requirements. I request:
+- Response within 20 days of receipt (CPRA standard)
+- Data in machine-readable format (CSV, JSON, or Excel preferred)
+- Reasonable fee waiver due to public benefit nature of request
+
+REQUESTOR INFORMATION:
+Name: [YOUR NAME]
+Email: [YOUR EMAIL]
+Phone: [YOUR PHONE]
+Organization: ParkSmart Mobile App
+Address: [YOUR ADDRESS]
+City/State/ZIP: [YOUR LOCATION]
+Purpose: Free public parking information app for LA residents
+
+DELIVERY METHOD:
+Email (preferred): [YOUR EMAIL]
+Alternative: [YOUR PHONE NUMBER]
+
+TIMELINE:
+Requested response date: [20 DAYS FROM SUBMISSION]
+
+If you cannot provide all requested records, please provide what you can and explain why any records cannot be produced. An extension of time may be requested if necessary.
+
+Sincerely,
+
+[YOUR SIGNATURE]
+[YOUR NAME]
+[DATE]
+
+---
+
+FILING INSTRUCTIONS:
+1. Email this request to: ladot.foia@lacity.org
+2. Include [CPRA Request - Parking Data] in subject line
+3. Keep copy of email for records
+4. Follow up after 10 business days if no acknowledgment
+5. If request is denied or partially denied, you have right to appeal to the City Records Officer
+
+APPENDIX: Preferred Data Formats
+Best (machine-readable): CSV, JSON, Excel
+Acceptable: GIS shapefile, tab-delimited text
+Not preferred: PDF scans, image files, printed documents

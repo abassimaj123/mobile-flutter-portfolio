@@ -1,0 +1,599 @@
+{
+  "project_info": {
+    "project_number": "385086392226",
+    "project_id": "android-app-54282",
+    "storage_bucket": "android-app-54282.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:558215fb5cec408ca6d4fb",
+        "android_client_info": {
+          "package_name": "com.affordability.uk.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:ab89bc3b87b218b9a6d4fb",
+        "android_client_info": {
+          "package_name": "com.affordability.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:800410949fba6483a6d4fb",
+        "android_client_info": {
+          "package_name": "com.autoloan.ca.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:41d869bed5bd1c23a6d4fb",
+        "android_client_info": {
+          "package_name": "com.autoloan.uk.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:c179c90b0142ef07a6d4fb",
+        "android_client_info": {
+          "package_name": "com.autoloan.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:ec9d7bf1135b847ea6d4fb",
+        "android_client_info": {
+          "package_name": "com.brrrr.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:04c2c7a3f903a9b1a6d4fb",
+        "android_client_info": {
+          "package_name": "com.calqwise.mortgageextrapayment"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:625243f6d1a25e79a6d4fb",
+        "android_client_info": {
+          "package_name": "com.caprate.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:16e93649c7737a87a6d4fb",
+        "android_client_info": {
+          "package_name": "com.creditcard.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:5653cef2050827e1a6d4fb",
+        "android_client_info": {
+          "package_name": "com.heloc.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:5176cfc3a5480e92a6d4fb",
+        "android_client_info": {
+          "package_name": "com.houseflip.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:45a4aa1b54b6c013a6d4fb",
+        "android_client_info": {
+          "package_name": "com.landlord.cashflow.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:1a9f8ed904390b3fa6d4fb",
+        "android_client_info": {
+          "package_name": "com.loanpayoff.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:480ffc7512a6049fa6d4fb",
+        "android_client_info": {
+          "package_name": "com.mortgageca.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:56dc3c1ec583a99ea6d4fb",
+        "android_client_info": {
+          "package_name": "com.mortgageuk.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:99865e8548d2a55fa6d4fb",
+        "android_client_info": {
+          "package_name": "com.mortgageus.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:4c225cba96695280a6d4fb",
+        "android_client_info": {
+          "package_name": "com.parksmart.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:10bd8bd48776d8dda6d4fb",
+        "android_client_info": {
+          "package_name": "com.propertyroi.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:277418ca605328eca6d4fb",
+        "android_client_info": {
+          "package_name": "com.refinance.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:2ae4216e62d762b8a6d4fb",
+        "android_client_info": {
+          "package_name": "com.rentalexpenses.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:aa5163cbdc603df2a6d4fb",
+        "android_client_info": {
+          "package_name": "com.rentalroi.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:af2fe8daa67a4b0da6d4fb",
+        "android_client_info": {
+          "package_name": "com.rentbuy.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:8a65176b0b1f1dd1a6d4fb",
+        "android_client_info": {
+          "package_name": "com.rideprofit.app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:837bfb4b27a729b3a6d4fb",
+        "android_client_info": {
+          "package_name": "com.salary.ca.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:73809f040788c1a4a6d4fb",
+        "android_client_info": {
+          "package_name": "com.salary.uk.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:d4437b5c04dce5f1a6d4fb",
+        "android_client_info": {
+          "package_name": "com.salary.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:1ea6b97ef1af713fa6d4fb",
+        "android_client_info": {
+          "package_name": "com.studentloan.us.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:8b83d5b9786371fea6d4fb",
+        "android_client_info": {
+          "package_name": "com.taxau.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:063602bd1c097b82a6d4fb",
+        "android_client_info": {
+          "package_name": "com.taxeca.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:be2ddbf4f67c66eda6d4fb",
+        "android_client_info": {
+          "package_name": "com.taxeuk.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:385086392226:android:4c225cba96695280a6d4fb",
+        "android_client_info": {
+          "package_name": "com.taxus.calculator"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVdM2OBORjb4fgCtWiqCwOJkkc5yhPRSY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

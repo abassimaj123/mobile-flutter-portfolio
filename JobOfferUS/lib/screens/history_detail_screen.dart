@@ -58,10 +58,10 @@ class HistoryDetailScreen extends StatelessWidget {
                 // ── Header card ──────────────────────────────────────────────
                 CalcwiseHeroCard(
                   label: isEs ? 'Neto anual' : 'Annual net take-home',
-                  value: AmountFormatter.format(netSalary, 'USD'),
+                  value: AmountFormatter.ui(netSalary, 'USD'),
                   secondary: isEs
-                      ? '${AmountFormatter.format(monthlyNet, 'USD')}/mes · Imp. ${pctFmt.format(taxRate)}%'
-                      : '${AmountFormatter.format(monthlyNet, 'USD')}/mo · Tax ${pctFmt.format(taxRate)}%',
+                      ? '${AmountFormatter.ui(monthlyNet, 'USD')}/mes · Imp. ${pctFmt.format(taxRate)}%'
+                      : '${AmountFormatter.ui(monthlyNet, 'USD')}/mo · Tax ${pctFmt.format(taxRate)}%',
                   backgroundColor: AppTheme.primary,
                   stats: [
                     (
@@ -81,11 +81,11 @@ class HistoryDetailScreen extends StatelessWidget {
                   title: isEs ? 'Compensación' : 'Compensation',
                   rows: [
                     _RowData(isEs ? 'Salario bruto' : 'Gross Salary',
-                        AmountFormatter.format(salary, 'USD')),
+                        AmountFormatter.ui(salary, 'USD')),
                     _RowData(isEs ? 'Ingreso neto anual' : 'Net Annual',
-                        AmountFormatter.format(netSalary, 'USD')),
+                        AmountFormatter.ui(netSalary, 'USD')),
                     _RowData(isEs ? 'Ingreso neto mensual' : 'Net Monthly',
-                        AmountFormatter.format(monthlyNet, 'USD')),
+                        AmountFormatter.ui(monthlyNet, 'USD')),
                     _RowData(isEs ? 'Tasa efectiva' : 'Effective Tax Rate',
                         '${pctFmt.format(taxRate)}%'),
                   ],
@@ -98,13 +98,13 @@ class HistoryDetailScreen extends StatelessWidget {
                   rows: [
                     if (bonus > 0)
                       _RowData(isEs ? 'Bono anual' : 'Annual Bonus',
-                          AmountFormatter.format(bonus, 'USD')),
+                          AmountFormatter.ui(bonus, 'USD')),
                     if (benefits > 0)
                       _RowData(isEs ? 'Beneficios salud' : 'Health Benefits',
-                          AmountFormatter.format(benefits, 'USD')),
+                          AmountFormatter.ui(benefits, 'USD')),
                     if (stockOptions > 0)
                       _RowData(isEs ? 'RSU / Stock' : 'RSU / Stock',
-                          AmountFormatter.format(stockOptions, 'USD')),
+                          AmountFormatter.ui(stockOptions, 'USD')),
                     if (pto > 0)
                       _RowData(isEs ? 'Días PTO' : 'PTO Days',
                           '$pto ${isEs ? "días" : "days"}'),

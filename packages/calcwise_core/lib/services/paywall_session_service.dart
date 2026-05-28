@@ -31,7 +31,13 @@ class PaywallSessionService {
     this.hardActionThreshold = 4,
     this.softSessionStart    = 4,
     this.hardSessionStart    = 7,
+    this.hasFullAccess,
   });
+
+  /// Optional getter — when provided, all paywall triggers are suppressed
+  /// for premium/rewarded users without any change at the call site.
+  /// Pass: `hasFullAccess: () => freemiumService.hasFullAccess`
+  final bool Function()? hasFullAccess;
 
   final String appKey;
 
@@ -86,6 +92,9 @@ class PaywallSessionService {
   /// Returns [PaywallTrigger.none] otherwise.
   /// Only triggers once per session (no repeated interruptions in same session).
   Future<PaywallTrigger> recordAction() async {
+    // Premium / rewarded users never see the paywall
+    if (hasFullAccess?.call() ?? false) return PaywallTrigger.none;
+
     // Already shown this session — don't repeat
     if (_shownInSession > 0) return PaywallTrigger.none;
 

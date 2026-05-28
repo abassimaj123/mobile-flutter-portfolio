@@ -1,0 +1,110 @@
+FREEDOM OF INFORMATION ACT (FOIA) REQUEST
+San Francisco Municipal Transportation Agency
+
+TO: San Francisco Municipal Transportation Agency
+FOIA Coordinator
+250 South Van Ness Avenue
+San Francisco, CA 94103
+Email: sfmta.foia@sfgov.org
+
+SUBJECT: FOIA Request – San Francisco Parking Meter and Street Parking Data
+
+This is a request under the California Public Records Act (CPRA) for the following public records:
+
+1. PARKING METER INVENTORY & RATES
+   Complete dataset of all SFMTA parking meters and regulations:
+   - Meter ID / sensor ID
+   - Street location (address)
+   - Block number, lot number
+   - Latitude and longitude coordinates
+   - Rate schedule (price per hour, e.g., $0.75/hr)
+   - Operating hours (e.g., 8 AM - 10 PM, which days)
+   - Maximum stay (in minutes or hours)
+   - Zone / district name
+   - Effective date of current rates
+
+   Requested format: CSV, Excel (.xlsx), JSON, or GIS shapefile
+
+2. STREET PARKING REGULATIONS (Curb Space Rules)
+   Complete street parking regulation database by street segment:
+   - Street name
+   - From cross street / intersection
+   - To cross street / intersection
+   - Side of street
+   - Regulation type (NO PARKING, LOADING ZONE, METER, etc.)
+   - Detailed rule (e.g., "No Parking 7 AM - 9 AM, Mon-Fri")
+   - Max stay duration
+   - Permit requirements (if applicable)
+   - Effective date
+
+   Requested format: CSV, Excel, JSON, or GIS-compatible format
+
+3. PARKING SWEEPING / STREET CLEANING SCHEDULE
+   Complete street sweeping schedule:
+   - Street name (or segment)
+   - Sweeping day(s) of week (e.g., Monday, Thursday)
+   - Sweeping hours (e.g., 8 AM - 10 AM)
+   - Zone / area designation
+   - Current effective schedule
+
+   Requested format: CSV, Excel, JSON, or text table
+
+4. OPTIONAL: PARKING LOT INVENTORY (Public Parking)
+   If available, locations of public parking lots operated by SFMTA:
+   - Lot address
+   - Capacity (number of spaces)
+   - Rate (if any)
+   - Hours of operation
+   - Contact information
+
+5. OPTIONAL: API DOCUMENTATION
+   If SFMTA maintains a public parking data API, please provide:
+   - API endpoint documentation
+   - Authentication requirements
+   - Data format and schema
+   - Rate limits (if applicable)
+
+JUSTIFICATION:
+This data will be used to develop a mobile application ("ParkSmart") that provides San Francisco residents and visitors with accurate, accessible parking rule information. The app will reduce parking violations, improve driver behavior, and provide a public service at no cost to SFMTA.
+
+WAIVER OF FEES:
+I request a waiver of search and copying fees, as this request is for public information that will be used for public benefit (educational/informational mobile app, provided free).
+
+REQUESTOR INFORMATION:
+Name: [YOUR NAME]
+Email: [YOUR EMAIL]
+Phone: [YOUR PHONE]
+Organization: ParkSmart Mobile App
+Address: [YOUR ADDRESS]
+City/State/ZIP: [YOUR LOCATION]
+Purpose: Public parking information app (free to users)
+
+DELIVERY PREFERENCE:
+Email to: [YOUR EMAIL] (preferred)
+Or: [YOUR PHONE NUMBER]
+
+TIMELINE:
+Requested response date: [30 DAYS FROM SUBMISSION]
+
+I understand that if you cannot provide all requested records, you will provide those you can find and explain the reasons why any records cannot be produced. An extension of time may be granted if necessary.
+
+Sincerely,
+
+[YOUR SIGNATURE]
+[YOUR NAME]
+[DATE]
+
+---
+
+FILING INSTRUCTIONS:
+1. Send this form as email or printed letter
+2. Email to: sfmta.foia@sfgov.org
+3. Include [CPRA Request - Parking Data] in subject line
+4. Keep copy for records (reference number for follow-ups)
+5. Follow up if no response within 10 days (CPRA standard is 10-day initial response)
+6. If partially denied, file appeal to SF Sunshine Ordinance Task Force
+
+APPENDIX A: Acceptable File Formats
+Preferred (machine-readable): CSV, JSON, Excel (.xlsx), GIS shapefile
+Also acceptable: PDF table, text file
+Not preferred (image/scan): PDF scans or photos of documents (please provide data tables instead)

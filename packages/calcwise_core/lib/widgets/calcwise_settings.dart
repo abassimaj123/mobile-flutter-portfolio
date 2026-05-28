@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../theme/tokens/tokens.dart';
 
 class CalcwiseSettingsScaffold extends StatelessWidget {
   final String title;
@@ -21,9 +22,12 @@ class CalcwiseSettingsScaffold extends StatelessWidget {
         elevation: 0,
       ),
       bottomNavigationBar: bottomNavigationBar,
-      body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        children: children,
+      body: SafeArea(
+        top: false,
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          children: children,
+        ),
       ),
     );
   }
@@ -49,7 +53,7 @@ class CalcwiseSettingsSection extends StatelessWidget {
           child: Text(
             title.toUpperCase(),
             style: TextStyle(
-              fontSize: 11,
+              fontSize: AppTextSize.xs,
               fontWeight: FontWeight.w600,
               color: Theme.of(context).colorScheme.primary,
               letterSpacing: 1.0,

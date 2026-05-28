@@ -6,13 +6,14 @@ import '_paywall_price.dart';
 class PaywallSoft extends StatelessWidget {
   final String featureTitle, featureSubtitle;
   final bool isSpanish;
+  final bool isFrench;
   final VoidCallback onUnlock;
   final VoidCallback? onMaybeLater; // null = no dismiss button shown
   final String? priceLabel;
   const PaywallSoft({
     super.key, required this.featureTitle, required this.featureSubtitle,
-    this.isSpanish = false, required this.onUnlock, this.onMaybeLater,
-    this.priceLabel,
+    this.isSpanish = false, this.isFrench = false, required this.onUnlock,
+    this.onMaybeLater, this.priceLabel,
   });
 
   /// Show the soft paywall as a modal bottom sheet.
@@ -20,6 +21,7 @@ class PaywallSoft extends StatelessWidget {
   static Future<void> show(
     BuildContext context, {
     bool isSpanish = false,
+    bool isFrench = false,
     String? featureTitle,
     String? featureSubtitle,
     String? priceLabel,
@@ -29,25 +31,23 @@ class PaywallSoft extends StatelessWidget {
     final effectivePrice = priceLabel ?? globalPaywallPrice.value;
     await showModalBottomSheet<void>(
       context: context,
-      isScrollControlled: true,
       backgroundColor: Colors.transparent,
       isDismissible: true,
-      builder: (ctx) => Align(
-        alignment: Alignment.bottomCenter,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.lg + MediaQuery.of(ctx).viewPadding.bottom),
-          child: PaywallSoft(
-            isSpanish: isSpanish,
-            featureTitle: featureTitle ??
-                (isSpanish ? 'Función Premium' : 'Premium Feature'),
-            featureSubtitle: featureSubtitle ??
-                (isSpanish ? 'Desbloquea para continuar' : 'Unlock to continue'),
-            priceLabel: effectivePrice,
-            onUnlock: () {
-              Navigator.of(ctx).pop();
-              onUnlock?.call();
-            },
-          ),
+      useSafeArea: true,
+      builder: (ctx) => Padding(
+        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.lg),
+        child: PaywallSoft(
+          isSpanish: isSpanish,
+          isFrench: isFrench,
+          featureTitle: featureTitle ??
+              (isFrench ? 'Fonctionnalité Premium' : (isSpanish ? 'Función Premium' : 'Premium Feature')),
+          featureSubtitle: featureSubtitle ??
+              (isFrench ? 'Débloquez pour continuer' : (isSpanish ? 'Desbloquea para continuar' : 'Unlock to continue')),
+          priceLabel: effectivePrice,
+          onUnlock: () {
+            Navigator.of(ctx).pop();
+            onUnlock?.call();
+          },
         ),
       ),
     );
@@ -75,23 +75,27 @@ class PaywallSoft extends StatelessWidget {
               style: TextStyle(fontSize: AppTextSize.sm, color: ct.textSecondary)),
         ])),
         const SizedBox(width: AppSpacing.md),
-        GestureDetector(
-          onTap: onUnlock,
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.smPlus),
-            decoration: BoxDecoration(
-              gradient: ct.ctaGradient,
-              borderRadius: BorderRadius.circular(AppRadius.mdPlus),
-              boxShadow: [BoxShadow(
-                color: ct.primary.withValues(alpha: 0.35),
-                blurRadius: 10, offset: const Offset(0, 3))],
+        Flexible(
+          child: GestureDetector(
+            onTap: onUnlock,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg, vertical: AppSpacing.smPlus),
+              decoration: BoxDecoration(
+                gradient: ct.ctaGradient,
+                borderRadius: BorderRadius.circular(AppRadius.mdPlus),
+                boxShadow: [BoxShadow(
+                  color: ct.primary.withValues(alpha: 0.35),
+                  blurRadius: 10, offset: const Offset(0, 3))],
+              ),
+              child: Text(
+                  priceLabel != null
+                      ? (isFrench ? 'Débloquer — $priceLabel' : (isSpanish ? 'Desbloquear — $priceLabel' : 'Unlock — $priceLabel'))
+                      : (isFrench ? 'Débloquer' : (isSpanish ? 'Desbloquear' : 'Unlock')),
+                  style: const TextStyle(color: Colors.white, fontSize: AppTextSize.body,
+                      fontWeight: FontWeight.w700),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
             ),
-            child: Text(
-                priceLabel != null
-                    ? (isSpanish ? 'Desbloquear — $priceLabel' : 'Unlock — $priceLabel')
-                    : (isSpanish ? 'Desbloquear' : 'Unlock'),
-                style: const TextStyle(color: Colors.white, fontSize: AppTextSize.body,
-                    fontWeight: FontWeight.w700)),
           ),
         ),
       ]),

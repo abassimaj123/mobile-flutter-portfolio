@@ -76,18 +76,18 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         ],
         [
           isSpanish ? 'Salario bruto' : 'Gross Salary',
-          AmountFormatter.format(a.grossSalary, 'USD'),
-          AmountFormatter.format(b.grossSalary, 'USD')
+          AmountFormatter.ui(a.grossSalary, 'USD'),
+          AmountFormatter.ui(b.grossSalary, 'USD')
         ],
         [
           isSpanish ? 'Ingreso neto anual' : 'Net Annual Take-Home',
-          AmountFormatter.format(a.netTakeHome, 'USD'),
-          AmountFormatter.format(b.netTakeHome, 'USD')
+          AmountFormatter.ui(a.netTakeHome, 'USD'),
+          AmountFormatter.ui(b.netTakeHome, 'USD')
         ],
         [
           isSpanish ? 'Ingreso neto mensual' : 'Net Monthly',
-          AmountFormatter.format(a.monthlyTakeHome, 'USD'),
-          AmountFormatter.format(b.monthlyTakeHome, 'USD')
+          AmountFormatter.ui(a.monthlyTakeHome, 'USD'),
+          AmountFormatter.ui(b.monthlyTakeHome, 'USD')
         ],
         [
           isSpanish ? 'Tasa efectiva' : 'Effective Tax Rate',
@@ -96,57 +96,57 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         ],
         [
           isSpanish ? 'Impuesto federal' : 'Federal Tax',
-          AmountFormatter.format(a.federalTax, 'USD'),
-          AmountFormatter.format(b.federalTax, 'USD')
+          AmountFormatter.ui(a.federalTax, 'USD'),
+          AmountFormatter.ui(b.federalTax, 'USD')
         ],
         [
           isSpanish ? 'Impuesto estatal' : 'State Tax',
-          AmountFormatter.format(a.stateTax, 'USD'),
-          AmountFormatter.format(b.stateTax, 'USD')
+          AmountFormatter.ui(a.stateTax, 'USD'),
+          AmountFormatter.ui(b.stateTax, 'USD')
         ],
-        ['FICA', AmountFormatter.format(a.ficaTax, 'USD'), AmountFormatter.format(b.ficaTax, 'USD')],
+        ['FICA', AmountFormatter.ui(a.ficaTax, 'USD'), AmountFormatter.ui(b.ficaTax, 'USD')],
         [
           isSpanish ? 'Bono anual (neto)' : 'Annual Bonus (after tax)',
-          AmountFormatter.format(a.bonusAfterTax, 'USD'),
-          AmountFormatter.format(b.bonusAfterTax, 'USD')
+          AmountFormatter.ui(a.bonusAfterTax, 'USD'),
+          AmountFormatter.ui(b.bonusAfterTax, 'USD')
         ],
         if (a.signingBonusAfterTax > 0 || b.signingBonusAfterTax > 0)
           [
             isSpanish
                 ? 'Bono contratación (neto)'
                 : 'Signing Bonus (after tax)',
-            AmountFormatter.format(a.signingBonusAfterTax, 'USD'),
-            AmountFormatter.format(b.signingBonusAfterTax, 'USD')
+            AmountFormatter.ui(a.signingBonusAfterTax, 'USD'),
+            AmountFormatter.ui(b.signingBonusAfterTax, 'USD')
           ],
         [
           isSpanish ? 'Match 401k' : '401k Match',
-          AmountFormatter.format(a.k401kMatch, 'USD'),
-          AmountFormatter.format(b.k401kMatch, 'USD')
+          AmountFormatter.ui(a.k401kMatch, 'USD'),
+          AmountFormatter.ui(b.k401kMatch, 'USD')
         ],
         [
           isSpanish ? 'Beneficios salud' : 'Health Benefits',
-          AmountFormatter.format(a.healthBenefits, 'USD'),
-          AmountFormatter.format(b.healthBenefits, 'USD')
+          AmountFormatter.ui(a.healthBenefits, 'USD'),
+          AmountFormatter.ui(b.healthBenefits, 'USD')
         ],
         [
           isSpanish ? 'Valor PTO' : 'PTO Value',
-          AmountFormatter.format(a.ptoValue, 'USD'),
-          AmountFormatter.format(b.ptoValue, 'USD')
+          AmountFormatter.ui(a.ptoValue, 'USD'),
+          AmountFormatter.ui(b.ptoValue, 'USD')
         ],
         [
           isSpanish ? 'RSU anual' : 'Annual RSU',
-          AmountFormatter.format(a.annualRsuValue, 'USD'),
-          AmountFormatter.format(b.annualRsuValue, 'USD')
+          AmountFormatter.ui(a.annualRsuValue, 'USD'),
+          AmountFormatter.ui(b.annualRsuValue, 'USD')
         ],
         [
           isSpanish ? 'Costo traslado' : 'Commute Cost',
-          AmountFormatter.format(a.commuteCost, 'USD'),
-          AmountFormatter.format(b.commuteCost, 'USD')
+          AmountFormatter.ui(a.commuteCost, 'USD'),
+          AmountFormatter.ui(b.commuteCost, 'USD')
         ],
         [
           isSpanish ? 'Compensación total neta' : 'Total Net Compensation',
-          AmountFormatter.format(a.totalCompensation, 'USD'),
-          AmountFormatter.format(b.totalCompensation, 'USD')
+          AmountFormatter.ui(a.totalCompensation, 'USD'),
+          AmountFormatter.ui(b.totalCompensation, 'USD')
         ],
       ];
 
@@ -211,7 +211,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
         : winner == Winner.offerB
             ? (isSpanish ? 'Oferta B gana' : 'Offer B wins')
             : (isSpanish ? 'Empate' : 'Tie');
-    final advantage = AmountFormatter.format(widget.result.annualAdvantage, 'USD');
+    final advantage = AmountFormatter.ui(widget.result.annualAdvantage, 'USD');
 
     final pdf = pw.Document();
     final primary = PdfColor.fromHex('1565C0');
@@ -323,38 +323,38 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                 ],
               ),
               row(isSpanish ? 'Salario bruto' : 'Gross Salary',
-                  AmountFormatter.format(a.grossSalary, 'USD'), AmountFormatter.format(b.grossSalary, 'USD'),
+                  AmountFormatter.ui(a.grossSalary, 'USD'), AmountFormatter.ui(b.grossSalary, 'USD'),
                   bold: true),
               row(isSpanish ? 'Ingreso neto anual' : 'Net Take-Home (Annual)',
-                  AmountFormatter.format(a.netTakeHome, 'USD'), AmountFormatter.format(b.netTakeHome, 'USD'),
+                  AmountFormatter.ui(a.netTakeHome, 'USD'), AmountFormatter.ui(b.netTakeHome, 'USD'),
                   bold: true),
               row(isSpanish ? 'Ingreso neto mensual' : 'Net Monthly',
-                  AmountFormatter.format(a.monthlyTakeHome, 'USD'), AmountFormatter.format(b.monthlyTakeHome, 'USD')),
+                  AmountFormatter.ui(a.monthlyTakeHome, 'USD'), AmountFormatter.ui(b.monthlyTakeHome, 'USD')),
               row(
                   isSpanish ? 'Tasa efectiva' : 'Effective Tax Rate',
                   '${pctFmt.format(a.effectiveTaxRate)}%',
                   '${pctFmt.format(b.effectiveTaxRate)}%'),
               row(isSpanish ? 'Bono anual (neto)' : 'Annual Bonus (after tax)',
-                  AmountFormatter.format(a.bonusAfterTax, 'USD'), AmountFormatter.format(b.bonusAfterTax, 'USD')),
+                  AmountFormatter.ui(a.bonusAfterTax, 'USD'), AmountFormatter.ui(b.bonusAfterTax, 'USD')),
               if (a.signingBonusAfterTax > 0 || b.signingBonusAfterTax > 0)
                 row(
                     isSpanish
                         ? 'Bono contratación (neto)'
                         : 'Signing Bonus (net)',
-                    AmountFormatter.format(a.signingBonusAfterTax, 'USD'),
-                    AmountFormatter.format(b.signingBonusAfterTax, 'USD')),
+                    AmountFormatter.ui(a.signingBonusAfterTax, 'USD'),
+                    AmountFormatter.ui(b.signingBonusAfterTax, 'USD')),
               row(isSpanish ? 'Match 401k' : '401k Match',
-                  AmountFormatter.format(a.k401kMatch, 'USD'), AmountFormatter.format(b.k401kMatch, 'USD')),
+                  AmountFormatter.ui(a.k401kMatch, 'USD'), AmountFormatter.ui(b.k401kMatch, 'USD')),
               row(isSpanish ? 'Beneficios de salud' : 'Health Benefits',
-                  AmountFormatter.format(a.healthBenefits, 'USD'), AmountFormatter.format(b.healthBenefits, 'USD')),
+                  AmountFormatter.ui(a.healthBenefits, 'USD'), AmountFormatter.ui(b.healthBenefits, 'USD')),
               row(isSpanish ? 'RSU anual' : 'Annual RSU',
-                  AmountFormatter.format(a.annualRsuValue, 'USD'), AmountFormatter.format(b.annualRsuValue, 'USD')),
+                  AmountFormatter.ui(a.annualRsuValue, 'USD'), AmountFormatter.ui(b.annualRsuValue, 'USD')),
               row(isSpanish ? 'Costo de traslado' : 'Commute Cost',
-                  AmountFormatter.format(a.commuteCost, 'USD'), AmountFormatter.format(b.commuteCost, 'USD')),
+                  AmountFormatter.ui(a.commuteCost, 'USD'), AmountFormatter.ui(b.commuteCost, 'USD')),
               row(
                   isSpanish ? 'Compensación total' : 'Total Compensation',
-                  AmountFormatter.format(a.totalCompensation, 'USD'),
-                  AmountFormatter.format(b.totalCompensation, 'USD'),
+                  AmountFormatter.ui(a.totalCompensation, 'USD'),
+                  AmountFormatter.ui(b.totalCompensation, 'USD'),
                   bold: true),
             ],
           ),
@@ -575,7 +575,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
     return ValueListenableBuilder<bool>(
       valueListenable: isSpanishNotifier,
       builder: (_, isSpanish, __) => ValueListenableBuilder<bool>(
-        valueListenable: freemiumService.isPremiumNotifier,
+        valueListenable: freemiumService.hasFullAccessNotifier,
         builder: (_, isPremium, __) => Scaffold(
           appBar: AppBar(
             title: Text(
@@ -983,7 +983,7 @@ class _HeroKpiCard extends StatelessWidget {
 
     if (result.isTie) {
       heroLabel = isSpanish ? 'Compensación total' : 'Total Compensation';
-      heroValue = AmountFormatter.format(a.totalCompensation, 'USD');
+      heroValue = AmountFormatter.ui(a.totalCompensation, 'USD');
       heroSecondary = isSpanish
           ? 'Las dos ofertas son equivalentes'
           : 'Both offers are equivalent';
@@ -1006,17 +1006,17 @@ class _HeroKpiCard extends StatelessWidget {
           : (isAWinner ? AppTheme.offerADeep : AppTheme.offerBDeep);
       heroLabel =
           isSpanish ? '$winnerLabel — Neto anual' : '$winnerLabel — Annual Net';
-      heroValue = AmountFormatter.format(winnerResult.netTakeHome, 'USD');
+      heroValue = AmountFormatter.ui(winnerResult.netTakeHome, 'USD');
       heroSecondary = isSpanish
-          ? 'Ventaja: ${AmountFormatter.format(result.annualAdvantage, 'USD')}/año'
-          : 'Advantage: ${AmountFormatter.format(result.annualAdvantage, 'USD')}/yr';
+          ? 'Ventaja: ${AmountFormatter.ui(result.annualAdvantage, 'USD')}/año'
+          : 'Advantage: ${AmountFormatter.ui(result.annualAdvantage, 'USD')}/yr';
       statLabelA = isSpanish ? 'Tasa efectiva' : 'Effective rate';
       statLabelB = isSpanish ? 'Comp. total' : 'Total comp';
 
       return Semantics(
         label: isSpanish
-            ? '$winnerLabel gana con ${AmountFormatter.format(winnerResult.netTakeHome, 'USD')} neto anual, ventaja de ${AmountFormatter.format(result.annualAdvantage, 'USD')}'
-            : '$winnerLabel wins with ${AmountFormatter.format(winnerResult.netTakeHome, 'USD')} annual net, advantage of ${AmountFormatter.format(result.annualAdvantage, 'USD')}',
+            ? '$winnerLabel gana con ${AmountFormatter.ui(winnerResult.netTakeHome, 'USD')} neto anual, ventaja de ${AmountFormatter.ui(result.annualAdvantage, 'USD')}'
+            : '$winnerLabel wins with ${AmountFormatter.ui(winnerResult.netTakeHome, 'USD')} annual net, advantage of ${AmountFormatter.ui(result.annualAdvantage, 'USD')}',
         child: CalcwiseHeroCard(
           label: heroLabel,
           value: heroValue,
@@ -1029,7 +1029,7 @@ class _HeroKpiCard extends StatelessWidget {
             ),
             (
               label: statLabelB,
-              value: AmountFormatter.format(winnerResult.totalCompensation, 'USD'),
+              value: AmountFormatter.ui(winnerResult.totalCompensation, 'USD'),
             ),
           ],
         ),
@@ -1038,8 +1038,8 @@ class _HeroKpiCard extends StatelessWidget {
 
     return Semantics(
       label: isSpanish
-          ? 'Las dos ofertas son equivalentes. Compensación total: ${AmountFormatter.format(a.totalCompensation, 'USD')}'
-          : 'Both offers are equivalent. Total compensation: ${AmountFormatter.format(a.totalCompensation, 'USD')}',
+          ? 'Las dos ofertas son equivalentes. Compensación total: ${AmountFormatter.ui(a.totalCompensation, 'USD')}'
+          : 'Both offers are equivalent. Total compensation: ${AmountFormatter.ui(a.totalCompensation, 'USD')}',
       child: CalcwiseHeroCard(
         label: heroLabel,
         value: heroValue,
@@ -1048,11 +1048,11 @@ class _HeroKpiCard extends StatelessWidget {
         stats: [
           (
             label: statLabelA,
-            value: AmountFormatter.format(a.netTakeHome, 'USD'),
+            value: AmountFormatter.ui(a.netTakeHome, 'USD'),
           ),
           (
             label: statLabelB,
-            value: AmountFormatter.format(b.netTakeHome, 'USD'),
+            value: AmountFormatter.ui(b.netTakeHome, 'USD'),
           ),
         ],
       ),
@@ -1422,14 +1422,14 @@ class _RsuVestingCardState extends State<_RsuVestingCard> {
                     Expanded(
                         child: _GrantChip(
                       label: isSp ? 'Total concesión A' : 'Total grant A',
-                      value: AmountFormatter.format(grantA, 'USD'),
+                      value: AmountFormatter.ui(grantA, 'USD'),
                       color: AppTheme.offerADeep,
                     )),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                         child: _GrantChip(
                       label: isSp ? 'Total concesión B' : 'Total grant B',
-                      value: AmountFormatter.format(grantB, 'USD'),
+                      value: AmountFormatter.ui(grantB, 'USD'),
                       color: AppTheme.offerBDeep,
                     )),
                   ]),
@@ -1651,7 +1651,7 @@ class _VestRow extends StatelessWidget {
         Expanded(
           child:
               Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-            Text(AmountFormatter.format(vested, 'USD'),
+            Text(AmountFormatter.ui(vested, 'USD'),
                 style: const TextStyle(
                     fontSize: AppTextSize.sm, fontWeight: FontWeight.w600)),
             Text('${(taxRate * 100).toStringAsFixed(1)}% tax est.',
@@ -1659,7 +1659,7 @@ class _VestRow extends StatelessWidget {
           ]),
         ),
         Expanded(
-          child: Text(AmountFormatter.format(netVested, 'USD'),
+          child: Text(AmountFormatter.ui(netVested, 'USD'),
               textAlign: TextAlign.right,
               style: TextStyle(
                   fontSize: AppTextSize.sm,
@@ -1745,7 +1745,7 @@ class _NegotiationTipsCard extends StatelessWidget {
                           fontSize: AppTextSize.sm, color: ct.textSecondary),
                     ),
                     Text(
-                      AmountFormatter.format(gap, 'USD'),
+                      AmountFormatter.ui(gap, 'USD'),
                       style: const TextStyle(
                           fontSize: AppTextSize.md,
                           fontWeight: FontWeight.w700,
@@ -1762,8 +1762,8 @@ class _NegotiationTipsCard extends StatelessWidget {
                   ),
                   child: Text(
                     isSpanish
-                        ? 'Si está negociando $loserLabel, pida ${AmountFormatter.format(counterTarget, 'USD')} neto anual para dividir la diferencia a la mitad.'
-                        : 'If negotiating $loserLabel, counter at ${AmountFormatter.format(counterTarget, 'USD')}/yr net to split the difference.',
+                        ? 'Si está negociando $loserLabel, pida ${AmountFormatter.ui(counterTarget, 'USD')} neto anual para dividir la diferencia a la mitad.'
+                        : 'If negotiating $loserLabel, counter at ${AmountFormatter.ui(counterTarget, 'USD')}/yr net to split the difference.',
                     style: TextStyle(
                         fontSize: AppTextSize.sm,
                         color: ct.textPrimary,
