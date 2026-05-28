@@ -50,7 +50,7 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
     final last = prefs.getString(_quotaKey);
     final today = DateTime.now().toIso8601String().substring(0, 10);
     final count = prefs.getInt(_quotaCountKey) ?? 0;
-    if (last == today && count >= 1) return false;
+    if (last == today && count >= 3) return false;
     return true;
   }
 
@@ -74,8 +74,8 @@ class _OfferParserDialogState extends State<OfferParserDialog> {
       setState(() {
         _busy = false;
         _error = _isSp
-            ? 'Límite gratuito: 1 análisis por día. Premium para ilimitado.'
-            : 'Free limit: 1 parse per day. Premium for unlimited.';
+            ? 'Límite gratuito: 3 análisis por día. Premium para ilimitado.'
+            : 'Free limit: 3 parses per day. Premium for unlimited.';
       });
       return;
     }
