@@ -152,6 +152,66 @@ class OfferEngine {
     return bonus - (taxOnTotal - taxOnSalary);
   }
 
+  // ── Premium wealth calculations ───────────────────────────────────────────
+
+  /// Projected 401k balance at retirement.
+  /// Assumes employee contributes [empContribPct]% of salary each year,
+  /// plus [employerMatch] annual match, compounded at [annualReturn] for [years].
+  static double k401kWealthAtRetirement(
+    double baseSalary, {
+    double employerMatch = 0,
+    double empContribPct = 6.0,
+    double annualReturn = 0.07,
+    int years = 30,
+  }) {
+    if (years <= 0 || baseSalary <= 0) return 0;
+    final annualContrib = baseSalary * (empContribPct / 100) + employerMatch;
+    // FV of annuity: PMT × [(1+r)^n − 1] / r
+    final fv = annualContrib * ((pow1r(annualReturn, years) - 1) / annualReturn);
+    return fv;
+  }
+
+  /// (1+r)^n without dart:math import.
+  static double pow1r(double r, int n) {
+    double result = 1.0;
+    for (var i = 0; i < n; i++) {
+      result *= (1 + r);
+    }
+    return result;
+  }
+
+  /// Net investable wealth after [years] years.
+  /// Each year saves [savingsRate] of net take-home, invested at [annualReturn].
+  static double netWealthProjection(
+    List<double> annualNetIncome, {
+    double savingsRate = 0.20,
+    double annualReturn = 0.06,
+  }) {
+    if (annualNetIncome.isEmpty) return 0;
+    double wealth = 0;
+    final n = annualNetIncome.length;
+    for (var i = 0; i < n; i++) {
+      final saved = annualNetIncome[i] * savingsRate;
+      // Compound from year i to end of year n
+      wealth += saved * pow1r(annualReturn, n - i);
+    }
+    return wealth;
+  }
+
+  /// Months until the higher-annual-comp offer overcomes the lower-annual-comp
+  /// offer's signing bonus head start.
+  /// Returns null if there's no signing bonus advantage to overcome,
+  /// or if the higher-comp offer never catches up.
+  static int? breakEvenMonths(OfferResult high, OfferResult low,
+      double highSigning, double lowSigning) {
+    final signingAdv = lowSigning - highSigning; // low offer has this head start
+    if (signingAdv <= 0) return null; // high offer has equal/better signing too
+    final monthlyAdv =
+        (high.totalCompensation - low.totalCompensation) / 12; // high is better
+    if (monthlyAdv <= 0) return null; // high is NOT better monthly
+    return (signingAdv / monthlyAdv).ceil();
+  }
+
   /// 5-year total compensation projection, assuming [annualRaisePct] annually.
   static List<double> fiveYearProjection({
     required double baseSalary,
@@ -256,6 +316,14 @@ class OfferEngine {
       advantage = diff.abs();
     }
 
+    // Break-even: only meaningful for A vs B (2-way primary)
+    int? bem;
+    if (winner == Winner.offerA) {
+      bem = breakEvenMonths(a, b, offerA.signingBonus, offerB.signingBonus);
+    } else if (winner == Winner.offerB) {
+      bem = breakEvenMonths(b, a, offerB.signingBonus, offerA.signingBonus);
+    }
+
     return ComparisonResult(
       resultA: a,
       resultB: b,
@@ -263,6 +331,7 @@ class OfferEngine {
       winner: winner,
       annualAdvantage: advantage,
       categoryWinners: _categoryWinnersThree(a, b, c),
+      breakEvenMonths: bem,
     );
   }
 
@@ -311,6 +380,30 @@ class OfferEngine {
       commuteCostAnnual: commute,
     );
 
+    // ── Premium wealth metrics ────────────────────────────────────────────────
+    final cumulative5Yr = projection.fold(0.0, (s, v) => s + v);
+
+    final k401kWealth = k401kWealthAtRetirement(
+      o.baseSalary,
+      employerMatch: match,
+      empContribPct: 6.0,
+      annualReturn: 0.07,
+      years: 30,
+    );
+
+    // Net-take-home per projection year (salary grows with raise)
+    final netPerYear = <double>[];
+    double sal = o.baseSalary;
+    for (var i = 0; i < 5; i++) {
+      netPerYear.add(netTakeHome(sal, o.stateCode, o.city));
+      sal *= (1 + o.annualRaisePct / 100);
+    }
+    final savings5Yr = netWealthProjection(
+      netPerYear,
+      savingsRate: 0.20,
+      annualReturn: 0.06,
+    );
+
     return OfferResult(
       grossSalary: o.baseSalary,
       federalTax: fed,
@@ -331,6 +424,9 @@ class OfferEngine {
       colAdjustedTakeHome: colAdj,
       fiveYearProjection: projection,
       signingBonusAfterTax: signingNet,
+      cumulativeComp5Yr: cumulative5Yr,
+      k401kWealthAt65: k401kWealth,
+      netWealthAfter5Yrs: savings5Yr,
     );
   }
 

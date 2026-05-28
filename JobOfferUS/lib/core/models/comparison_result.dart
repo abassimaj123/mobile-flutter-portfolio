@@ -20,6 +20,17 @@ class OfferResult {
   final List<double> fiveYearProjection; // year 1–5 total comp (premium)
   final double signingBonusAfterTax; // one-time signing bonus net of tax
 
+  // ── Premium wealth metrics ───────────────────────────────────────────────────
+  /// Sum of total compensation over 5 years (with raise progression).
+  final double cumulativeComp5Yr;
+
+  /// Projected 401k balance at retirement assuming 30-year horizon, 7% return,
+  /// 6% employee contribution + employer match.
+  final double k401kWealthAt65;
+
+  /// Net investable wealth after 5 years at 20% savings rate, 6% annual return.
+  final double netWealthAfter5Yrs;
+
   const OfferResult({
     required this.grossSalary,
     required this.federalTax,
@@ -40,6 +51,9 @@ class OfferResult {
     required this.colAdjustedTakeHome,
     required this.fiveYearProjection,
     this.signingBonusAfterTax = 0,
+    this.cumulativeComp5Yr = 0,
+    this.k401kWealthAt65 = 0,
+    this.netWealthAfter5Yrs = 0,
   });
 
   double get monthlyTakeHome => netTakeHome / 12;
@@ -57,6 +71,11 @@ class ComparisonResult {
   final Map<String, Winner>
       categoryWinners; // 'takeHome','bonus','benefits','pto','rsu','commute','col'
 
+  /// Months until the lower-annual-comp offer's signing bonus advantage is
+  /// overtaken by the higher-annual-comp offer's cumulative earnings.
+  /// null if no signing bonus crossover (or the same offer wins on both).
+  final int? breakEvenMonths;
+
   const ComparisonResult({
     required this.resultA,
     required this.resultB,
@@ -64,6 +83,7 @@ class ComparisonResult {
     required this.winner,
     required this.annualAdvantage,
     required this.categoryWinners,
+    this.breakEvenMonths,
   });
 
   bool get isTie => winner == Winner.tie;

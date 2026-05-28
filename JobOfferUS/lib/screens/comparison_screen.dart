@@ -551,6 +551,9 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
           'total_comp': r.totalCompensation,
           'col_adj': r.colAdjustedTakeHome,
           '5yr': r.fiveYearProjection,
+          'cumulative_5yr': r.cumulativeComp5Yr,
+          'k401k_wealth_65': r.k401kWealthAt65,
+          'net_wealth_5yr': r.netWealthAfter5Yrs,
         };
 
     final compJson = jsonEncode({
@@ -563,6 +566,7 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
                   ? 'C'
                   : 'tie',
       'advantage': widget.result.annualAdvantage,
+      'break_even_months': widget.result.breakEvenMonths,
       'offers': [
         offerJson(widget.offerA, a),
         offerJson(widget.offerB, b),
@@ -959,9 +963,31 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
             const SizedBox(height: AppSpacing.md),
           ],
 
-          // ── 5-year projection (Premium) ────────────────────────────────
-          if (isPremium && a.fiveYearProjection.isNotEmpty) ...[
-            _ProjectionCard(
+          // ── Premium wealth analysis ────────────────────────────────────
+          if (isPremium) ...[
+            // 5-year projection
+            if (a.fiveYearProjection.isNotEmpty) ...[
+              _ProjectionCard(
+                resultA: a,
+                resultB: b,
+                labelA: widget.offerA.label,
+                labelB: widget.offerB.label,
+                isSpanish: isSpanish,
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
+            // Break-even
+            if (widget.result.breakEvenMonths != null) ...[
+              _BreakEvenCard(
+                result: widget.result,
+                offerA: widget.offerA,
+                offerB: widget.offerB,
+                isSpanish: isSpanish,
+              ),
+              const SizedBox(height: AppSpacing.md),
+            ],
+            // Wealth building
+            _WealthBuildingCard(
               resultA: a,
               resultB: b,
               labelA: widget.offerA.label,
@@ -969,14 +995,14 @@ class _ComparisonScreenState extends State<ComparisonScreen> {
               isSpanish: isSpanish,
             ),
             const SizedBox(height: AppSpacing.md),
-          ] else if (!isPremium) ...[
+          ] else ...[
             PaywallSoft(
               featureTitle: isSpanish
-                  ? 'Proyección a 5 años'
-                  : '5-year career projection',
+                  ? 'Análisis de riqueza a largo plazo'
+                  : 'Long-term wealth analysis',
               featureSubtitle: isSpanish
-                  ? 'Con aumentos anuales, ¿cuál ofrece más a largo plazo?'
-                  : 'With annual raises, which pays more long-term?',
+                  ? 'Proyección 5 años · 401k a jubilación · Riqueza neta · Punto de equilibrio'
+                  : '5-year projection · 401k at retirement · Net wealth · Break-even',
               isSpanish: isSpanish,
               onUnlock: () => _showPaywall(context, isSpanish),
             ),
@@ -1837,6 +1863,304 @@ class _NegotiationTipsCard extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+// ── Break-even card ───────────────────────────────────────────────────────────
+
+class _BreakEvenCard extends StatelessWidget {
+  final ComparisonResult result;
+  final JobOffer offerA, offerB;
+  final bool isSpanish;
+  const _BreakEvenCard({
+    required this.result,
+    required this.offerA,
+    required this.offerB,
+    required this.isSpanish,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ct = CalcwiseTheme.of(context);
+    final months = result.breakEvenMonths!;
+    final years = months ~/ 12;
+    final rem = months % 12;
+    final isSp = isSpanish;
+
+    final winnerLabel = result.winner == Winner.offerA ? offerA.label : offerB.label;
+    final loserLabel = result.winner == Winner.offerA ? offerB.label : offerA.label;
+
+    String duration;
+    if (years == 0) {
+      duration = isSp ? '$months meses' : '$months months';
+    } else if (rem == 0) {
+      duration = isSp ? '$years ${years == 1 ? "año" : "años"}' : '$years ${years == 1 ? "year" : "years"}';
+    } else {
+      duration = isSp ? '$years a. $rem m.' : '${years}y ${rem}m';
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [
+            AppTheme.primary.withValues(alpha: 0.08),
+            AppTheme.offerBDeep.withValues(alpha: 0.04),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        border: Border.all(color: AppTheme.primary.withValues(alpha: 0.25)),
+      ),
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Row(children: [
+          const Icon(Icons.swap_vert_rounded, color: AppTheme.primary, size: 18),
+          const SizedBox(width: AppSpacing.xs),
+          Text(
+            isSp ? 'Punto de equilibrio' : 'Break-even analysis',
+            style: const TextStyle(
+                fontSize: AppTextSize.md,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.primary),
+          ),
+        ]),
+        const SizedBox(height: AppSpacing.md),
+        // Big number
+        Row(crossAxisAlignment: CrossAxisAlignment.end, children: [
+          Text(duration,
+              style: const TextStyle(
+                  fontSize: 32,
+                  fontWeight: FontWeight.w900,
+                  color: AppTheme.primary,
+                  letterSpacing: -1)),
+          const SizedBox(width: AppSpacing.sm),
+          Padding(
+            padding: const EdgeInsets.only(bottom: 4),
+            child: Text(
+              isSp ? '→ $winnerLabel supera a $loserLabel' : '→ $winnerLabel overtakes $loserLabel',
+              style: TextStyle(fontSize: AppTextSize.sm, color: ct.textSecondary),
+            ),
+          ),
+        ]),
+        const SizedBox(height: AppSpacing.sm),
+        Text(
+          isSp
+              ? '$loserLabel tiene ventaja de bono inicial. Pero $winnerLabel paga más cada año — después de $duration, $winnerLabel habrá ganado más en total.'
+              : '$loserLabel has a signing bonus head start. But $winnerLabel pays more each year — after $duration, $winnerLabel\'s cumulative earnings surpass $loserLabel\'s.',
+          style: TextStyle(
+              fontSize: AppTextSize.sm,
+              color: ct.textSecondary,
+              height: 1.5),
+        ),
+      ]),
+    );
+  }
+}
+
+// ── Wealth building card ──────────────────────────────────────────────────────
+
+class _WealthBuildingCard extends StatelessWidget {
+  final dynamic resultA, resultB;
+  final String labelA, labelB;
+  final bool isSpanish;
+  const _WealthBuildingCard({
+    required this.resultA,
+    required this.resultB,
+    required this.labelA,
+    required this.labelB,
+    required this.isSpanish,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ct = CalcwiseTheme.of(context);
+    final isSp = isSpanish;
+    final a = resultA;
+    final b = resultB;
+
+    final cum5A = a.cumulativeComp5Yr as double;
+    final cum5B = b.cumulativeComp5Yr as double;
+    final k401kA = a.k401kWealthAt65 as double;
+    final k401kB = b.k401kWealthAt65 as double;
+    final wealthA = a.netWealthAfter5Yrs as double;
+    final wealthB = b.netWealthAfter5Yrs as double;
+
+    final winA_cum = cum5A >= cum5B;
+    final winA_k = k401kA >= k401kB;
+    final winA_w = wealthA >= wealthB;
+
+    Widget metricRow(String title, String sub, double vA, double vB, bool aWins) {
+      final winColor = aWins ? AppTheme.offerADeep : AppTheme.offerBDeep;
+      final winLabel = aWins ? labelA : labelB;
+      final diff = (vA - vB).abs();
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Row(children: [
+            Expanded(
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                Text(title,
+                    style: const TextStyle(
+                        fontSize: AppTextSize.sm, fontWeight: FontWeight.w600)),
+                Text(sub,
+                    style: TextStyle(
+                        fontSize: AppTextSize.xs, color: ct.textSecondary)),
+              ]),
+            ),
+            Container(
+              padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.sm, vertical: 3),
+              decoration: BoxDecoration(
+                color: winColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(AppRadius.xxl),
+              ),
+              child: Text(
+                '+${AmountFormatter.ui(diff, 'USD')} $winLabel',
+                style: TextStyle(
+                    fontSize: AppTextSize.xs,
+                    color: winColor,
+                    fontWeight: FontWeight.w700),
+              ),
+            ),
+          ]),
+          const SizedBox(height: AppSpacing.xs),
+          Row(children: [
+            Expanded(
+              child: _MiniBar(
+                  label: labelA, value: vA, maxVal: vA > vB ? vA : vB, color: AppTheme.offerADeep),
+            ),
+            const SizedBox(width: AppSpacing.sm),
+            Expanded(
+              child: _MiniBar(
+                  label: labelB, value: vB, maxVal: vA > vB ? vA : vB, color: AppTheme.offerBDeep),
+            ),
+          ]),
+        ]),
+      );
+    }
+
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        borderRadius: BorderRadius.circular(AppRadius.xl),
+        border: Border.all(color: ct.cardBorder),
+      ),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg, AppSpacing.md, AppSpacing.lg, AppSpacing.sm),
+          child: Row(children: [
+            const Icon(Icons.account_balance_wallet_rounded,
+                size: 16, color: AppTheme.primary),
+            const SizedBox(width: AppSpacing.xs),
+            Text(
+              isSp ? 'Construcción de riqueza' : 'Wealth Building',
+              style: const TextStyle(
+                  fontSize: AppTextSize.md, fontWeight: FontWeight.w700),
+            ),
+          ]),
+        ),
+        Divider(height: 1, color: ct.cardBorder),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.md),
+          child: Column(children: [
+            metricRow(
+              isSp ? 'Compensación total — 5 años' : 'Total Earnings — 5 Years',
+              isSp
+                  ? 'Suma acumulada con aumentos anuales'
+                  : 'Cumulative total with annual raises',
+              cum5A,
+              cum5B,
+              winA_cum,
+            ),
+            Divider(height: 20, color: ct.cardBorder),
+            metricRow(
+              isSp ? '401k a la jubilación (30 años)' : '401k Balance at Retirement (30 yr)',
+              isSp
+                  ? '6% aporte + match · 7% retorno compuesto'
+                  : '6% contrib + match · 7% compounded return',
+              k401kA,
+              k401kB,
+              winA_k,
+            ),
+            Divider(height: 20, color: ct.cardBorder),
+            metricRow(
+              isSp ? 'Riqueza neta en 5 años' : 'Net Investable Wealth — 5 Years',
+              isSp
+                  ? '20% tasa de ahorro · 6% retorno anual'
+                  : '20% savings rate · 6% annual return',
+              wealthA,
+              wealthB,
+              winA_w,
+            ),
+          ]),
+        ),
+        Container(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, AppSpacing.md),
+          decoration: BoxDecoration(
+            color: ct.surfaceHigh,
+            borderRadius: const BorderRadius.vertical(
+                bottom: Radius.circular(AppRadius.xl)),
+          ),
+          child: Text(
+            isSp
+                ? '* Proyecciones estimativas basadas en tasas 2026. La rentabilidad real puede variar.'
+                : '* Projections are estimates based on 2026 rates. Actual returns may vary.',
+            style: TextStyle(
+                fontSize: AppTextSize.xs,
+                color: ct.textSecondary,
+                fontStyle: FontStyle.italic),
+          ),
+        ),
+      ]),
+    );
+  }
+}
+
+class _MiniBar extends StatelessWidget {
+  final String label;
+  final double value;
+  final double maxVal;
+  final Color color;
+  const _MiniBar(
+      {required this.label,
+      required this.value,
+      required this.maxVal,
+      required this.color});
+
+  @override
+  Widget build(BuildContext context) {
+    final ct = CalcwiseTheme.of(context);
+    final ratio = maxVal > 0 ? (value / maxVal).clamp(0.0, 1.0) : 0.0;
+    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+      Text(label,
+          style: TextStyle(fontSize: AppTextSize.xs, color: ct.textSecondary),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis),
+      const SizedBox(height: 2),
+      LayoutBuilder(builder: (_, bc) {
+        return Stack(children: [
+          Container(
+              height: 6,
+              width: bc.maxWidth,
+              decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(3))),
+          Container(
+              height: 6,
+              width: bc.maxWidth * ratio,
+              decoration: BoxDecoration(
+                  color: color, borderRadius: BorderRadius.circular(3))),
+        ]);
+      }),
+      const SizedBox(height: 2),
+      Text(AmountFormatter.ui(value, 'USD'),
+          style: TextStyle(
+              fontSize: AppTextSize.xs,
+              color: color,
+              fontWeight: FontWeight.w700)),
+    ]);
   }
 }
 
