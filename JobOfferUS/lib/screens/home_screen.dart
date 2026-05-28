@@ -185,7 +185,11 @@ class _HomeScreenState extends State<HomeScreen> {
           bottomNavigationBar: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const CalcwiseAdFooter(),
+              MediaQuery.removePadding(
+                context: context,
+                removeBottom: true,
+                child: const CalcwiseAdFooter(),
+              ),
               NavigationBar(
                 selectedIndex: _tabIndex,
                 onDestinationSelected: (i) => setState(() => _tabIndex = i),
