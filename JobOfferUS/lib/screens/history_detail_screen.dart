@@ -960,17 +960,29 @@ class _ComparisonBody extends StatelessWidget {
                 SizedBox(
                   height: 52,
                   child: ElevatedButton.icon(
-                    onPressed:
-                        exporting ? null : (isPrem ? onExport : null),
+                    onPressed: exporting
+                        ? null
+                        : () {
+                            if (!isPrem) {
+                              PaywallHard.show(context);
+                              return;
+                            }
+                            onExport();
+                          },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.primary,
-                      foregroundColor: Colors.white,
+                      backgroundColor:
+                          isPrem ? AppTheme.primary : ct.surfaceHigh,
+                      foregroundColor:
+                          isPrem ? Colors.white : ct.textSecondary,
                       disabledBackgroundColor:
                           AppTheme.primary.withValues(alpha: 0.4),
                       elevation: 0,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppRadius.xl),
                       ),
+                      side: isPrem
+                          ? BorderSide.none
+                          : BorderSide(color: ct.cardBorder),
                     ),
                     icon: exporting
                         ? const SizedBox(
@@ -978,7 +990,11 @@ class _ComparisonBody extends StatelessWidget {
                             height: 18,
                             child: CircularProgressIndicator(
                                 strokeWidth: 2, color: Colors.white))
-                        : const Icon(Icons.picture_as_pdf_rounded, size: 20),
+                        : Icon(
+                            isPrem
+                                ? Icons.picture_as_pdf_rounded
+                                : Icons.lock_rounded,
+                            size: 20),
                     label: Text(
                       exporting
                           ? (isEs ? 'Generando...' : 'Generating...')
@@ -1361,33 +1377,68 @@ class _LegacyBody extends StatelessWidget {
               style: TextStyle(fontSize: AppTextSize.xs, color: ct.textSecondary)),
         ),
         const SizedBox(height: AppSpacing.xl),
-        SizedBox(
-          width: double.infinity,
-          height: 52,
-          child: ElevatedButton.icon(
-            onPressed: exporting ? null : onExport,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.primary,
-              foregroundColor: Colors.white,
-              disabledBackgroundColor: AppTheme.primary.withValues(alpha: 0.4),
-              elevation: 0,
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AppRadius.xl)),
-            ),
-            icon: exporting
-                ? const SizedBox(width: 18, height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                : const Icon(Icons.picture_as_pdf_rounded, size: 20),
-            label: Text(
-              exporting
-                  ? (isEs ? 'Generando...' : 'Generating...')
-                  : (isEs ? 'Exportar PDF' : 'Export PDF'),
-              style: const TextStyle(fontWeight: FontWeight.w700, fontSize: AppTextSize.md),
-            ),
+        ValueListenableBuilder<bool>(
+          valueListenable: freemiumService.hasFullAccessNotifier,
+          builder: (context, isPremium, __) => Column(
+            children: [
+              SizedBox(
+                width: double.infinity,
+                height: 52,
+                child: ElevatedButton.icon(
+                  onPressed: exporting
+                      ? null
+                      : () {
+                          if (!isPremium) {
+                            PaywallHard.show(context);
+                            return;
+                          }
+                          onExport();
+                        },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: isPremium
+                        ? AppTheme.primary
+                        : ct.surfaceHigh,
+                    foregroundColor: isPremium
+                        ? Colors.white
+                        : ct.textSecondary,
+                    disabledBackgroundColor:
+                        AppTheme.primary.withValues(alpha: 0.4),
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(AppRadius.xl)),
+                    side: isPremium
+                        ? BorderSide.none
+                        : BorderSide(color: ct.cardBorder),
+                  ),
+                  icon: exporting
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                              strokeWidth: 2, color: Colors.white))
+                      : Icon(
+                          isPremium
+                              ? Icons.picture_as_pdf_rounded
+                              : Icons.lock_rounded,
+                          size: 20),
+                  label: Text(
+                    exporting
+                        ? (isEs ? 'Generando...' : 'Generating...')
+                        : (isEs ? 'Exportar PDF' : 'Export PDF'),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w700,
+                        fontSize: AppTextSize.md),
+                  ),
+                ),
+              ),
+              if (!isPremium) const CalcwiseAdFooter(),
+            ],
           ),
         ),
-        const SizedBox(height: AppSpacing.lg),
-        const CalcwiseAdFooter(),
+        if (freemiumService.hasFullAccess) ...[
+          const SizedBox(height: AppSpacing.lg),
+          const CalcwiseAdFooter(),
+        ],
       ]),
     );
   }

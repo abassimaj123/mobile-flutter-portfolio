@@ -1,6 +1,6 @@
 name: calcwise_core
 description: Shared Firebase, AdMob, IAP and Freemium services for Calcwise portfolio apps.
-version: 1.0.0
+version: 1.0.5
 homepage: https://github.com/abassimaj123/calcwise_core
 repository: https://github.com/abassimaj123/calcwise_core
 

@@ -5,7 +5,7 @@
   "packages": [
     {
       "name": "calcwise_core",
-      "version": "1.0.0",
+      "version": "1.0.5",
       "dependencies": [
         "firebase_analytics",
         "firebase_crashlytics",

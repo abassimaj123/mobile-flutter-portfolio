@@ -34,8 +34,14 @@ class PaywallSoft extends StatelessWidget {
       backgroundColor: Colors.transparent,
       isDismissible: true,
       useSafeArea: true,
+      isScrollControlled: true,
       builder: (ctx) => Padding(
-        padding: const EdgeInsets.fromLTRB(AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.lg),
+        padding: EdgeInsets.fromLTRB(
+          AppSpacing.lg,
+          AppSpacing.lg,
+          AppSpacing.lg,
+          MediaQuery.viewInsetsOf(ctx).bottom + AppSpacing.lg,
+        ),
         child: PaywallSoft(
           isSpanish: isSpanish,
           isFrench: isFrench,
